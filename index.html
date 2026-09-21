@@ -297,6 +297,8 @@ textarea { resize: none; }
   flex-direction: column;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 50;
+  height: 100%;
+  overflow: hidden;
 }
 .sidebar-header {
   padding: 24px;
@@ -304,6 +306,7 @@ textarea { resize: none; }
   display: flex;
   align-items: center;
   gap: 14px;
+  flex-shrink: 0;
 }
 .sidebar-logo {
   width: 44px; height: 44px;
@@ -333,12 +336,13 @@ textarea { resize: none; }
   gap: 10px;
   transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
   box-shadow: 0 8px 16px var(--accent-glow);
+  flex-shrink: 0;
 }
 .new-chat-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 12px 20px var(--accent-glow); }
 .new-chat-btn:active { transform: scale(0.98); }
 .new-chat-btn svg { width: 18px; height: 18px; }
 
-.sidebar-section { padding: 0 20px 8px; }
+.sidebar-section { padding: 0 20px 8px; flex-shrink: 0; }
 .sidebar-section-title {
   font-size: 11px;
   font-weight: 700;
@@ -404,6 +408,7 @@ textarea { resize: none; }
 .sidebar-footer {
   border-top: 1px solid var(--border);
   padding: 12px;
+  flex-shrink: 0;
 }
 .sidebar-footer-btn {
   width: 100%;
@@ -427,6 +432,8 @@ textarea { resize: none; }
   background: var(--bg-primary);
   min-width: 0;
   position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 .topbar {
   padding: 16px 24px;
@@ -436,6 +443,7 @@ textarea { resize: none; }
   justify-content: space-between;
   gap: 16px;
   background: var(--bg-secondary);
+  flex-shrink: 0;
 }
 .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .menu-toggle {
@@ -498,6 +506,7 @@ textarea { resize: none; }
   overflow-y: auto;
   scroll-behavior: smooth;
   position: relative;
+  min-height: 0; /* Crucial for flex scrolling */
 }
 
 /* Welcome Screen */
@@ -751,6 +760,7 @@ textarea { resize: none; }
 .input-area {
   padding: 16px 24px 24px;
   background: var(--bg-primary);
+  flex-shrink: 0;
 }
 .input-wrapper {
   max-width: 860px;
@@ -868,6 +878,10 @@ textarea { resize: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  z-index: 2;
 }
 .modal-header h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 .modal-close {
@@ -1739,7 +1753,6 @@ function highlightCode() {
       hljs.highlightElement(block);
     } catch (e) {}
     
-    // Add copy button & language label
     if (!block.parentElement.parentElement.classList.contains('code-block-wrapper')) {
       const pre = block.parentElement;
       const wrapper = document.createElement('div');
@@ -1801,7 +1814,7 @@ function bindMessageActions() {
 }
 
 // ============ AI INTEGRATION ============
-async function sendToAI(messages, onChunk) {
+async function sendToAI(messages) {
   const chat = getCurrentChat();
   if (!chat) return;
   
@@ -1810,7 +1823,6 @@ async function sendToAI(messages, onChunk) {
   updateSendButton();
   showTypingIndicator();
   
-  // Build messages array for Puter AI
   const aiMessages = [
     { role: 'system', content: AI_CONFIG.systemPrompt + ' ' + lengthMap[state.settings.responseLength] },
     ...messages.map(m => ({
@@ -1820,7 +1832,6 @@ async function sendToAI(messages, onChunk) {
   ];
   
   try {
-    // Check if Puter is available
     if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) {
       throw new Error('Puter AI not available');
     }
@@ -1838,44 +1849,72 @@ async function sendToAI(messages, onChunk) {
     const newMsg = { id: msgId, role: 'assistant', content: '', timestamp: Date.now() };
     chat.messages.push(newMsg);
     
-    // Create streaming message element
     appendStreamingMessage(newMsg);
+    
+    let renderTimer = null;
+    let lastText = '';
     
     try {
       for await (const part of response) {
         if (state.shouldStop) break;
-        const chunk = part?.text || part?.delta || part?.content || '';
+        
+        let chunk = '';
+        if (typeof part === 'string') {
+          chunk = part;
+        } else if (part?.message?.content) {
+          chunk = part.message.content;
+        } else {
+          chunk = part?.text || part?.delta || '';
+        }
+        
         if (chunk) {
           fullText += chunk;
           newMsg.content = fullText;
-          updateStreamingMessage(msgId, fullText);
+          
+          // Throttle DOM updates to prevent flickering
+          if (!renderTimer) {
+            renderTimer = setTimeout(() => {
+              const el = $(`[data-msg-id="${msgId}"] .message-body`);
+              if (el) {
+                el.innerHTML = renderMarkdown(fullText);
+              }
+              scrollToBottom();
+              renderTimer = null;
+            }, 50); // Update UI every 50ms max
+          }
         }
       }
     } catch (streamErr) {
-      // If streaming fails, try non-streaming
       if (!fullText) {
         const resp = await puter.ai.chat(aiMessages, {
           model: state.settings.model,
           temperature: state.settings.temperature
         });
-        fullText = typeof resp === 'string' ? resp : (resp?.message?.content || resp?.text || '');
+        fullText = typeof resp === 'string' ? resp : (resp?.message?.content || resp?.text || JSON.stringify(resp));
         newMsg.content = fullText;
-        updateStreamingMessage(msgId, fullText);
       }
+    }
+    
+    if (renderTimer) {
+      clearTimeout(renderTimer);
+      renderTimer = null;
     }
     
     if (!fullText.trim()) {
       fullText = 'Maaf, saya tidak dapat memberikan jawaban saat ini. Silakan coba pertanyaan lain.';
       newMsg.content = fullText;
-      updateStreamingMessage(msgId, fullText);
     }
+    
+    const el = $(`[data-msg-id="${msgId}"] .message-body`);
+    if (el) {
+      el.innerHTML = renderMarkdown(fullText);
+    }
+    highlightCode(); 
+    finalizeStreamMessage(msgId, newMsg);
     
     chat.updatedAt = Date.now();
     saveChats();
     renderSidebar();
-    
-    // Finalize message (re-render to add actions)
-    renderChat();
     
   } catch (err) {
     hideTypingIndicator();
@@ -1896,7 +1935,6 @@ function handleAIError(err) {
     errorMsg = 'Silakan hubungkan akun Puter terlebih dahulu untuk menggunakan AI. Klik tombol di bawah untuk masuk.';
   }
   
-  // Add error message with retry button
   const msgId = 'm_err_' + Date.now();
   const errHtml = `
     <div class="message ai" data-msg-id="${msgId}">
@@ -1935,11 +1973,9 @@ function handleAIError(err) {
 window.retryLastMessage = function() {
   const chat = getCurrentChat();
   if (!chat) return;
-  // Remove the error message
   const errMsg = chat.messages.find(m => m.role === 'assistant' && m.content.includes('kendala'));
   if (errMsg) chat.messages.pop();
   renderChat();
-  // Find last user message
   const lastUser = [...chat.messages].reverse().find(m => m.role === 'user');
   if (lastUser) {
     const idx = chat.messages.indexOf(lastUser);
@@ -2002,12 +2038,32 @@ function appendStreamingMessage(msg) {
   scrollToBottom();
 }
 
-function updateStreamingMessage(msgId, content) {
-  const el = $(`[data-msg-id="${msgId}"] .message-body`);
-  if (el) {
-    el.innerHTML = renderMarkdown(content);
-    highlightCode();
-    scrollToBottom();
+function finalizeStreamMessage(msgId, msgData) {
+  const msgEl = $(`[data-msg-id="${msgId}"]`);
+  if (msgEl) {
+    const contentEl = msgEl.querySelector('.message-content');
+    if (contentEl) {
+      if (!contentEl.querySelector('.message-actions')) {
+        const actionsHtml = `
+          <div class="message-actions">
+            <button class="action-btn" data-action="copy" data-msg-id="${msgId}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <button class="action-btn" data-action="speak" data-msg-id="${msgId}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 5 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span class="speak-label">Bacakan</span>
+            </button>
+            <button class="action-btn" data-action="regenerate" data-msg-id="${msgId}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Jawab Lagi
+            </button>
+          </div>
+        `;
+        contentEl.insertAdjacentHTML('beforeend', actionsHtml);
+        bindMessageActions(); 
+      }
+    }
   }
 }
 
@@ -2019,14 +2075,12 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
   
-  // Ensure chat exists
   let chat = getCurrentChat();
   if (!chat) {
     createNewChat();
     chat = getCurrentChat();
   }
   
-  // Add user message
   const userMsg = {
     id: 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
     role: 'user',
@@ -2035,22 +2089,18 @@ async function sendMessage() {
   };
   chat.messages.push(userMsg);
   
-  // Update title if first message
   if (chat.messages.filter(m => m.role === 'user').length === 1) {
     chat.title = generateTitle(text);
   }
   chat.updatedAt = Date.now();
   saveChats();
   
-  // Clear input
   input.value = '';
   autoResizeTextarea();
   
-  // Render
   renderChat();
   renderSidebar();
   
-  // Send to AI
   await sendToAI(chat.messages.slice(0, -1).concat([userMsg]));
 }
 
@@ -2062,19 +2112,16 @@ async function regenerateAnswer(msgId) {
   const msgIdx = chat.messages.findIndex(m => m.id === msgId);
   if (msgIdx === -1) return;
   
-  // Find the user message before this AI message
   let userIdx = msgIdx - 1;
   while (userIdx >= 0 && chat.messages[userIdx].role !== 'user') {
     userIdx--;
   }
   if (userIdx < 0) return;
   
-  // Remove this AI message
   chat.messages.splice(msgIdx, 1);
   saveChats();
   renderChat();
   
-  // Re-send from user message
   const history = chat.messages.slice(0, userIdx + 1);
   await sendToAI(history);
 }
@@ -2294,7 +2341,6 @@ function toggleTTS(msgId, text) {
     return;
   }
   
-  // Strip markdown for speech
   const cleanText = text
     .replace(/```[\s\S]*?```/g, ' blok kode ')
     .replace(/`([^`]+)`/g, '$1')
@@ -2308,7 +2354,6 @@ function toggleTTS(msgId, text) {
   utterance.rate = 1;
   utterance.pitch = 1;
   
-  // Try to find Indonesian voice
   const voices = speechSynthesis.getVoices();
   const idVoice = voices.find(v => v.lang.startsWith('id'));
   if (idVoice) utterance.voice = idVoice;
@@ -2429,7 +2474,6 @@ function importChat(file) {
         showToast('Format file tidak valid', 'error');
         return;
       }
-      // Generate new ID
       data.id = generateId();
       data.title = data.title || 'Chat Import';
       data.createdAt = Date.now();
@@ -2540,19 +2584,16 @@ function bindSettings() {
     saveSettings();
   });
   
-  // Export buttons in settings
   $('#exportTxt').addEventListener('click', () => exportChat('txt'));
   $('#exportJson').addEventListener('click', () => exportChat('json'));
   $('#exportMd').addEventListener('click', () => exportChat('md'));
   
-  // Import
   $('#importBtn').addEventListener('click', () => $('#importFile').click());
   $('#importFile').addEventListener('change', (e) => {
     if (e.target.files[0]) importChat(e.target.files[0]);
     e.target.value = '';
   });
   
-  // Clear all
   $('#clearAllBtn').addEventListener('click', () => {
     if (confirm('Yakin ingin menghapus SEMUA riwayat chat? Tindakan ini tidak dapat dibatalkan.')) {
       state.chats = [];
@@ -2568,7 +2609,6 @@ function bindSettings() {
 // ============ PWA / SERVICE WORKER ============
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
-  // Inline service worker via blob URL for single-file deploy
   const swCode = `
     const CACHE = 'masbayu-v1';
     self.addEventListener('install', e => self.skipWaiting());
@@ -2623,7 +2663,6 @@ function init() {
   applyTheme(state.settings.theme);
   applySettingsToUI();
   
-  // Landing page
   $('#startBtn').addEventListener('click', () => {
     $('#landing').classList.add('hidden');
     setTimeout(() => {
@@ -2632,10 +2671,8 @@ function init() {
     }, 600);
   });
   
-  // New chat
   $('#newChatBtn').addEventListener('click', createNewChat);
   
-  // Send
   $('#sendBtn').addEventListener('click', () => {
     if (state.isGenerating) {
       stopGeneration();
@@ -2644,7 +2681,6 @@ function init() {
     }
   });
   
-  // Input
   const input = $('#chatInput');
   input.addEventListener('input', autoResizeTextarea);
   input.addEventListener('keydown', (e) => {
@@ -2654,17 +2690,11 @@ function init() {
     }
   });
   
-  // Theme toggle
   $('#themeToggle').addEventListener('click', toggleTheme);
-  
-  // Export
   $('#exportBtn').addEventListener('click', () => openModal('#exportModal'));
-  
-  // Settings
   $('#settingsBtn').addEventListener('click', () => openModal('#settingsModal'));
   $('#aboutBtn').addEventListener('click', () => openModal('#aboutModal'));
   
-  // Modal close
   $$('[data-close]').forEach(btn => {
     btn.addEventListener('click', () => {
       $$('.modal-overlay').forEach(m => m.classList.remove('active'));
@@ -2676,43 +2706,27 @@ function init() {
     });
   });
   
-  // Export modal buttons
   $$('[data-export]').forEach(btn => {
     btn.addEventListener('click', () => exportChat(btn.dataset.export));
   });
   
-  // Mobile sidebar
   $('#menuToggle').addEventListener('click', openSidebar);
   $('#sidebarOverlay').addEventListener('click', closeSidebar);
   
-  // Settings
   bindSettings();
-  
-  // Voice input
   initVoiceInput();
   
-  // Load voices for TTS
   if ('speechSynthesis' in window) {
     speechSynthesis.onvoiceschanged = () => {};
   }
   
-  // Initial render
   renderSidebar();
   renderChat();
   
-  // PWA
   setupManifest();
   registerSW();
-  
-  // Check Puter availability
-  setTimeout(() => {
-    if (typeof puter === 'undefined') {
-      console.warn('Puter.js belum termuat. Fitur AI mungkin tidak berfungsi.');
-    }
-  }, 2000);
 }
 
-// Start when DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
