@@ -1,0 +1,2724 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Tanya ke Mas Bayu AI — Asisten AI Pintar</title>
+<meta name="description" content="Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi. Didukung Puter AI.">
+<meta name="theme-color" content="#0f172a">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Markdown & Highlight -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- Puter AI -->
+<script src="https://js.puter.com/v2/"></script>
+
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea { font-family: inherit; }
+textarea { resize: none; }
+
+/* ============ THEME VARIABLES ============ */
+:root {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: rgba(37, 99, 235, 0.08);
+  --accent-glow: rgba(37, 99, 235, 0.2);
+  --amber: #d97706;
+  --amber-light: rgba(217, 119, 6, 0.1);
+  --danger: #dc2626;
+  --danger-light: rgba(220, 38, 38, 0.08);
+  --border: rgba(15, 23, 42, 0.06);
+  --border-strong: rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --user-bubble: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --user-text: #ffffff;
+  --ai-bubble: #ffffff;
+  --ai-text: #0f172a;
+  --code-bg: #1e293b;
+}
+[data-theme="dark"] {
+  --bg-primary: #0b1120;
+  --bg-secondary: #131c31;
+  --bg-tertiary: #1e293b;
+  --bg-elevated: #1a233a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-light: rgba(59, 130, 246, 0.1);
+  --accent-glow: rgba(59, 130, 246, 0.3);
+  --amber: #fbbf24;
+  --amber-light: rgba(251, 191, 36, 0.1);
+  --danger: #ef4444;
+  --danger-light: rgba(239, 68, 68, 0.1);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+  --user-bubble: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --user-text: #ffffff;
+  --ai-bubble: #1a233a;
+  --ai-text: #f1f5f9;
+  --code-bg: #0f172a;
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ============ LANDING PAGE ============ */
+.landing {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.landing.hidden { opacity: 0; transform: scale(1.02); pointer-events: none; }
+.landing-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.landing-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: float 20s ease-in-out infinite;
+}
+.landing-blob.b1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -150px; opacity: 0.2; }
+.landing-blob.b2 { width: 500px; height: 500px; background: var(--amber); bottom: -150px; right: -100px; opacity: 0.15; animation-delay: -10s; }
+.landing-blob.b3 { width: 400px; height: 400px; background: var(--accent); bottom: 20%; left: 30%; opacity: 0.1; animation-delay: -5s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -40px) scale(1.05); }
+  66% { transform: translate(-40px, 50px) scale(0.95); }
+}
+
+.landing-content {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.landing-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.logo-mark {
+  width: 96px; height: 96px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 24px 48px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative;
+  margin-bottom: 24px;
+  transition: transform 0.3s ease;
+}
+.logo-mark:hover { transform: scale(1.05) rotate(-3deg); }
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent 60%);
+  pointer-events: none;
+}
+.logo-mark svg { width: 52px; height: 52px; color: #fff; position: relative; z-index: 1; }
+.logo-text { display: flex; flex-direction: column; align-items: center; line-height: 1; gap: 4px; }
+.logo-text .t1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; }
+.logo-text .t2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1.5px; color: var(--text-primary); }
+.logo-text .t3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 7px; color: var(--amber); text-transform: uppercase; }
+
+.landing h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+.landing h1 .grad {
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 50%, var(--amber) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.landing .tagline {
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin: 0 auto 48px;
+  line-height: 1.6;
+  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--accent);
+  color: #fff;
+  padding: 18px 40px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 16px 32px var(--accent-glow);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+.btn-cta:hover { transform: translateY(-3px); box-shadow: 0 20px 40px var(--accent-glow); }
+.btn-cta:active { transform: translateY(-1px); }
+.btn-cta svg { width: 20px; height: 20px; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 72px;
+  width: 100%;
+  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+.feature-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: left;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
+.feature-card:hover::before { transform: translateX(0); }
+.feature-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+  background: var(--accent-light);
+}
+.feature-card h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+.feature-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes slideDown { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============ APP LAYOUT ============ */
+.app {
+  display: grid;
+  grid-template-columns: 288px 1fr;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+}
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+}
+.sidebar-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sidebar-logo {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px var(--accent-glow);
+}
+.sidebar-logo svg { width: 24px; height: 24px; color: #fff; }
+.sidebar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: -0.5px; }
+.sidebar-title small { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1.5px; margin-top: 3px; text-transform: uppercase; }
+
+.new-chat-btn {
+  margin: 20px;
+  padding: 14px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 8px 16px var(--accent-glow);
+}
+.new-chat-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 12px 20px var(--accent-glow); }
+.new-chat-btn:active { transform: scale(0.98); }
+.new-chat-btn svg { width: 18px; height: 18px; }
+
+.sidebar-section { padding: 0 20px 8px; }
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  padding: 16px 8px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 12px;
+}
+.chat-list-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.chat-item {
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+.chat-item:hover { background: var(--bg-tertiary); }
+.chat-item.active { background: var(--accent-light); }
+.chat-item.active .chat-item-title { color: var(--accent); font-weight: 600; }
+.chat-item-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-muted); }
+.chat-item.active .chat-item-icon { color: var(--accent); }
+.chat-item-content { flex: 1; min-width: 0; }
+.chat-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+.chat-item-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.chat-item-delete {
+  opacity: 0;
+  background: transparent;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.chat-item:hover .chat-item-delete { opacity: 1; }
+.chat-item-delete:hover { color: var(--danger); background: var(--danger-light); }
+.chat-item-delete svg { width: 14px; height: 14px; display: block; }
+
+.sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+}
+.sidebar-footer-btn {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-footer-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.sidebar-footer-btn svg { width: 20px; height: 20px; }
+
+/* ============ MAIN CHAT AREA ============ */
+.main {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  min-width: 0;
+  position: relative;
+}
+.topbar {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-secondary);
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.menu-toggle {
+  display: none;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  transition: background 0.15s;
+}
+.menu-toggle:hover { background: var(--border); }
+.menu-toggle svg { width: 22px; height: 22px; }
+.topbar-title { min-width: 0; }
+.topbar-title h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-title p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.icon-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.icon-btn:active { transform: scale(0.92); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* ============ CHAT CONTAINER ============ */
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+/* Welcome Screen */
+.welcome {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+.welcome-avatar {
+  width: 88px; height: 88px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 40px var(--accent-glow);
+  position: relative;
+  animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.welcome-avatar svg { width: 46px; height: 46px; color: #fff; }
+.welcome-avatar::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 30px;
+  border: 2px solid var(--accent);
+  opacity: 0.3;
+  animation: ripple 2s ease infinite;
+}
+@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.15); opacity: 0; } }
+@keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+
+.welcome h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+.welcome p { font-size: 16px; color: var(--text-secondary); margin-bottom: 40px; max-width: 520px; line-height: 1.6; }
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 820px;
+}
+.quick-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.quick-btn:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow-md); }
+.quick-btn-icon { font-size: 26px; line-height: 1; }
+.quick-btn-text { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.quick-btn-desc { font-size: 12px; color: var(--text-muted); }
+
+/* Messages */
+.messages { padding: 24px 0 40px; max-width: 860px; margin: 0 auto; width: 100%; }
+.message {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  margin-bottom: 8px;
+  animation: messageIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes messageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.message-avatar {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.message.user .message-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+.message.ai .message-avatar {
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  color: #fff;
+  box-shadow: 0 8px 16px var(--accent-glow);
+}
+.message-avatar svg { width: 22px; height: 22px; }
+
+.message-content { flex: 1; min-width: 0; }
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.message-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.message-time { font-size: 11px; color: var(--text-muted); }
+.message-body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-primary);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.message-body p { margin: 0 0 16px; }
+.message-body p:last-child { margin-bottom: 0; }
+.message-body ul, .message-body ol { margin: 12px 0 16px; padding-left: 24px; }
+.message-body li { margin: 6px 0; }
+.message-body h1, .message-body h2, .message-body h3, .message-body h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  line-height: 1.3;
+}
+.message-body h1 { font-size: 24px; }
+.message-body h2 { font-size: 20px; }
+.message-body h3 { font-size: 18px; }
+.message-body h4 { font-size: 16px; }
+.message-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.message-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 8px 16px;
+  margin: 16px 0;
+  color: var(--text-secondary);
+  background: var(--accent-light);
+  border-radius: 0 12px 12px 0;
+}
+.message-body code:not(pre code) {
+  background: var(--bg-tertiary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+}
+.message-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.message-body th, .message-body td {
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  text-align: left;
+}
+.message-body th { background: var(--bg-tertiary); font-weight: 700; }
+
+/* Code blocks */
+.code-block-wrapper {
+  position: relative;
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--code-bg);
+  color: #94a3b8;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.code-block-header .lang { font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.code-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+.code-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.code-copy-btn svg { width: 14px; height: 14px; }
+.code-block-wrapper pre { margin: 0; }
+.code-block-wrapper pre code {
+  display: block;
+  padding: 16px;
+  background: var(--code-bg);
+  color: #e2e8f0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+/* Message actions */
+.message-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.action-btn:hover { background: var(--accent-light); color: var(--accent); }
+.action-btn:active { transform: scale(0.95); }
+.action-btn svg { width: 14px; height: 14px; }
+.action-btn.danger:hover { background: var(--danger-light); color: var(--danger); }
+.action-btn.active { background: var(--accent-light); color: var(--accent); }
+
+/* Typing indicator */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+}
+.typing-indicator span {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ============ INPUT AREA ============ */
+.input-area {
+  padding: 16px 24px 24px;
+  background: var(--bg-primary);
+}
+.input-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-md);
+}
+.input-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-light);
+}
+.input-tools { display: flex; gap: 2px; padding: 4px; }
+.input-tool-btn {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+.input-tool-btn:hover { background: var(--bg-tertiary); color: var(--accent); }
+.input-tool-btn.recording { background: var(--danger-light); color: var(--danger); animation: pulse 1s infinite; }
+.input-tool-btn svg { width: 20px; height: 20px; }
+
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 10px 8px;
+  max-height: 200px;
+  outline: none;
+}
+.chat-input::placeholder { color: var(--text-muted); }
+
+.send-btn {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.1s, opacity 0.2s;
+  box-shadow: 0 8px 16px var(--accent-glow);
+}
+.send-btn:hover { background: var(--accent-hover); }
+.send-btn:active { transform: scale(0.92); }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.send-btn.stop { background: var(--danger); box-shadow: 0 8px 16px rgba(220, 38, 38, 0.3); }
+.send-btn svg { width: 22px; height: 22px; }
+
+.input-hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.input-hint kbd {
+  background: var(--bg-tertiary);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ============ MODALS ============ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--bg-secondary);
+  border-radius: 24px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.modal-overlay.active .modal { transform: scale(1) translateY(0); }
+.modal-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.modal-close {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+.modal-close:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.modal-close svg { width: 22px; height: 22px; }
+.modal-body { padding: 24px; }
+.modal-body h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; margin: 24px 0 12px; color: var(--text-primary); letter-spacing: -0.2px; }
+.modal-body h3:first-child { margin-top: 0; }
+.modal-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.7; }
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.setting-label small { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+
+/* Custom select */
+.select {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 10px 36px 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  min-width: 150px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.select:focus { outline: none; border-color: var(--accent); }
+.select:hover { background-color: var(--border); }
+
+/* Toggle */
+.toggle { position: relative; width: 44px; height: 26px; background: var(--bg-tertiary); border-radius: 14px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border); flex-shrink: 0; }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle.on::after { transform: translateX(18px); }
+
+/* Slider */
+.slider-row { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.slider-row label { font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-primary); }
+.slider-row label span { color: var(--accent); font-weight: 700; }
+input[type="range"] { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; appearance: none; outline: none; }
+input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px var(--accent-glow); border: 2px solid #fff; }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
+
+/* Buttons */
+.btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s, transform 0.1s, border-color 0.15s, color 0.15s;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.btn:hover { background: var(--border); }
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn.danger { background: var(--danger-light); color: var(--danger); border-color: transparent; }
+.btn.danger:hover { background: var(--danger); color: #fff; }
+.btn svg { width: 16px; height: 16px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+/* About page */
+.about-logo {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 16px 32px var(--accent-glow);
+}
+.about-logo svg { width: 36px; height: 36px; color: #fff; }
+.about-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 24px 0; }
+.about-stat { background: var(--bg-tertiary); padding: 16px; border-radius: 14px; text-align: center; }
+.about-stat-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: var(--accent); }
+.about-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+/* ============ TOAST ============ */
+.toast-container {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 380px;
+}
+.toast.success { border-left: 4px solid var(--accent); }
+.toast.error { border-left: 4px solid var(--danger); }
+.toast.info { border-left: 4px solid var(--amber); }
+.toast svg { width: 20px; height: 20px; flex-shrink: 0; }
+.toast.success svg { color: var(--accent); }
+.toast.error svg { color: var(--danger); }
+.toast.info svg { color: var(--amber); }
+@keyframes toastIn { from { opacity: 0; transform: translateX(40px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
+.toast.out { animation: toastOut 0.3s ease forwards; }
+@keyframes toastOut { to { opacity: 0; transform: translateX(40px) scale(0.95); } }
+
+/* ============ MOBILE ============ */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 288px;
+    height: 100%;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .menu-toggle { display: flex; }
+  .topbar { padding: 14px 18px; }
+  .topbar-title h1 { font-size: 17px; }
+  .topbar-title p { font-size: 11px; }
+  .input-area { padding: 12px 16px 18px; }
+  .input-wrapper { border-radius: 18px; }
+  .chat-input { font-size: 16px; }
+  .message { padding: 12px 18px; }
+  .messages { padding: 20px 0 32px; }
+  .modal { max-width: calc(100vw - 32px); border-radius: 20px; }
+  .toast-container { bottom: 88px; right: 16px; left: 16px; }
+  .toast { min-width: 0; }
+}
+
+@media (max-width: 480px) {
+  .quick-actions { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .quick-btn { padding: 16px 14px; }
+  .landing h1 { font-size: 32px; letter-spacing: -1px; }
+  .features-grid { grid-template-columns: 1fr; gap: 16px; margin-top: 48px; }
+  .feature-card { padding: 24px 20px; }
+  .message-body { font-size: 14px; }
+  .input-tool-btn { width: 34px; height: 34px; }
+  .send-btn { width: 38px; height: 38px; }
+  .icon-btn { width: 38px; height: 38px; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .topbar, .input-area, .modal-overlay { display: none; }
+  .main { display: block; }
+  .chat-container { overflow: visible; height: auto; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Utility */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ============ LANDING PAGE ============ -->
+<div class="landing" id="landing">
+  <div class="landing-bg">
+    <div class="landing-blob b1"></div>
+    <div class="landing-blob b2"></div>
+    <div class="landing-blob b3"></div>
+  </div>
+  <div class="landing-content">
+    <div class="landing-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="t1">Tanya</span>
+        <span class="t2">MAS BAYU</span>
+        <span class="t3">AI</span>
+      </div>
+    </div>
+    <h1>Teman Pintar untuk <span class="grad">Semua Kebutuhan</span></h1>
+    <p class="tagline">Tanya apa saja, Mas Bayu bantu jawab dengan AI. Belajar, bekerja, coding, menulis, dan membuat konten jadi lebih mudah.</p>
+    <button class="btn-cta" id="startBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+      MULAI BERTANYA
+    </button>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Pintar</h3>
+        <p>Didukung Puter AI dengan model terkini untuk jawaban akurat dan terstruktur.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Cepat &amp; Mudah</h3>
+        <p>Tinggal ketik pertanyaan dan langsung dapatkan jawaban dalam hitungan detik.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Banyak Kegunaan</h3>
+        <p>Belajar, bisnis, coding, menulis, terjemahan, dan berbagai kebutuhan kreatif.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="sidebar-title">
+        MAS BAYU AI
+        <small>TANYA APA SAJA</small>
+      </div>
+    </div>
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Chat Baru
+    </button>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">
+        <span>Riwayat Chat</span>
+      </div>
+    </div>
+    <div class="chat-list" id="chatList">
+      <div class="chat-list-empty">Belum ada percakapan.<br>Mulai chat baru sekarang!</div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-footer-btn" id="settingsBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Pengaturan
+      </button>
+      <button class="sidebar-footer-btn" id="aboutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        Tentang
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <div class="topbar-title">
+          <h1>TANYA KE MAS BAYU AI</h1>
+          <p>Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi.</p>
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            AI ONLINE
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeToggle" title="Ganti Tema">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="exportBtn" title="Export Chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-container" id="chatContainer">
+      <!-- Welcome screen atau messages -->
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrapper">
+        <div class="input-tools">
+          <button class="input-tool-btn" id="voiceBtn" title="Input Suara">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <textarea class="chat-input" id="chatInput" placeholder="Tulis pertanyaan kamu di sini..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" title="Kirim">
+          <svg id="sendIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="input-hint">
+        <kbd>Enter</kbd> kirim • <kbd>Shift + Enter</kbd> baris baru • Mas Bayu siap membantu kapan saja
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Pengaturan</h2>
+      <button class="modal-close" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <h3>Tampilan</h3>
+      <div class="setting-row">
+        <div class="setting-label">
+          Tema
+          <small>Pilih tampilan aplikasi</small>
+        </div>
+        <select class="select" id="settingTheme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+
+      <h3>Chat</h3>
+      <div class="setting-row">
+        <div class="setting-label">
+          Enter untuk mengirim
+          <small>Matikan untuk Enter = baris baru</small>
+        </div>
+        <div class="toggle on" id="settingEnter"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Tampilkan timestamp
+          <small>Tampilkan waktu pada setiap pesan</small>
+        </div>
+        <div class="toggle on" id="settingTimestamp"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Simpan riwayat
+          <small>Simpan percakapan di perangkat</small>
+        </div>
+        <div class="toggle on" id="settingSaveHistory"></div>
+      </div>
+
+      <h3>AI</h3>
+      <div class="setting-row">
+        <div class="setting-label">
+          Model AI
+          <small>Pilih model Puter AI</small>
+        </div>
+        <select class="select" id="settingModel">
+          <option value="gpt-4o-mini">GPT-4o Mini (Cepat)</option>
+          <option value="gpt-4o">GPT-4o (Pintar)</option>
+          <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+          <option value="claude-3-haiku">Claude 3 Haiku</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        </select>
+      </div>
+      <div class="slider-row">
+        <label>Temperature <span id="tempValue">0.7</span></label>
+        <input type="range" id="settingTemp" min="0" max="1" step="0.1" value="0.7">
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Panjang jawaban
+          <small>Kontrol panjang respons AI</small>
+        </div>
+        <select class="select" id="settingLength">
+          <option value="short">Pendek</option>
+          <option value="medium">Sedang</option>
+          <option value="long">Panjang</option>
+        </select>
+      </div>
+
+      <h3>Data</h3>
+      <div class="setting-row">
+        <div class="setting-label">
+          Export chat
+          <small>Unduh semua percakapan</small>
+        </div>
+        <div class="btn-group" style="margin-top:0">
+          <button class="btn" id="exportTxt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>TXT</button>
+          <button class="btn" id="exportJson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>JSON</button>
+          <button class="btn" id="exportMd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>MD</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Import chat
+          <small>Muat file JSON percakapan</small>
+        </div>
+        <button class="btn" id="importBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Import
+        </button>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Hapus semua riwayat
+          <small>Tindakan ini tidak dapat dibatalkan</small>
+        </div>
+        <button class="btn danger" id="clearAllBtn">Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABOUT MODAL ============ -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Tentang Aplikasi</h2>
+      <button class="modal-close" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <div class="about-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;margin-bottom:6px;letter-spacing:-0.5px;">Tanya ke Mas Bayu AI</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 1.0.0 • Powered by Puter AI</p>
+      <p style="text-align:left">Tanya ke Mas Bayu adalah aplikasi asisten AI yang dirancang untuk membantu pengguna mendapatkan informasi, belajar, menyelesaikan pekerjaan, membuat konten, dan mencari solusi dengan cara yang sederhana dan mudah digunakan.</p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <div class="about-stat-num">10+</div>
+          <div class="about-stat-label">Kategori Bantuan</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">∞</div>
+          <div class="about-stat-label">Pertanyaan</div>
+        </div>
+      </div>
+      <h3 style="text-align:left">AI Engine</h3>
+      <p style="text-align:left">Aplikasi ini menggunakan <strong style="color:var(--accent)">Puter AI</strong> sebagai mesin AI utama. Puter AI menyediakan akses ke berbagai model AI seperti GPT-4o, Claude, dan Gemini tanpa perlu API key di frontend.</p>
+      <h3 style="text-align:left">Fitur Utama</h3>
+      <p style="text-align:left">✓ Chat AI dengan streaming respons<br>✓ Riwayat percakapan tersimpan otomatis<br>✓ Input suara & text-to-speech<br>✓ Copy jawaban & kode<br>✓ Regenerate jawaban<br>✓ Dark & light mode<br>✓ Export & import chat<br>✓ Responsif untuk semua perangkat</p>
+      <p style="margin-top:18px;font-size:12px;color:var(--text-muted)">© 2026 Tanya ke Mas Bayu • Powered by Mas Bayu</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EXPORT MODAL ============ -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Export Chat</h2>
+      <button class="modal-close" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Pilih format untuk mengunduh percakapan saat ini:</p>
+      <div class="btn-group" style="flex-direction:column">
+        <button class="btn" data-export="txt" style="justify-content:flex-start;width:100%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div style="text-align:left">
+            <div>Download sebagai TXT</div>
+            <small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format teks biasa</small>
+          </div>
+        </button>
+        <button class="btn" data-export="json" style="justify-content:flex-start;width:100%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div style="text-align:left">
+            <div>Download sebagai JSON</div>
+            <small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format data terstruktur</small>
+          </div>
+        </button>
+        <button class="btn" data-export="md" style="justify-content:flex-start;width:100%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div style="text-align:left">
+            <div>Download sebagai Markdown</div>
+            <small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format markdown</small>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST CONTAINER ============ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ====================================================================
+   TANYA KE MAS BAYU AI — Main Application
+   ==================================================================== */
+
+// ============ CONFIG ============
+const AI_CONFIG = {
+  provider: "puter",
+  model: "gpt-4o-mini",
+  temperature: 0.7,
+  systemPrompt: `Kamu adalah Mas Bayu AI, asisten AI yang ramah, cerdas, membantu, dan mudah dipahami. Jawablah pertanyaan pengguna secara akurat dan terstruktur. Gunakan bahasa Indonesia sebagai bahasa utama kecuali pengguna meminta bahasa lain. Jika pertanyaan membutuhkan langkah-langkah, berikan langkah secara berurutan. Jika pengguna meminta kode, berikan kode lengkap dan jelaskan cara menggunakannya. Jangan mengarang informasi yang tidak diketahui. Jika informasi tidak cukup, katakan apa yang masih diperlukan. Gunakan markdown untuk formatting: **bold**, *italic*, daftar, dan blok kode dengan bahasa pemrograman yang sesuai.`
+};
+
+// ============ STATE ============
+const state = {
+  currentChatId: null,
+  chats: [],
+  isGenerating: false,
+  shouldStop: false,
+  recognition: null,
+  isRecording: false,
+  ttsPlaying: false,
+  ttsUtterance: null,
+  ttsMessageId: null,
+  settings: {
+    theme: 'light',
+    enterToSend: true,
+    showTimestamp: true,
+    saveHistory: true,
+    model: 'gpt-4o-mini',
+    temperature: 0.7,
+    responseLength: 'medium'
+  }
+};
+
+const lengthMap = {
+  short: 'Berikan jawaban yang singkat dan padat.',
+  medium: 'Berikan jawaban yang cukup detail namun tetap mudah dipahami.',
+  long: 'Berikan jawaban yang sangat detail, lengkap, dan komprehensif.'
+};
+
+const QUICK_ACTIONS = [
+  { icon: '📚', title: 'Bantu belajar', desc: 'Penjelasan materi', prompt: 'Jelaskan apa itu fotosintesis dengan bahasa yang mudah dipahami untuk pelajar SD.' },
+  { icon: '🧮', title: 'Pecahkan soal', desc: 'Matematika & logika', prompt: 'Berapakah hasil dari 2x + 5 = 15? Jelaskan langkah-langkahnya.' },
+  { icon: '💻', title: 'Bantu coding', desc: 'HTML, CSS, JS, dll', prompt: 'Buatkan contoh kode HTML sederhana untuk halaman profil pribadi yang menarik.' },
+  { icon: '✍️', title: 'Buat tulisan', desc: 'Artikel, surat, dll', prompt: 'Tuliskan caption Instagram yang menarik untuk promosi jualan kopi.' },
+  { icon: '💡', title: 'Cari ide bisnis', desc: 'Inspirasi usaha', prompt: 'Berikan 5 ide bisnis modal kecil yang cocok untuk mahasiswa dengan budget Rp 100.000.' },
+  { icon: '📱', title: 'Buat konten', desc: 'Ide & script kreatif', prompt: 'Buatkan ide konten TikTok selama 7 hari bertema produktivitas harian.' },
+  { icon: '🤖', title: 'Buat prompt AI', desc: 'Prompt gambar & teks', prompt: 'Buatkan prompt AI yang detail untuk menghasilkan gambar pemandangan kota futuristik saat malam hari.' },
+  { icon: '📊', title: 'Analisis data', desc: 'Insight & strategi', prompt: 'Bagaimana cara menganalisis data penjualan sederhana untuk UMKM? Jelaskan langkah-langkahnya.' },
+  { icon: '🌐', title: 'Terjemahkan', desc: 'Multi bahasa', prompt: 'Terjemahkan kalimat berikut ke bahasa Inggris: "Saya senang belajar hal baru setiap hari."' },
+  { icon: '🧠', title: 'Jelaskan sesuatu', desc: 'Konsep sederhana', prompt: 'Jelaskan apa itu kecerdasan buatan (AI) dengan bahasa yang sangat sederhana seperti menjelaskan ke anak kecil.' }
+];
+
+// ============ DOM HELPERS ============
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+// ============ STORAGE ============
+function loadChats() {
+  try {
+    const data = localStorage.getItem('tanyaMasBayuChats');
+    state.chats = data ? JSON.parse(data) : [];
+  } catch (e) {
+    state.chats = [];
+  }
+}
+function saveChats() {
+  if (!state.settings.saveHistory) return;
+  try {
+    localStorage.setItem('tanyaMasBayuChats', JSON.stringify(state.chats));
+  } catch (e) {
+    showToast('Gagal menyimpan riwayat chat', 'error');
+  }
+}
+function loadSettings() {
+  try {
+    const data = localStorage.getItem('tanyaMasBayuSettings');
+    if (data) Object.assign(state.settings, JSON.parse(data));
+  } catch (e) {}
+}
+function saveSettings() {
+  try {
+    localStorage.setItem('tanyaMasBayuSettings', JSON.stringify(state.settings));
+  } catch (e) {}
+}
+
+// ============ CHAT MANAGEMENT ============
+function generateId() {
+  return 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+function createNewChat() {
+  const chat = {
+    id: generateId(),
+    title: 'Chat Baru',
+    messages: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  state.chats.unshift(chat);
+  state.currentChatId = chat.id;
+  saveChats();
+  renderSidebar();
+  renderChat();
+  closeSidebar();
+  $('#chatInput').focus();
+}
+function deleteChat(id) {
+  if (!confirm('Hapus percakapan ini?')) return;
+  state.chats = state.chats.filter(c => c.id !== id);
+  if (state.currentChatId === id) {
+    state.currentChatId = state.chats[0]?.id || null;
+  }
+  saveChats();
+  renderSidebar();
+  renderChat();
+  showToast('Chat berhasil dihapus', 'success');
+}
+function getCurrentChat() {
+  return state.chats.find(c => c.id === state.currentChatId);
+}
+function generateTitle(text) {
+  const clean = text.trim().replace(/\s+/g, ' ');
+  return clean.length > 32 ? clean.substr(0, 32) + '...' : clean;
+}
+
+// ============ RENDERING ============
+function renderSidebar() {
+  const list = $('#chatList');
+  if (state.chats.length === 0) {
+    list.innerHTML = '<div class="chat-list-empty">Belum ada percakapan.<br>Mulai chat baru sekarang!</div>';
+    return;
+  }
+  list.innerHTML = state.chats.map(chat => `
+    <div class="chat-item ${chat.id === state.currentChatId ? 'active' : ''}" data-id="${chat.id}">
+      <svg class="chat-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <div class="chat-item-content">
+        <div class="chat-item-title">${escapeHtml(chat.title)}</div>
+        <div class="chat-item-time">${formatRelativeTime(chat.updatedAt)}</div>
+      </div>
+      <button class="chat-item-delete" data-delete="${chat.id}" title="Hapus">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+  
+  $$('.chat-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('[data-delete]')) return;
+      const id = item.dataset.id;
+      state.currentChatId = id;
+      renderSidebar();
+      renderChat();
+      closeSidebar();
+    });
+  });
+  $$('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteChat(btn.dataset.delete);
+    });
+  });
+}
+
+function renderChat() {
+  const container = $('#chatContainer');
+  const chat = getCurrentChat();
+  
+  if (!chat || chat.messages.length === 0) {
+    container.innerHTML = renderWelcome();
+    bindQuickActions();
+    return;
+  }
+  
+  container.innerHTML = `<div class="messages" id="messages">${chat.messages.map(m => renderMessage(m)).join('')}</div>`;
+  bindMessageActions();
+  highlightCode();
+  scrollToBottom();
+}
+
+function renderWelcome() {
+  return `
+    <div class="welcome">
+      <div class="welcome-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h2>👋 Halo! Saya Mas Bayu AI</h2>
+      <p>Mau tanya apa hari ini? Pilih topik di bawah atau ketik pertanyaan kamu sendiri.</p>
+      <div class="quick-actions">
+        ${QUICK_ACTIONS.map((a, i) => `
+          <button class="quick-btn" data-prompt="${i}">
+            <div class="quick-btn-icon">${a.icon}</div>
+            <div class="quick-btn-text">${a.title}</div>
+            <div class="quick-btn-desc">${a.desc}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderMessage(msg) {
+  const isUser = msg.role === 'user';
+  const time = state.settings.showTimestamp ? `<span class="message-time">${formatTime(msg.timestamp)}</span>` : '';
+  const avatar = isUser 
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`;
+  
+  let actions = '';
+  if (!isUser && msg.content) {
+    actions = `
+      <div class="message-actions">
+        <button class="action-btn" data-action="copy" data-msg-id="${msg.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="action-btn" data-action="speak" data-msg-id="${msg.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 5 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <span class="speak-label">Bacakan</span>
+        </button>
+        <button class="action-btn" data-action="regenerate" data-msg-id="${msg.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Jawab Lagi
+        </button>
+      </div>
+    `;
+  }
+  
+  const bodyContent = isUser 
+    ? escapeHtml(msg.content).replace(/\n/g, '<br>')
+    : renderMarkdown(msg.content);
+  
+  return `
+    <div class="message ${isUser ? 'user' : 'ai'}" data-msg-id="${msg.id}">
+      <div class="message-avatar">${avatar}</div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-name">${isUser ? 'Kamu' : 'Mas Bayu AI'}</span>
+          ${time}
+        </div>
+        <div class="message-body">${bodyContent}</div>
+        ${actions}
+      </div>
+    </div>
+  `;
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  try {
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      headerIds: false,
+      mangle: false
+    });
+    return marked.parse(text);
+  } catch (e) {
+    return escapeHtml(text).replace(/\n/g, '<br>');
+  }
+}
+
+function highlightCode() {
+  $$('pre code').forEach(block => {
+    try {
+      hljs.highlightElement(block);
+    } catch (e) {}
+    
+    // Add copy button & language label
+    if (!block.parentElement.parentElement.classList.contains('code-block-wrapper')) {
+      const pre = block.parentElement;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      
+      const header = document.createElement('div');
+      header.className = 'code-block-header';
+      const lang = block.className.match(/language-(\w+)/);
+      header.innerHTML = `<span class="lang">${lang ? lang[1] : 'code'}</span>`;
+      
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'code-copy-btn';
+      copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code`;
+      copyBtn.onclick = () => {
+        copyToClipboard(block.textContent);
+        showToast('Kode berhasil disalin', 'success');
+      };
+      header.appendChild(copyBtn);
+      
+      wrapper.appendChild(header);
+      wrapper.appendChild(pre);
+    }
+  });
+}
+
+function bindQuickActions() {
+  $$('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.prompt);
+      const prompt = QUICK_ACTIONS[idx].prompt;
+      $('#chatInput').value = prompt;
+      autoResizeTextarea();
+      sendMessage();
+    });
+  });
+}
+
+function bindMessageActions() {
+  $$('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      const msgId = btn.dataset.msgId;
+      const chat = getCurrentChat();
+      if (!chat) return;
+      const msg = chat.messages.find(m => m.id === msgId);
+      if (!msg) return;
+      
+      if (action === 'copy') {
+        copyToClipboard(msg.content);
+        showToast('Jawaban berhasil disalin', 'success');
+      } else if (action === 'speak') {
+        toggleTTS(msgId, msg.content);
+      } else if (action === 'regenerate') {
+        regenerateAnswer(msgId);
+      }
+    });
+  });
+}
+
+// ============ AI INTEGRATION ============
+async function sendToAI(messages, onChunk) {
+  const chat = getCurrentChat();
+  if (!chat) return;
+  
+  state.isGenerating = true;
+  state.shouldStop = false;
+  updateSendButton();
+  showTypingIndicator();
+  
+  // Build messages array for Puter AI
+  const aiMessages = [
+    { role: 'system', content: AI_CONFIG.systemPrompt + ' ' + lengthMap[state.settings.responseLength] },
+    ...messages.map(m => ({
+      role: m.role === 'user' ? 'user' : 'assistant',
+      content: m.content
+    }))
+  ];
+  
+  try {
+    // Check if Puter is available
+    if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) {
+      throw new Error('Puter AI not available');
+    }
+    
+    const response = await puter.ai.chat(aiMessages, {
+      model: state.settings.model,
+      temperature: state.settings.temperature,
+      stream: true
+    });
+    
+    hideTypingIndicator();
+    
+    let fullText = '';
+    const msgId = 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const newMsg = { id: msgId, role: 'assistant', content: '', timestamp: Date.now() };
+    chat.messages.push(newMsg);
+    
+    // Create streaming message element
+    appendStreamingMessage(newMsg);
+    
+    try {
+      for await (const part of response) {
+        if (state.shouldStop) break;
+        const chunk = part?.text || part?.delta || part?.content || '';
+        if (chunk) {
+          fullText += chunk;
+          newMsg.content = fullText;
+          updateStreamingMessage(msgId, fullText);
+        }
+      }
+    } catch (streamErr) {
+      // If streaming fails, try non-streaming
+      if (!fullText) {
+        const resp = await puter.ai.chat(aiMessages, {
+          model: state.settings.model,
+          temperature: state.settings.temperature
+        });
+        fullText = typeof resp === 'string' ? resp : (resp?.message?.content || resp?.text || '');
+        newMsg.content = fullText;
+        updateStreamingMessage(msgId, fullText);
+      }
+    }
+    
+    if (!fullText.trim()) {
+      fullText = 'Maaf, saya tidak dapat memberikan jawaban saat ini. Silakan coba pertanyaan lain.';
+      newMsg.content = fullText;
+      updateStreamingMessage(msgId, fullText);
+    }
+    
+    chat.updatedAt = Date.now();
+    saveChats();
+    renderSidebar();
+    
+    // Finalize message (re-render to add actions)
+    renderChat();
+    
+  } catch (err) {
+    hideTypingIndicator();
+    handleAIError(err);
+  } finally {
+    state.isGenerating = false;
+    state.shouldStop = false;
+    updateSendButton();
+  }
+}
+
+function handleAIError(err) {
+  console.error('AI Error:', err);
+  const chat = getCurrentChat();
+  let errorMsg = 'Maaf, Mas Bayu AI sedang mengalami kendala. Silakan coba lagi.';
+  
+  if (err && (err.message?.includes('auth') || err.message?.includes('login') || err.message?.includes('Puter'))) {
+    errorMsg = 'Silakan hubungkan akun Puter terlebih dahulu untuk menggunakan AI. Klik tombol di bawah untuk masuk.';
+  }
+  
+  // Add error message with retry button
+  const msgId = 'm_err_' + Date.now();
+  const errHtml = `
+    <div class="message ai" data-msg-id="${msgId}">
+      <div class="message-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="message-content">
+        <div class="message-header"><span class="message-name">Mas Bayu AI</span></div>
+        <div class="message-body">
+          <p>${escapeHtml(errorMsg)}</p>
+          <div class="message-actions">
+            <button class="action-btn" onclick="window.retryLastMessage()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>
+              Coba Lagi
+            </button>
+            ${err.message?.includes('Puter') ? `
+            <button class="action-btn" onclick="window.loginPuter()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Login Puter
+            </button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  const messages = $('#messages');
+  if (messages) {
+    messages.insertAdjacentHTML('beforeend', errHtml);
+  } else {
+    $('#chatContainer').innerHTML = `<div class="messages" id="messages">${errHtml}</div>`;
+  }
+  scrollToBottom();
+}
+
+window.retryLastMessage = function() {
+  const chat = getCurrentChat();
+  if (!chat) return;
+  // Remove the error message
+  const errMsg = chat.messages.find(m => m.role === 'assistant' && m.content.includes('kendala'));
+  if (errMsg) chat.messages.pop();
+  renderChat();
+  // Find last user message
+  const lastUser = [...chat.messages].reverse().find(m => m.role === 'user');
+  if (lastUser) {
+    const idx = chat.messages.indexOf(lastUser);
+    const history = chat.messages.slice(0, idx + 1);
+    sendToAI(history);
+  }
+};
+
+window.loginPuter = async function() {
+  try {
+    if (typeof puter !== 'undefined' && puter.auth) {
+      await puter.auth.signIn();
+      showToast('Berhasil masuk ke Puter', 'success');
+      window.retryLastMessage();
+    } else {
+      showToast('Puter tidak tersedia', 'error');
+    }
+  } catch (e) {
+    showToast('Gagal masuk ke Puter', 'error');
+  }
+};
+
+// ============ TYPING INDICATOR ============
+function showTypingIndicator() {
+  const messages = $('#messages');
+  if (!messages) {
+    $('#chatContainer').innerHTML = `<div class="messages" id="messages"></div>`;
+  }
+  const msg = $('#messages');
+  msg.insertAdjacentHTML('beforeend', `
+    <div class="message ai" id="typingIndicator">
+      <div class="message-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="message-content">
+        <div class="message-header"><span class="message-name">Mas Bayu AI</span></div>
+        <div class="message-body">
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `);
+  scrollToBottom();
+}
+
+function hideTypingIndicator() {
+  const el = $('#typingIndicator');
+  if (el) el.remove();
+}
+
+function appendStreamingMessage(msg) {
+  const messages = $('#messages');
+  if (!messages) {
+    $('#chatContainer').innerHTML = `<div class="messages" id="messages"></div>`;
+  }
+  const container = $('#messages');
+  container.insertAdjacentHTML('beforeend', renderMessage(msg));
+  scrollToBottom();
+}
+
+function updateStreamingMessage(msgId, content) {
+  const el = $(`[data-msg-id="${msgId}"] .message-body`);
+  if (el) {
+    el.innerHTML = renderMarkdown(content);
+    highlightCode();
+    scrollToBottom();
+  }
+}
+
+// ============ SEND MESSAGE ============
+async function sendMessage() {
+  if (state.isGenerating) return;
+  
+  const input = $('#chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  // Ensure chat exists
+  let chat = getCurrentChat();
+  if (!chat) {
+    createNewChat();
+    chat = getCurrentChat();
+  }
+  
+  // Add user message
+  const userMsg = {
+    id: 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    role: 'user',
+    content: text,
+    timestamp: Date.now()
+  };
+  chat.messages.push(userMsg);
+  
+  // Update title if first message
+  if (chat.messages.filter(m => m.role === 'user').length === 1) {
+    chat.title = generateTitle(text);
+  }
+  chat.updatedAt = Date.now();
+  saveChats();
+  
+  // Clear input
+  input.value = '';
+  autoResizeTextarea();
+  
+  // Render
+  renderChat();
+  renderSidebar();
+  
+  // Send to AI
+  await sendToAI(chat.messages.slice(0, -1).concat([userMsg]));
+}
+
+async function regenerateAnswer(msgId) {
+  if (state.isGenerating) return;
+  const chat = getCurrentChat();
+  if (!chat) return;
+  
+  const msgIdx = chat.messages.findIndex(m => m.id === msgId);
+  if (msgIdx === -1) return;
+  
+  // Find the user message before this AI message
+  let userIdx = msgIdx - 1;
+  while (userIdx >= 0 && chat.messages[userIdx].role !== 'user') {
+    userIdx--;
+  }
+  if (userIdx < 0) return;
+  
+  // Remove this AI message
+  chat.messages.splice(msgIdx, 1);
+  saveChats();
+  renderChat();
+  
+  // Re-send from user message
+  const history = chat.messages.slice(0, userIdx + 1);
+  await sendToAI(history);
+}
+
+function stopGeneration() {
+  state.shouldStop = true;
+  if (state.ttsPlaying) stopTTS();
+}
+
+function updateSendButton() {
+  const btn = $('#sendBtn');
+  const icon = $('#sendIcon');
+  if (state.isGenerating) {
+    btn.classList.add('stop');
+    btn.title = 'Stop';
+    icon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
+  } else {
+    btn.classList.remove('stop');
+    btn.title = 'Kirim';
+    icon.innerHTML = '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>';
+  }
+}
+
+// ============ TEXTAREA AUTO RESIZE ============
+function autoResizeTextarea() {
+  const ta = $('#chatInput');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+}
+
+// ============ SCROLL ============
+function scrollToBottom() {
+  const container = $('#chatContainer');
+  requestAnimationFrame(() => {
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+// ============ UTILITIES ============
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatRelativeTime(ts) {
+  if (!ts) return '';
+  const now = Date.now();
+  const diff = now - ts;
+  const min = 60 * 1000;
+  const hour = 60 * min;
+  const day = 24 * hour;
+  
+  if (diff < min) return 'Baru saja';
+  if (diff < hour) return Math.floor(diff / min) + ' mnt lalu';
+  if (diff < day) return Math.floor(diff / hour) + ' jam lalu';
+  if (diff < 7 * day) return Math.floor(diff / day) + ' hari lalu';
+  
+  const d = new Date(ts);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+}
+
+// ============ TOAST ============
+function showToast(message, type = 'info') {
+  const container = $('#toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icons = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+  };
+  
+  toast.innerHTML = `${icons[type] || icons.info}<span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ============ THEME ============
+function applyTheme(theme) {
+  const html = document.documentElement;
+  let actualTheme = theme;
+  if (theme === 'system') {
+    actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  html.setAttribute('data-theme', actualTheme);
+  updateThemeIcon(actualTheme);
+}
+
+function updateThemeIcon(theme) {
+  const icon = $('#themeIcon');
+  if (theme === 'dark') {
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  }
+}
+
+function toggleTheme() {
+  const current = state.settings.theme;
+  const newTheme = current === 'dark' ? 'light' : 'dark';
+  state.settings.theme = newTheme;
+  applyTheme(newTheme);
+  saveSettings();
+  $('#settingTheme').value = newTheme;
+}
+
+// ============ VOICE INPUT ============
+function initVoiceInput() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    $('#voiceBtn').addEventListener('click', () => {
+      showToast('Browser Anda belum mendukung input suara.', 'info');
+    });
+    return;
+  }
+  
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'id-ID';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  
+  let finalTranscript = '';
+  
+  recognition.onstart = () => {
+    state.isRecording = true;
+    $('#voiceBtn').classList.add('recording');
+    showToast('Mendengarkan... Silakan bicara', 'info');
+  };
+  
+  recognition.onresult = (e) => {
+    let interim = '';
+    finalTranscript = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalTranscript += e.results[i][0].transcript;
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    const input = $('#chatInput');
+    input.value = finalTranscript + interim;
+    autoResizeTextarea();
+  };
+  
+  recognition.onerror = (e) => {
+    showToast('Error input suara: ' + e.error, 'error');
+    state.isRecording = false;
+    $('#voiceBtn').classList.remove('recording');
+  };
+  
+  recognition.onend = () => {
+    state.isRecording = false;
+    $('#voiceBtn').classList.remove('recording');
+    if (finalTranscript.trim()) {
+      $('#chatInput').focus();
+    }
+  };
+  
+  state.recognition = recognition;
+  
+  $('#voiceBtn').addEventListener('click', () => {
+    if (state.isRecording) {
+      recognition.stop();
+    } else {
+      try {
+        recognition.start();
+      } catch (e) {
+        showToast('Tidak dapat memulai input suara', 'error');
+      }
+    }
+  });
+}
+
+// ============ TEXT TO SPEECH ============
+function toggleTTS(msgId, text) {
+  if (state.ttsPlaying && state.ttsMessageId === msgId) {
+    stopTTS();
+    return;
+  }
+  
+  stopTTS();
+  
+  if (!('speechSynthesis' in window)) {
+    showToast('Browser tidak mendukung text-to-speech', 'info');
+    return;
+  }
+  
+  // Strip markdown for speech
+  const cleanText = text
+    .replace(/```[\s\S]*?```/g, ' blok kode ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/[*#>_~`]/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\n+/g, '. ')
+    .trim();
+  
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = 'id-ID';
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  
+  // Try to find Indonesian voice
+  const voices = speechSynthesis.getVoices();
+  const idVoice = voices.find(v => v.lang.startsWith('id'));
+  if (idVoice) utterance.voice = idVoice;
+  
+  utterance.onstart = () => {
+    state.ttsPlaying = true;
+    state.ttsMessageId = msgId;
+    state.ttsUtterance = utterance;
+    updateTTSButton(msgId, true);
+  };
+  
+  utterance.onend = () => {
+    state.ttsPlaying = false;
+    state.ttsMessageId = null;
+    state.ttsUtterance = null;
+    updateTTSButton(msgId, false);
+  };
+  
+  utterance.onerror = () => {
+    state.ttsPlaying = false;
+    state.ttsMessageId = null;
+    state.ttsUtterance = null;
+    updateTTSButton(msgId, false);
+  };
+  
+  speechSynthesis.speak(utterance);
+}
+
+function stopTTS() {
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+  }
+  if (state.ttsMessageId) {
+    updateTTSButton(state.ttsMessageId, false);
+  }
+  state.ttsPlaying = false;
+  state.ttsMessageId = null;
+  state.ttsUtterance = null;
+}
+
+function updateTTSButton(msgId, playing) {
+  const btn = document.querySelector(`[data-action="speak"][data-msg-id="${msgId}"]`);
+  if (!btn) return;
+  if (playing) {
+    btn.classList.add('active');
+    btn.querySelector('.speak-label').textContent = 'Stop';
+  } else {
+    btn.classList.remove('active');
+    btn.querySelector('.speak-label').textContent = 'Bacakan';
+  }
+}
+
+// ============ EXPORT / IMPORT ============
+function exportChat(format) {
+  const chat = getCurrentChat();
+  if (!chat || chat.messages.length === 0) {
+    showToast('Tidak ada chat untuk diexport', 'info');
+    return;
+  }
+  
+  let content = '';
+  let filename = '';
+  let mimeType = '';
+  
+  const dateStr = new Date().toISOString().slice(0, 10);
+  
+  if (format === 'json') {
+    content = JSON.stringify(chat, null, 2);
+    filename = `masbayu-chat-${dateStr}.json`;
+    mimeType = 'application/json';
+  } else if (format === 'txt') {
+    content = `TANYA KE MAS BAYU AI\n`;
+    content += `Judul: ${chat.title}\n`;
+    content += `Tanggal: ${new Date(chat.createdAt).toLocaleString('id-ID')}\n`;
+    content += `${'='.repeat(50)}\n\n`;
+    chat.messages.forEach(m => {
+      const sender = m.role === 'user' ? 'KAMU' : 'MAS BAYU AI';
+      const time = new Date(m.timestamp).toLocaleString('id-ID');
+      content += `[${sender}] ${time}\n${m.content}\n\n`;
+    });
+    filename = `masbayu-chat-${dateStr}.txt`;
+    mimeType = 'text/plain';
+  } else if (format === 'md') {
+    content = `# ${chat.title}\n\n`;
+    content += `> Dibuat: ${new Date(chat.createdAt).toLocaleString('id-ID')}\n\n`;
+    content += `---\n\n`;
+    chat.messages.forEach(m => {
+      const sender = m.role === 'user' ? '🧑 Kamu' : '🤖 Mas Bayu AI';
+      content += `### ${sender}\n\n${m.content}\n\n---\n\n`;
+    });
+    filename = `masbayu-chat-${dateStr}.md`;
+    mimeType = 'text/markdown';
+  }
+  
+  downloadFile(content, filename, mimeType);
+  showToast(`Chat berhasil diexport sebagai ${format.toUpperCase()}`, 'success');
+  closeModal('#exportModal');
+}
+
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+function importChat(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.messages || !Array.isArray(data.messages)) {
+        showToast('Format file tidak valid', 'error');
+        return;
+      }
+      // Generate new ID
+      data.id = generateId();
+      data.title = data.title || 'Chat Import';
+      data.createdAt = Date.now();
+      data.updatedAt = Date.now();
+      data.messages = data.messages.map(m => ({
+        ...m,
+        id: 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        timestamp: m.timestamp || Date.now()
+      }));
+      state.chats.unshift(data);
+      state.currentChatId = data.id;
+      saveChats();
+      renderSidebar();
+      renderChat();
+      showToast('Chat berhasil diimport', 'success');
+    } catch (err) {
+      showToast('Gagal import: file tidak valid', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ============ SIDEBAR (MOBILE) ============
+function openSidebar() {
+  $('#sidebar').classList.add('open');
+  $('#sidebarOverlay').classList.add('active');
+}
+function closeSidebar() {
+  $('#sidebar').classList.remove('open');
+  $('#sidebarOverlay').classList.remove('active');
+}
+
+// ============ MODALS ============
+function openModal(sel) {
+  $(sel).classList.add('active');
+}
+function closeModal(sel) {
+  $(sel).classList.remove('active');
+}
+
+// ============ SETTINGS UI ============
+function applySettingsToUI() {
+  $('#settingTheme').value = state.settings.theme;
+  $('#settingEnter').classList.toggle('on', state.settings.enterToSend);
+  $('#settingTimestamp').classList.toggle('on', state.settings.showTimestamp);
+  $('#settingSaveHistory').classList.toggle('on', state.settings.saveHistory);
+  $('#settingModel').value = state.settings.model;
+  $('#settingTemp').value = state.settings.temperature;
+  $('#tempValue').textContent = state.settings.temperature;
+  $('#settingLength').value = state.settings.responseLength;
+}
+
+function bindSettings() {
+  $('#settingTheme').addEventListener('change', (e) => {
+    state.settings.theme = e.target.value;
+    applyTheme(e.target.value);
+    saveSettings();
+  });
+  
+  $('#settingEnter').addEventListener('click', (e) => {
+    state.settings.enterToSend = !state.settings.enterToSend;
+    e.target.classList.toggle('on', state.settings.enterToSend);
+    saveSettings();
+  });
+  
+  $('#settingTimestamp').addEventListener('click', (e) => {
+    state.settings.showTimestamp = !state.settings.showTimestamp;
+    e.target.classList.toggle('on', state.settings.showTimestamp);
+    saveSettings();
+    renderChat();
+  });
+  
+  $('#settingSaveHistory').addEventListener('click', (e) => {
+    state.settings.saveHistory = !state.settings.saveHistory;
+    e.target.classList.toggle('on', state.settings.saveHistory);
+    saveSettings();
+    if (!state.settings.saveHistory) {
+      if (confirm('Menonaktifkan riwayat akan menghapus semua chat tersimpan. Lanjutkan?')) {
+        localStorage.removeItem('tanyaMasBayuChats');
+        state.chats = [];
+        state.currentChatId = null;
+        renderSidebar();
+        renderChat();
+      } else {
+        state.settings.saveHistory = true;
+        e.target.classList.add('on');
+        saveSettings();
+      }
+    }
+  });
+  
+  $('#settingModel').addEventListener('change', (e) => {
+    state.settings.model = e.target.value;
+    AI_CONFIG.model = e.target.value;
+    saveSettings();
+    showToast('Model AI diganti ke ' + e.target.value, 'success');
+  });
+  
+  $('#settingTemp').addEventListener('input', (e) => {
+    state.settings.temperature = parseFloat(e.target.value);
+    $('#tempValue').textContent = e.target.value;
+    AI_CONFIG.temperature = state.settings.temperature;
+    saveSettings();
+  });
+  
+  $('#settingLength').addEventListener('change', (e) => {
+    state.settings.responseLength = e.target.value;
+    saveSettings();
+  });
+  
+  // Export buttons in settings
+  $('#exportTxt').addEventListener('click', () => exportChat('txt'));
+  $('#exportJson').addEventListener('click', () => exportChat('json'));
+  $('#exportMd').addEventListener('click', () => exportChat('md'));
+  
+  // Import
+  $('#importBtn').addEventListener('click', () => $('#importFile').click());
+  $('#importFile').addEventListener('change', (e) => {
+    if (e.target.files[0]) importChat(e.target.files[0]);
+    e.target.value = '';
+  });
+  
+  // Clear all
+  $('#clearAllBtn').addEventListener('click', () => {
+    if (confirm('Yakin ingin menghapus SEMUA riwayat chat? Tindakan ini tidak dapat dibatalkan.')) {
+      state.chats = [];
+      state.currentChatId = null;
+      saveChats();
+      renderSidebar();
+      renderChat();
+      showToast('Semua riwayat berhasil dihapus', 'success');
+    }
+  });
+}
+
+// ============ PWA / SERVICE WORKER ============
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  // Inline service worker via blob URL for single-file deploy
+  const swCode = `
+    const CACHE = 'masbayu-v1';
+    self.addEventListener('install', e => self.skipWaiting());
+    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(
+        fetch(e.request).then(resp => {
+          const copy = resp.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
+          return resp;
+        }).catch(() => caches.match(e.request))
+      );
+    });
+  `;
+  try {
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url).catch(() => {});
+  } catch (e) {}
+}
+
+function setupManifest() {
+  const manifest = {
+    name: "Tanya ke Mas Bayu AI",
+    short_name: "Mas Bayu AI",
+    description: "Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi.",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#0f172a",
+    theme_color: "#2563eb",
+    icons: [{
+      src: "data:image/svg+xml;base64," + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="42" fill="#2563eb"/><text x="96" y="120" font-family="Plus Jakarta Sans, sans-serif" font-size="80" font-weight="800" fill="white" text-anchor="middle">M</text></svg>`),
+      sizes: "192x192",
+      type: "image/svg+xml"
+    }]
+  };
+  try {
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = url;
+    document.head.appendChild(link);
+  } catch (e) {}
+}
+
+// ============ INIT ============
+function init() {
+  loadSettings();
+  loadChats();
+  applyTheme(state.settings.theme);
+  applySettingsToUI();
+  
+  // Landing page
+  $('#startBtn').addEventListener('click', () => {
+    $('#landing').classList.add('hidden');
+    setTimeout(() => {
+      $('#landing').style.display = 'none';
+      $('#chatInput').focus();
+    }, 600);
+  });
+  
+  // New chat
+  $('#newChatBtn').addEventListener('click', createNewChat);
+  
+  // Send
+  $('#sendBtn').addEventListener('click', () => {
+    if (state.isGenerating) {
+      stopGeneration();
+    } else {
+      sendMessage();
+    }
+  });
+  
+  // Input
+  const input = $('#chatInput');
+  input.addEventListener('input', autoResizeTextarea);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && state.settings.enterToSend) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  
+  // Theme toggle
+  $('#themeToggle').addEventListener('click', toggleTheme);
+  
+  // Export
+  $('#exportBtn').addEventListener('click', () => openModal('#exportModal'));
+  
+  // Settings
+  $('#settingsBtn').addEventListener('click', () => openModal('#settingsModal'));
+  $('#aboutBtn').addEventListener('click', () => openModal('#aboutModal'));
+  
+  // Modal close
+  $$('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('.modal-overlay').forEach(m => m.classList.remove('active'));
+    });
+  });
+  $$('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+  
+  // Export modal buttons
+  $$('[data-export]').forEach(btn => {
+    btn.addEventListener('click', () => exportChat(btn.dataset.export));
+  });
+  
+  // Mobile sidebar
+  $('#menuToggle').addEventListener('click', openSidebar);
+  $('#sidebarOverlay').addEventListener('click', closeSidebar);
+  
+  // Settings
+  bindSettings();
+  
+  // Voice input
+  initVoiceInput();
+  
+  // Load voices for TTS
+  if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = () => {};
+  }
+  
+  // Initial render
+  renderSidebar();
+  renderChat();
+  
+  // PWA
+  setupManifest();
+  registerSW();
+  
+  // Check Puter availability
+  setTimeout(() => {
+    if (typeof puter === 'undefined') {
+      console.warn('Puter.js belum termuat. Fitur AI mungkin tidak berfungsi.');
+    }
+  }, 2000);
+}
+
+// Start when DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>
