@@ -340,13 +340,6 @@ textarea { resize: none; }
 .toggle.on { background: var(--accent); border-color: var(--accent); }
 .toggle.on::after { transform: translateX(18px); }
 
-.slider-row { padding: 14px 0; border-bottom: 1px solid var(--border); }
-.slider-row label { font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-primary); }
-.slider-row label span { color: var(--accent); font-weight: 700; }
-input[type="range"] { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; appearance: none; outline: none; }
-input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px var(--accent-glow); border: 2px solid #fff; }
-input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
-
 .btn { padding: 12px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s, transform 0.1s, border-color 0.15s, color 0.15s; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); }
 .btn:hover { background: var(--border); }
 .btn:active { transform: scale(0.97); }
@@ -544,7 +537,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
           <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
         </select>
       </div>
-      <div class="slider-row"><label>Temperature <span id="tempValue">0.7</span></label><input type="range" id="settingTemp" min="0" max="1" step="0.1" value="0.7"></div>
       <div class="setting-row">
         <div class="setting-label">Panjang jawaban<small>Kontrol panjang respons AI</small></div>
         <select class="select" id="settingLength"><option value="short">Pendek</option><option value="medium">Sedang</option><option value="long">Panjang</option></select>
@@ -555,8 +547,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         <div class="setting-label">Suara Browser<small>Pilih suara untuk fitur "Bacakan"</small></div>
         <select class="select" id="settingTtsVoice"><option value="">Default Browser</option></select>
       </div>
-      <div class="slider-row"><label>Kecepatan <span id="rateValue">1.0</span></label><input type="range" id="settingTtsRate" min="0.5" max="2" step="0.1" value="1"></div>
-      <div class="slider-row"><label>Pitch (Nada) <span id="pitchValue">1.0</span></label><input type="range" id="settingTtsPitch" min="0" max="2" step="0.1" value="1"></div>
       <div class="setting-row">
         <div class="setting-label">Bahasa Suara<small>Filter bahasa untuk TTS</small></div>
         <select class="select" id="settingTtsLang">
@@ -573,9 +563,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
           <option value="it">Italia</option>
           <option value="pt">Portugis</option>
           <option value="ru">Rusia</option>
-          <option value="th">Thai</option>
-          <option value="vi">Vietnam</option>
-          <option value="hi">Hindi</option>
         </select>
       </div>
 
@@ -647,7 +634,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     <div class="modal-body" style="text-align:center">
       <div class="about-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
       <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;margin-bottom:6px;letter-spacing:-0.5px;">Tanya ke Mas Bayu AI</h2>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.1.0 • Powered by Puter AI</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.2.0 • Powered by Puter AI</p>
       <p style="text-align:left">Tanya ke Mas Bayu adalah aplikasi asisten AI yang dirancang untuk membantu pengguna mendapatkan informasi, belajar, menyelesaikan pekerjaan, membuat konten, dan mencari solusi dengan cara yang sederhana dan mudah digunakan.</p>
       <div class="about-stats">
         <div class="about-stat"><div class="about-stat-num">10+</div><div class="about-stat-label">Kategori Bantuan</div></div>
@@ -686,7 +673,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 
 <script>
 /* ====================================================================
-   TANYA KE MAS BAYU AI — Main Application v2.1
+   TANYA KE MAS BAYU AI — Main Application v2.2
    ==================================================================== */
 
 // ============ CONFIG ============
@@ -715,11 +702,8 @@ const state = {
     showTimestamp: true,
     saveHistory: true,
     model: 'gpt-4o-mini',
-    temperature: 0.7,
     responseLength: 'medium',
     ttsVoice: '',
-    ttsRate: 1,
-    ttsPitch: 1,
     ttsLang: 'all',
     downloadLang: 'id',
   }
@@ -1404,8 +1388,8 @@ function toggleTTS(msgId, text) {
   
   const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = 'id-ID';
-  utterance.rate = state.settings.ttsRate;
-  utterance.pitch = state.settings.ttsPitch;
+  utterance.rate = 1;
+  utterance.pitch = 1;
   
   const voices = getBrowserVoices();
   if (state.settings.ttsVoice && voices[state.settings.ttsVoice]) {
@@ -1457,7 +1441,33 @@ function updateTTSButton(msgId, playing) {
   }
 }
 
-// ============ DOWNLOAD MP3 (Google Translate TTS API) ============
+// ============ HELPER: FETCH WITH CORS PROXY ============
+async function fetchWithProxies(url) {
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    `https://thingproxy.freeboard.io/fetch/${url}`,
+    url // Direct attempt as last resort
+  ];
+  
+  for (let i = 0; i < proxies.length; i++) {
+    try {
+      const response = await fetch(proxies[i]);
+      if (response.ok) {
+        const blob = await response.blob();
+        // Google TTS returns mp3. Valid mp3 size should be > 1KB.
+        if (blob.size > 1000) {
+          return blob;
+        }
+      }
+    } catch (e) {
+      // Silent fail, try next proxy
+    }
+  }
+  throw new Error('Semua proxy gagal/CORS block');
+}
+
+// ============ DOWNLOAD MP3 (Google Translate TTS) ============
 async function downloadMP3(msgId, text) {
   if (state.downloadingMp3.has(msgId)) {
     showToast('Sedang mengunduh, tunggu sebentar...', 'info');
@@ -1504,11 +1514,9 @@ async function downloadMP3(msgId, text) {
   try {
     const audioBlobs = [];
     for (let i = 0; i < chunks.length; i++) {
-      // Using Google Translate TTS endpoint
-      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunks[i])}&tl=${lang}&client=tw-ob`;
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const blob = await response.blob();
+      const baseUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunks[i])}&tl=${lang}&client=tw-ob`;
+      
+      const blob = await fetchWithProxies(baseUrl);
       audioBlobs.push(blob);
       
       if (btn) {
@@ -1550,13 +1558,11 @@ async function downloadMP3(msgId, text) {
 async function testDownloadVoice() {
   const lang = state.settings.downloadLang || 'id';
   const testText = 'Halo, saya Mas Bayu AI. Ini adalah contoh suara untuk download MP3.';
-  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(testText)}&tl=${lang}&client=tw-ob`;
+  const baseUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(testText)}&tl=${lang}&client=tw-ob`;
   
   showToast('Memutar preview suara...', 'info');
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const blob = await response.blob();
+    const blob = await fetchWithProxies(baseUrl);
     const blobUrl = URL.createObjectURL(blob);
     const audio = new Audio(blobUrl);
     audio.play();
@@ -1654,13 +1660,7 @@ function applySettingsToUI() {
   $('#settingTimestamp').classList.toggle('on', state.settings.showTimestamp);
   $('#settingSaveHistory').classList.toggle('on', state.settings.saveHistory);
   $('#settingModel').value = state.settings.model;
-  $('#settingTemp').value = state.settings.temperature;
-  $('#tempValue').textContent = state.settings.temperature;
   $('#settingLength').value = state.settings.responseLength;
-  $('#settingTtsRate').value = state.settings.ttsRate;
-  $('#rateValue').textContent = state.settings.ttsRate.toFixed(1);
-  $('#settingTtsPitch').value = state.settings.ttsPitch;
-  $('#pitchValue').textContent = state.settings.ttsPitch.toFixed(1);
   $('#settingTtsLang').value = state.settings.ttsLang;
   $('#settingDownloadLang').value = state.settings.downloadLang;
 }
@@ -1684,13 +1684,10 @@ function bindSettings() {
     }
   });
   $('#settingModel').addEventListener('change', (e) => { state.settings.model = e.target.value; AI_CONFIG.model = e.target.value; saveSettings(); showToast('Model AI diganti ke ' + e.target.value, 'success'); });
-  $('#settingTemp').addEventListener('input', (e) => { state.settings.temperature = parseFloat(e.target.value); $('#tempValue').textContent = e.target.value; AI_CONFIG.temperature = state.settings.temperature; saveSettings(); });
   $('#settingLength').addEventListener('change', (e) => { state.settings.responseLength = e.target.value; saveSettings(); });
   
   // TTS settings
   $('#settingTtsVoice').addEventListener('change', (e) => { state.settings.ttsVoice = e.target.value; saveSettings(); });
-  $('#settingTtsRate').addEventListener('input', (e) => { state.settings.ttsRate = parseFloat(e.target.value); $('#rateValue').textContent = parseFloat(e.target.value).toFixed(1); saveSettings(); });
-  $('#settingTtsPitch').addEventListener('input', (e) => { state.settings.ttsPitch = parseFloat(e.target.value); $('#pitchValue').textContent = parseFloat(e.target.value).toFixed(1); saveSettings(); });
   $('#settingTtsLang').addEventListener('change', (e) => { state.settings.ttsLang = e.target.value; saveSettings(); populateBrowserVoices(); });
   
   // Download MP3 settings
