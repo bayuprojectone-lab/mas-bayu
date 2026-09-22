@@ -579,13 +579,34 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         </select>
       </div>
 
-      <h3>💾 Download MP3</h3>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Gunakan suara premium dari server untuk mengunduh jawaban sebagai file MP3. Tersedia 40+ suara berbagai bahasa.</p>
+      <h3>💾 Download MP3 (Google TTS)</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Unduh jawaban AI sebagai file MP3. Gratis, tanpa limit, dan mendukung banyak bahasa termasuk Indonesia.</p>
       <div class="setting-row">
-        <div class="setting-label">Suara Download MP3<small>Pilih suara untuk file MP3</small></div>
-        <select class="select" id="settingDownloadVoice"></select>
+        <div class="setting-label">Bahasa Suara MP3<small>Pilih bahasa untuk file MP3</small></div>
+        <select class="select" id="settingDownloadLang">
+          <option value="id">🇮🇩 Indonesia</option>
+          <option value="en">🇬🇧 English (UK)</option>
+          <option value="en-us">🇺🇸 English (US)</option>
+          <option value="en-au">🇦🇺 English (Australia)</option>
+          <option value="en-in">🇮🇳 English (India)</option>
+          <option value="ar">🇸🇦 Arab</option>
+          <option value="zh-cn">🇨🇳 Mandarin (Cina)</option>
+          <option value="ja">🇯🇵 Jepang</option>
+          <option value="ko">🇰🇷 Korea</option>
+          <option value="es">🇪🇸 Spanyol</option>
+          <option value="fr">🇫🇷 Prancis</option>
+          <option value="de">🇩🇪 Jerman</option>
+          <option value="it">🇮🇹 Italia</option>
+          <option value="pt">🇵🇹 Portugis</option>
+          <option value="pt-br">🇧🇷 Portugis (Brazil)</option>
+          <option value="ru">🇷🇺 Rusia</option>
+          <option value="th">🇹🇭 Thai</option>
+          <option value="vi">🇻🇳 Vietnam</option>
+          <option value="hi">🇮🇳 Hindi</option>
+          <option value="nl">🇳🇱 Belanda</option>
+          <option value="tr">🇹🇷 Turki</option>
+        </select>
       </div>
-      <div class="slider-row"><label>Kecepatan Download <span id="dlRateValue">1.0</span></label><input type="range" id="settingDownloadRate" min="0.5" max="2" step="0.1" value="1"></div>
       <div class="setting-row">
         <div class="setting-label">Tes Suara<small>Dengar preview suara download</small></div>
         <button class="btn primary" id="testDownloadVoice">
@@ -626,18 +647,18 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     <div class="modal-body" style="text-align:center">
       <div class="about-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
       <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;margin-bottom:6px;letter-spacing:-0.5px;">Tanya ke Mas Bayu AI</h2>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.0.0 • Powered by Puter AI</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.1.0 • Powered by Puter AI</p>
       <p style="text-align:left">Tanya ke Mas Bayu adalah aplikasi asisten AI yang dirancang untuk membantu pengguna mendapatkan informasi, belajar, menyelesaikan pekerjaan, membuat konten, dan mencari solusi dengan cara yang sederhana dan mudah digunakan.</p>
       <div class="about-stats">
         <div class="about-stat"><div class="about-stat-num">10+</div><div class="about-stat-label">Kategori Bantuan</div></div>
         <div class="about-stat"><div class="about-stat-num">∞</div><div class="about-stat-label">Pertanyaan</div></div>
-        <div class="about-stat"><div class="about-stat-num">40+</div><div class="about-stat-label">Pilihan Suara</div></div>
+        <div class="about-stat"><div class="about-stat-num">20+</div><div class="about-stat-label">Bahasa MP3</div></div>
         <div class="about-stat"><div class="about-stat-num">MP3</div><div class="about-stat-label">Download Audio</div></div>
       </div>
       <h3 style="text-align:left">AI Engine</h3>
       <p style="text-align:left">Aplikasi ini menggunakan <strong style="color:var(--accent)">Puter AI</strong> sebagai mesin AI utama. Puter AI menyediakan akses ke berbagai model AI seperti GPT-4o, Claude, dan Gemini tanpa perlu API key di frontend.</p>
       <h3 style="text-align:left">Fitur Utama</h3>
-      <p style="text-align:left">✓ Chat AI dengan streaming respons<br>✓ Riwayat percakapan tersimpan otomatis<br>✓ Input suara & text-to-speech<br>✓ <strong>Download jawaban sebagai MP3</strong><br>✓ <strong>40+ pilihan suara berbagai bahasa</strong><br>✓ Copy jawaban & kode<br>✓ Regenerate jawaban<br>✓ Dark & light mode<br>✓ Export & import chat<br>✓ Responsif untuk semua perangkat</p>
+      <p style="text-align:left">✓ Chat AI dengan streaming respons<br>✓ Riwayat percakapan tersimpan otomatis<br>✓ Input suara & text-to-speech<br>✓ <strong>Download jawaban sebagai MP3 (Indonesia & 20+ bahasa lain)</strong><br>✓ Copy jawaban & kode<br>✓ Regenerate jawaban<br>✓ Dark & light mode<br>✓ Export & import chat<br>✓ Responsif untuk semua perangkat</p>
       <p style="margin-top:18px;font-size:12px;color:var(--text-muted)">© 2026 Tanya ke Mas Bayu • Powered by Mas Bayu</p>
     </div>
   </div>
@@ -665,7 +686,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 
 <script>
 /* ====================================================================
-   TANYA KE MAS BAYU AI — Main Application v2.0
+   TANYA KE MAS BAYU AI — Main Application v2.1
    ==================================================================== */
 
 // ============ CONFIG ============
@@ -675,82 +696,6 @@ const AI_CONFIG = {
   temperature: 0.7,
   systemPrompt: `Kamu adalah Mas Bayu AI, asisten AI yang ramah, cerdas, membantu, dan mudah dipahami. Jawablah pertanyaan pengguna secara akurat dan terstruktur. Gunakan bahasa Indonesia sebagai bahasa utama kecuali pengguna meminta bahasa lain. Jika pertanyaan membutuhkan langkah-langkah, berikan langkah secara berurutan. Jika pengguna meminta kode, berikan kode lengkap dan jelaskan cara menggunakannya. Jangan mengarang informasi yang tidak diketahui. Jika informasi tidak cukup, katakan apa yang masih diperlukan. Gunakan markdown untuk formatting: **bold**, *italic*, daftar, dan blok kode dengan bahasa pemrograman yang sesuai.`
 };
-
-// ============ STREAM ELEMENTS VOICES (40+ voices) ============
-const DOWNLOAD_VOICES = [
-  // English
-  { id: 'Brian', name: 'Brian - English UK (Male)', lang: '🇬🇧' },
-  { id: 'Amy', name: 'Amy - English UK (Female)', lang: '🇬🇧' },
-  { id: 'Emma', name: 'Emma - English UK (Female)', lang: '🇬🇧' },
-  { id: 'Joey', name: 'Joey - English US (Male)', lang: '🇺🇸' },
-  { id: 'Justin', name: 'Justin - English US (Male)', lang: '🇺🇸' },
-  { id: 'Matthew', name: 'Matthew - English US (Male)', lang: '🇺🇸' },
-  { id: 'Ivy', name: 'Ivy - English US Kid (Female)', lang: '🇺🇸' },
-  { id: 'Joanna', name: 'Joanna - English US (Female)', lang: '🇺🇸' },
-  { id: 'Kendra', name: 'Kendra - English US (Female)', lang: '🇺🇸' },
-  { id: 'Kimberly', name: 'Kimberly - English US (Female)', lang: '🇺🇸' },
-  { id: 'Salli', name: 'Salli - English US (Female)', lang: '🇺🇸' },
-  { id: 'Nicole', name: 'Nicole - English AU (Female)', lang: '🇦🇺' },
-  { id: 'Russell', name: 'Russell - English AU (Male)', lang: '🇦🇺' },
-  // Spanish
-  { id: 'Conchita', name: 'Conchita - Spanish (Female)', lang: '🇪🇸' },
-  { id: 'Enrique', name: 'Enrique - Spanish (Male)', lang: '🇪🇸' },
-  { id: 'Lucia', name: 'Lucia - Spanish (Female)', lang: '🇪🇸' },
-  { id: 'Miguel', name: 'Miguel - US Spanish (Male)', lang: '🇲🇽' },
-  { id: 'Mia', name: 'Mia - Mexican Spanish (Female)', lang: '🇲🇽' },
-  // French
-  { id: 'Celine', name: 'Celine - French (Female)', lang: '🇫🇷' },
-  { id: 'Mathieu', name: 'Mathieu - French (Male)', lang: '🇫🇷' },
-  { id: 'Chantal', name: 'Chantal - Canadian French (Female)', lang: '🇨🇦' },
-  // German
-  { id: 'Marlene', name: 'Marlene - German (Female)', lang: '🇩🇪' },
-  { id: 'Hans', name: 'Hans - German (Male)', lang: '🇩🇪' },
-  { id: 'Vicki', name: 'Vicki - German (Female)', lang: '🇩🇪' },
-  // Italian
-  { id: 'Carla', name: 'Carla - Italian (Female)', lang: '🇮🇹' },
-  { id: 'Bianca', name: 'Bianca - Italian (Female)', lang: '🇮🇹' },
-  { id: 'Giorgio', name: 'Giorgio - Italian (Male)', lang: '🇮🇹' },
-  // Portuguese
-  { id: 'Cristiano', name: 'Cristiano - Portuguese (Male)', lang: '🇵🇹' },
-  { id: 'Vitoria', name: 'Vitoria - Brazilian (Female)', lang: '🇧🇷' },
-  { id: 'Ricardo', name: 'Ricardo - Brazilian (Male)', lang: '🇧🇷' },
-  // Russian
-  { id: 'Maxim', name: 'Maxim - Russian (Male)', lang: '🇷🇺' },
-  { id: 'Tatyana', name: 'Tatyana - Russian (Female)', lang: '🇷🇺' },
-  // Dutch
-  { id: 'Ruben', name: 'Ruben - Dutch (Male)', lang: '🇳🇱' },
-  { id: 'Lotte', name: 'Lotte - Dutch (Female)', lang: '🇳🇱' },
-  // Polish
-  { id: 'Jacek', name: 'Jacek - Polish (Male)', lang: '🇵🇱' },
-  { id: 'Ewa', name: 'Ewa - Polish (Female)', lang: '🇵🇱' },
-  { id: 'Jan', name: 'Jan - Polish (Male)', lang: '🇵🇱' },
-  { id: 'Maja', name: 'Maja - Polish (Female)', lang: '🇵🇱' },
-  // Turkish
-  { id: 'Filiz', name: 'Filiz - Turkish (Female)', lang: '🇹🇷' },
-  // Swedish
-  { id: 'Astrid', name: 'Astrid - Swedish (Female)', lang: '🇸🇪' },
-  // Japanese
-  { id: 'Mizuki', name: 'Mizuki - Japanese (Female)', lang: '🇯🇵' },
-  { id: 'Takumi', name: 'Takumi - Japanese (Male)', lang: '🇯🇵' },
-  // Korean
-  { id: 'Seoyeon', name: 'Seoyeon - Korean (Female)', lang: '🇰🇷' },
-  // Chinese
-  { id: 'Zhiyu', name: 'Zhiyu - Chinese (Female)', lang: '🇨🇳' },
-  // Norwegian
-  { id: 'Liv', name: 'Liv - Norwegian (Female)', lang: '🇳🇴' },
-  // Danish
-  { id: 'Naja', name: 'Naja - Danish (Female)', lang: '🇩🇰' },
-  { id: 'Mads', name: 'Mads - Danish (Male)', lang: '🇩🇰' },
-  // Welsh
-  { id: 'Gwyneth', name: 'Gwyneth - Welsh (Female)', lang: '🏴' },
-  // Icelandic
-  { id: 'Dora', name: 'Dora - Icelandic (Female)', lang: '🇮🇸' },
-  { id: 'Karl', name: 'Karl - Icelandic (Male)', lang: '🇮🇸' },
-  // Romanian
-  { id: 'Carmen', name: 'Carmen - Romanian (Female)', lang: '🇷🇴' },
-  // Arabic
-  { id: 'Zeina', name: 'Zeina - Arabic (Female)', lang: '🇸🇦' },
-];
 
 // ============ STATE ============
 const state = {
@@ -776,8 +721,7 @@ const state = {
     ttsRate: 1,
     ttsPitch: 1,
     ttsLang: 'all',
-    downloadVoice: 'Brian',
-    downloadRate: 1
+    downloadLang: 'id',
   }
 };
 
@@ -1513,7 +1457,7 @@ function updateTTSButton(msgId, playing) {
   }
 }
 
-// ============ DOWNLOAD MP3 (StreamElements TTS) ============
+// ============ DOWNLOAD MP3 (Google Translate TTS API) ============
 async function downloadMP3(msgId, text) {
   if (state.downloadingMp3.has(msgId)) {
     showToast('Sedang mengunduh, tunggu sebentar...', 'info');
@@ -1538,13 +1482,13 @@ async function downloadMP3(msgId, text) {
     .replace(/\s+/g, ' ')
     .trim();
   
-  // StreamElements limit ~500 chars, split if longer
+  // Google TTS limit is ~200 chars, split if longer
   const chunks = [];
-  if (cleanText.length > 480) {
+  if (cleanText.length > 190) {
     let remaining = cleanText;
-    while (remaining.length > 480) {
-      let cutAt = remaining.lastIndexOf('.', 480);
-      if (cutAt < 200) cutAt = 480;
+    while (remaining.length > 190) {
+      let cutAt = remaining.lastIndexOf('.', 190);
+      if (cutAt < 50) cutAt = 190;
       chunks.push(remaining.substring(0, cutAt + 1).trim());
       remaining = remaining.substring(cutAt + 1).trim();
     }
@@ -1553,14 +1497,15 @@ async function downloadMP3(msgId, text) {
     chunks.push(cleanText);
   }
   
-  const voice = state.settings.downloadVoice || 'Brian';
+  const lang = state.settings.downloadLang || 'id';
   
   showToast(`Mengunduh MP3 (${chunks.length} bagian)...`, 'info');
   
   try {
     const audioBlobs = [];
     for (let i = 0; i < chunks.length; i++) {
-      const url = `https://api.streamelements.com/kappa/v2/speech?voice=${encodeURIComponent(voice)}&text=${encodeURIComponent(chunks[i])}`;
+      // Using Google Translate TTS endpoint
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunks[i])}&tl=${lang}&client=tw-ob`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const blob = await response.blob();
@@ -1576,11 +1521,8 @@ async function downloadMP3(msgId, text) {
     const finalBlob = new Blob(audioBlobs, { type: 'audio/mp3' });
     const blobUrl = URL.createObjectURL(finalBlob);
     
-    // Get voice name for filename
-    const voiceInfo = DOWNLOAD_VOICES.find(v => v.id === voice);
-    const voiceName = voiceInfo ? voiceInfo.id : voice;
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
-    const filename = `masbayu-ai-${voiceName}-${timestamp}.mp3`;
+    const filename = `masbayu-ai-${lang}-${timestamp}.mp3`;
     
     const a = document.createElement('a');
     a.href = blobUrl;
@@ -1590,7 +1532,7 @@ async function downloadMP3(msgId, text) {
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     
-    showToast(`✅ MP3 berhasil diunduh (${chunks.length} bagian)!`, 'success');
+    showToast(`✅ MP3 berhasil diunduh!`, 'success');
   } catch (err) {
     console.error('Download MP3 error:', err);
     showToast('❌ Gagal mengunduh MP3: ' + err.message, 'error');
@@ -1606,9 +1548,9 @@ async function downloadMP3(msgId, text) {
 
 // Test download voice (preview)
 async function testDownloadVoice() {
-  const voice = state.settings.downloadVoice || 'Brian';
+  const lang = state.settings.downloadLang || 'id';
   const testText = 'Halo, saya Mas Bayu AI. Ini adalah contoh suara untuk download MP3.';
-  const url = `https://api.streamelements.com/kappa/v2/speech?voice=${encodeURIComponent(voice)}&text=${encodeURIComponent(testText)}`;
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(testText)}&tl=${lang}&client=tw-ob`;
   
   showToast('Memutar preview suara...', 'info');
   try {
@@ -1720,15 +1662,7 @@ function applySettingsToUI() {
   $('#settingTtsPitch').value = state.settings.ttsPitch;
   $('#pitchValue').textContent = state.settings.ttsPitch.toFixed(1);
   $('#settingTtsLang').value = state.settings.ttsLang;
-  $('#settingDownloadRate').value = state.settings.downloadRate;
-  $('#dlRateValue').textContent = state.settings.downloadRate.toFixed(1);
-  
-  // Populate download voices
-  const dlSelect = $('#settingDownloadVoice');
-  if (dlSelect) {
-    dlSelect.innerHTML = DOWNLOAD_VOICES.map(v => `<option value="${v.id}">${v.lang} ${escapeHtml(v.name)}</option>`).join('');
-    dlSelect.value = state.settings.downloadVoice;
-  }
+  $('#settingDownloadLang').value = state.settings.downloadLang;
 }
 
 function bindSettings() {
@@ -1760,8 +1694,7 @@ function bindSettings() {
   $('#settingTtsLang').addEventListener('change', (e) => { state.settings.ttsLang = e.target.value; saveSettings(); populateBrowserVoices(); });
   
   // Download MP3 settings
-  $('#settingDownloadVoice').addEventListener('change', (e) => { state.settings.downloadVoice = e.target.value; saveSettings(); });
-  $('#settingDownloadRate').addEventListener('input', (e) => { state.settings.downloadRate = parseFloat(e.target.value); $('#dlRateValue').textContent = parseFloat(e.target.value).toFixed(1); saveSettings(); });
+  $('#settingDownloadLang').addEventListener('change', (e) => { state.settings.downloadLang = e.target.value; saveSettings(); });
   $('#testDownloadVoice').addEventListener('click', testDownloadVoice);
   
   $('#exportTxt').addEventListener('click', () => exportChat('txt'));
