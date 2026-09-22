@@ -566,32 +566,33 @@ textarea { resize: none; }
         </select>
       </div>
 
-      <h3>💾 Download MP3 (Google TTS)</h3>
+      <h3>💾 Download MP3 (VoiceRSS)</h3>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Unduh jawaban AI sebagai file MP3. Gratis, tanpa limit, dan mendukung banyak bahasa termasuk Indonesia.</p>
       <div class="setting-row">
         <div class="setting-label">Bahasa Suara MP3<small>Pilih bahasa untuk file MP3</small></div>
         <select class="select" id="settingDownloadLang">
-          <option value="id">🇮🇩 Indonesia</option>
-          <option value="en">🇬🇧 English (UK)</option>
+          <option value="id-id">🇮🇩 Indonesia</option>
+          <option value="en-gb">🇬🇧 English (UK)</option>
           <option value="en-us">🇺🇸 English (US)</option>
           <option value="en-au">🇦🇺 English (Australia)</option>
           <option value="en-in">🇮🇳 English (India)</option>
-          <option value="ar">🇸🇦 Arab</option>
+          <option value="ar-sa">🇸🇦 Arab</option>
           <option value="zh-cn">🇨🇳 Mandarin (Cina)</option>
-          <option value="ja">🇯🇵 Jepang</option>
-          <option value="ko">🇰🇷 Korea</option>
-          <option value="es">🇪🇸 Spanyol</option>
-          <option value="fr">🇫🇷 Prancis</option>
-          <option value="de">🇩🇪 Jerman</option>
-          <option value="it">🇮🇹 Italia</option>
-          <option value="pt">🇵🇹 Portugis</option>
+          <option value="zh-hk">🇭🇰 Kanton (Hong Kong)</option>
+          <option value="ja-jp">🇯🇵 Jepang</option>
+          <option value="ko-kr">🇰🇷 Korea</option>
+          <option value="es-es">🇪🇸 Spanyol</option>
+          <option value="fr-fr">🇫🇷 Prancis</option>
+          <option value="de-de">🇩🇪 Jerman</option>
+          <option value="it-it">🇮🇹 Italia</option>
+          <option value="pt-pt">🇵🇹 Portugis</option>
           <option value="pt-br">🇧🇷 Portugis (Brazil)</option>
-          <option value="ru">🇷🇺 Rusia</option>
-          <option value="th">🇹🇭 Thai</option>
-          <option value="vi">🇻🇳 Vietnam</option>
-          <option value="hi">🇮🇳 Hindi</option>
-          <option value="nl">🇳🇱 Belanda</option>
-          <option value="tr">🇹🇷 Turki</option>
+          <option value="ru-ru">🇷🇺 Rusia</option>
+          <option value="th-th">🇹🇭 Thai</option>
+          <option value="vi-vn">🇻🇳 Vietnam</option>
+          <option value="hi-in">🇮🇳 Hindi</option>
+          <option value="nl-nl">🇳🇱 Belanda</option>
+          <option value="tr-tr">🇹🇷 Turki</option>
         </select>
       </div>
       <div class="setting-row">
@@ -634,7 +635,7 @@ textarea { resize: none; }
     <div class="modal-body" style="text-align:center">
       <div class="about-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
       <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;margin-bottom:6px;letter-spacing:-0.5px;">Tanya ke Mas Bayu AI</h2>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.2.0 • Powered by Puter AI</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.3.0 • Powered by Puter AI</p>
       <p style="text-align:left">Tanya ke Mas Bayu adalah aplikasi asisten AI yang dirancang untuk membantu pengguna mendapatkan informasi, belajar, menyelesaikan pekerjaan, membuat konten, dan mencari solusi dengan cara yang sederhana dan mudah digunakan.</p>
       <div class="about-stats">
         <div class="about-stat"><div class="about-stat-num">10+</div><div class="about-stat-label">Kategori Bantuan</div></div>
@@ -673,7 +674,7 @@ textarea { resize: none; }
 
 <script>
 /* ====================================================================
-   TANYA KE MAS BAYU AI — Main Application v2.2
+   TANYA KE MAS BAYU AI — Main Application v2.3 (Fix CORS MP3)
    ==================================================================== */
 
 // ============ CONFIG ============
@@ -705,7 +706,7 @@ const state = {
     responseLength: 'medium',
     ttsVoice: '',
     ttsLang: 'all',
-    downloadLang: 'id',
+    downloadLang: 'id-id',
   }
 };
 
@@ -1441,33 +1442,7 @@ function updateTTSButton(msgId, playing) {
   }
 }
 
-// ============ HELPER: FETCH WITH CORS PROXY ============
-async function fetchWithProxies(url) {
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-    `https://thingproxy.freeboard.io/fetch/${url}`,
-    url // Direct attempt as last resort
-  ];
-  
-  for (let i = 0; i < proxies.length; i++) {
-    try {
-      const response = await fetch(proxies[i]);
-      if (response.ok) {
-        const blob = await response.blob();
-        // Google TTS returns mp3. Valid mp3 size should be > 1KB.
-        if (blob.size > 1000) {
-          return blob;
-        }
-      }
-    } catch (e) {
-      // Silent fail, try next proxy
-    }
-  }
-  throw new Error('Semua proxy gagal/CORS block');
-}
-
-// ============ DOWNLOAD MP3 (Google Translate TTS) ============
+// ============ DOWNLOAD MP3 (VoiceRSS API) ============
 async function downloadMP3(msgId, text) {
   if (state.downloadingMp3.has(msgId)) {
     showToast('Sedang mengunduh, tunggu sebentar...', 'info');
@@ -1492,13 +1467,13 @@ async function downloadMP3(msgId, text) {
     .replace(/\s+/g, ' ')
     .trim();
   
-  // Google TTS limit is ~200 chars, split if longer
+  // VoiceRSS limit is ~300 chars, split if longer
   const chunks = [];
-  if (cleanText.length > 190) {
+  if (cleanText.length > 280) {
     let remaining = cleanText;
-    while (remaining.length > 190) {
-      let cutAt = remaining.lastIndexOf('.', 190);
-      if (cutAt < 50) cutAt = 190;
+    while (remaining.length > 280) {
+      let cutAt = remaining.lastIndexOf('.', 280);
+      if (cutAt < 100) cutAt = 280;
       chunks.push(remaining.substring(0, cutAt + 1).trim());
       remaining = remaining.substring(cutAt + 1).trim();
     }
@@ -1507,16 +1482,24 @@ async function downloadMP3(msgId, text) {
     chunks.push(cleanText);
   }
   
-  const lang = state.settings.downloadLang || 'id';
+  const lang = state.settings.downloadLang || 'id-id';
   
   showToast(`Mengunduh MP3 (${chunks.length} bagian)...`, 'info');
   
   try {
     const audioBlobs = [];
     for (let i = 0; i < chunks.length; i++) {
-      const baseUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunks[i])}&tl=${lang}&client=tw-ob`;
+      const baseUrl = `https://api.voicerss.org/?key=99c65445a63d4b0b8d2a55f2c5d6c4a2&hl=${lang}&src=${encodeURIComponent(chunks[i])}`;
       
-      const blob = await fetchWithProxies(baseUrl);
+      const response = await fetch(baseUrl);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const blob = await response.blob();
+      
+      // Check if blob is valid mp3 (not an error json/xml)
+      if (blob.type.includes('text') || blob.size < 100) {
+        throw new Error('API Error');
+      }
+      
       audioBlobs.push(blob);
       
       if (btn) {
@@ -1556,13 +1539,20 @@ async function downloadMP3(msgId, text) {
 
 // Test download voice (preview)
 async function testDownloadVoice() {
-  const lang = state.settings.downloadLang || 'id';
+  const lang = state.settings.downloadLang || 'id-id';
   const testText = 'Halo, saya Mas Bayu AI. Ini adalah contoh suara untuk download MP3.';
-  const baseUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(testText)}&tl=${lang}&client=tw-ob`;
+  const baseUrl = `https://api.voicerss.org/?key=99c65445a63d4b0b8d2a55f2c5d6c4a2&hl=${lang}&src=${encodeURIComponent(testText)}`;
   
   showToast('Memutar preview suara...', 'info');
   try {
-    const blob = await fetchWithProxies(baseUrl);
+    const response = await fetch(baseUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    
+    if (blob.type.includes('text') || blob.size < 100) {
+      throw new Error('API Error');
+    }
+    
     const blobUrl = URL.createObjectURL(blob);
     const audio = new Audio(blobUrl);
     audio.play();
