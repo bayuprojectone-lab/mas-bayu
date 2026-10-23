@@ -1,1732 +1,1599 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>Tanya ke Mas Bayu AI — Asisten AI Pintar</title>
-<meta name="description" content="Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi. Didukung Puter AI.">
-<meta name="theme-color" content="#0f172a">
-
-<!-- Fonts -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReelPro AI — Auto Upload Reel, Foto & Video ke Facebook Pro</title>
+<meta name="description" content="Aplikasi auto upload Reel, Foto, dan Video ke Facebook Pro dengan integrasi Puter AI untuk membaca & mengoptimalkan algoritma.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- Markdown & Highlight -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-<!-- Puter AI -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://js.puter.com/v2/"></script>
-
 <style>
-/* ============ RESET & BASE ============ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow: hidden;
-  height: 100vh;
-  height: 100dvh;
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.4s ease, color 0.4s ease;
+:root{
+  --bg:#07080f; --bg2:#0b0d18; --surface:#12141f; --surface2:#191c2b; --surface3:#202436;
+  --border:#252940; --border2:#323752;
+  --text:#f3f4fa; --muted:#8f94ab; --muted2:#6a6f88;
+  --acc:#ec4899; --acc2:#a855f7; --amber:#f59e0b; --ok:#34d399; --err:#f87171; --info:#38bdf8;
+  --grad:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);
+  --grad2:linear-gradient(135deg,#f59e0b 0%,#ec4899 100%);
+  --radius:16px; --radius-sm:10px;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --sidebar-w:242px;
 }
-button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-input, textarea { font-family: inherit; }
-textarea { resize: none; }
-
-/* ============ THEME VARIABLES ============ */
-:root {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --bg-elevated: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-light: rgba(37, 99, 235, 0.08);
-  --accent-glow: rgba(37, 99, 235, 0.2);
-  --amber: #d97706;
-  --amber-light: rgba(217, 119, 6, 0.1);
-  --danger: #dc2626;
-  --danger-light: rgba(220, 38, 38, 0.08);
-  --border: rgba(15, 23, 42, 0.06);
-  --border-strong: rgba(15, 23, 42, 0.12);
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
-  --user-bubble: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  --user-text: #ffffff;
-  --ai-bubble: #ffffff;
-  --ai-text: #0f172a;
-  --code-bg: #1e293b;
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  background:radial-gradient(1200px 600px at 80% -10%,rgba(168,85,247,.14),transparent 60%),
+             radial-gradient(1000px 500px at -10% 110%,rgba(236,72,153,.12),transparent 60%),
+             var(--bg);
+  color:var(--text);min-height:100vh;overflow-x:hidden;
 }
-[data-theme="dark"] {
-  --bg-primary: #0b1120;
-  --bg-secondary: #131c31;
-  --bg-tertiary: #1e293b;
-  --bg-elevated: #1a233a;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #3b82f6;
-  --accent-hover: #60a5fa;
-  --accent-light: rgba(59, 130, 246, 0.1);
-  --accent-glow: rgba(59, 130, 246, 0.3);
-  --amber: #fbbf24;
-  --amber-light: rgba(251, 191, 36, 0.1);
-  --danger: #ef4444;
-  --danger-light: rgba(239, 68, 68, 0.1);
-  --border: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
-  --user-bubble: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  --user-text: #ffffff;
-  --ai-bubble: #1a233a;
-  --ai-text: #f1f5f9;
-  --code-bg: #0f172a;
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2c3149;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#3d4368}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:var(--acc)}
+
+/* ===== LAYOUT ===== */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);background:rgba(11,13,24,.92);backdrop-filter:blur(14px);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  position:fixed;top:0;bottom:0;left:0;z-index:50;transition:transform .28s ease;
 }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-/* ============ LANDING PAGE ============ */
-.landing {
-  position: fixed; inset: 0; z-index: 1000;
-  background: var(--bg-primary);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 24px; overflow-y: auto;
-  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+.brand{display:flex;align-items:center;gap:12px;padding:20px 18px 16px}
+.brand-logo{
+  width:42px;height:42px;border-radius:13px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+  box-shadow:0 6px 18px rgba(236,72,153,.35);
 }
-.landing.hidden { opacity: 0; transform: scale(1.02); pointer-events: none; display: none !important; }
-.landing-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
-.landing-blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: float 20s ease-in-out infinite; }
-.landing-blob.b1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -150px; opacity: 0.2; }
-.landing-blob.b2 { width: 500px; height: 500px; background: var(--amber); bottom: -150px; right: -100px; opacity: 0.15; animation-delay: -10s; }
-.landing-blob.b3 { width: 400px; height: 400px; background: var(--accent); bottom: 20%; left: 30%; opacity: 0.1; animation-delay: -5s; }
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(50px, -40px) scale(1.05); }
-  66% { transform: translate(-40px, 50px) scale(0.95); }
+.brand-name{font-weight:800;font-size:17px;letter-spacing:.2px}
+.brand-name span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand-sub{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.6px;text-transform:uppercase}
+.nav{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.nav-label{font-size:10px;color:var(--muted2);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:12px 10px 4px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10.5px 12px;border-radius:12px;
+  color:var(--muted);font-size:13.5px;font-weight:600;border:1px solid transparent;
+  background:none;width:100%;text-align:left;transition:all .18s ease;
 }
-.landing-content { position: relative; z-index: 1; max-width: 960px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.landing-logo { display: flex; flex-direction: column; align-items: center; margin-bottom: 40px; animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-.logo-mark {
-  width: 96px; height: 96px;
-  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
-  border-radius: 28px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 24px 48px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
-  position: relative; margin-bottom: 24px; transition: transform 0.3s ease;
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(236,72,153,.16),rgba(168,85,247,.14));color:#fff;border-color:rgba(236,72,153,.35)}
+.nav-item .ico{font-size:16px;width:22px;text-align:center}
+.sidebar-foot{padding:14px;border-top:1px solid var(--border)}
+.credit-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:11px;color:var(--muted);line-height:1.55}
+.credit-card b{color:var(--text)}
+.status-row{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:11px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot.on{background:var(--ok);box-shadow:0 0 8px rgba(52,211,153,.8)}
+.dot.off{background:var(--err)}
+.dot.warn{background:var(--amber);box-shadow:0 0 8px rgba(245,158,11,.8)}
+
+.main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;
+  padding:14px 24px;background:rgba(7,8,15,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
 }
-.logo-mark:hover { transform: scale(1.05) rotate(-3deg); }
-.logo-mark::after { content: ''; position: absolute; inset: 2px; border-radius: 26px; background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent 60%); pointer-events: none; }
-.logo-mark svg { width: 52px; height: 52px; color: #fff; position: relative; z-index: 1; }
-.logo-text { display: flex; flex-direction: column; align-items: center; line-height: 1; gap: 4px; }
-.logo-text .t1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; }
-.logo-text .t2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1.5px; color: var(--text-primary); }
-.logo-text .t3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 7px; color: var(--amber); text-transform: uppercase; }
-.landing h1 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(36px, 6vw, 64px); font-weight: 800; letter-spacing: -2px;
-  margin-bottom: 20px; line-height: 1.1;
-  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+.hamburger{display:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:11px;font-size:17px}
+.page-title{font-size:18px;font-weight:800}
+.page-title small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:99px;
+  background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);
 }
-.landing h1 .grad { background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 50%, var(--amber) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.landing .tagline { font-size: clamp(16px, 2.2vw, 20px); color: var(--text-secondary); max-width: 680px; margin: 0 auto 48px; line-height: 1.6; animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both; }
-.btn-cta {
-  display: inline-flex; align-items: center; gap: 12px;
-  background: var(--accent); color: #fff;
-  padding: 18px 40px; border-radius: 16px;
-  font-size: 16px; font-weight: 700; letter-spacing: 0.3px;
-  box-shadow: 0 16px 32px var(--accent-glow);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
-  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
-  position: relative; z-index: 10;
+.chip b{color:var(--text)}
+.clock{font-variant-numeric:tabular-nums}
+
+.content{padding:24px;max-width:1220px;width:100%;margin:0 auto;flex:1}
+.page{display:none;animation:fadeUp .35s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ===== CARDS & COMMON ===== */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card+.card{margin-top:18px}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.card-head h3{font-size:15.5px;font-weight:700}
+.card-head .sub{font-size:12px;color:var(--muted);margin-top:2px;font-weight:500}
+.card-head .spacer{flex:1}
+.grid{display:grid;gap:18px}
+.grid.g2{grid-template-columns:1fr 1fr}
+.grid.g3{grid-template-columns:repeat(3,1fr)}
+.grid.g4{grid-template-columns:repeat(4,1fr)}
+.mb{margin-bottom:16px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 7px 2px;letter-spacing:.3px}
+.input,.select,.textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;
+  color:var(--text);padding:11px 14px;font-size:13.5px;outline:none;transition:border .18s,box-shadow .18s;
 }
-.btn-cta:hover { transform: translateY(-3px); box-shadow: 0 20px 40px var(--accent-glow); }
-.btn-cta:active { transform: translateY(-1px); }
-.btn-cta svg { width: 20px; height: 20px; }
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 72px; width: 100%; animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both; }
-.feature-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; text-align: left; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s; position: relative; overflow: hidden; }
-.feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); transform: translateX(-100%); transition: transform 0.4s ease; }
-.feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
-.feature-card:hover::before { transform: translateX(0); }
-.feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 20px; background: var(--accent-light); }
-.feature-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
-.feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ============ APP LAYOUT ============ */
-.app { display: grid; grid-template-columns: 288px 1fr; height: 100vh; height: 100dvh; position: relative; }
-
-/* ============ SIDEBAR ============ */
-.sidebar { background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 50; height: 100%; overflow: hidden; }
-.sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-.sidebar-logo { width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 8px 16px var(--accent-glow); }
-.sidebar-logo svg { width: 24px; height: 24px; color: #fff; }
-.sidebar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: -0.5px; }
-.sidebar-title small { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1.5px; margin-top: 3px; text-transform: uppercase; }
-.new-chat-btn { margin: 20px; padding: 14px 18px; background: var(--accent); color: #fff; border-radius: 14px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 8px 16px var(--accent-glow); flex-shrink: 0; }
-.new-chat-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 12px 20px var(--accent-glow); }
-.new-chat-btn:active { transform: scale(0.98); }
-.new-chat-btn svg { width: 18px; height: 18px; }
-.sidebar-section { padding: 0 20px 8px; flex-shrink: 0; }
-.sidebar-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); padding: 16px 8px 8px; display: flex; justify-content: space-between; align-items: center; }
-.chat-list { flex: 1; overflow-y: auto; padding: 0 12px 12px; }
-.chat-list-empty { padding: 40px 16px; text-align: center; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
-.chat-item { padding: 12px 14px; border-radius: 12px; margin-bottom: 4px; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 12px; position: relative; }
-.chat-item:hover { background: var(--bg-tertiary); }
-.chat-item.active { background: var(--accent-light); }
-.chat-item.active .chat-item-title { color: var(--accent); font-weight: 600; }
-.chat-item-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-muted); }
-.chat-item.active .chat-item-icon { color: var(--accent); }
-.chat-item-content { flex: 1; min-width: 0; }
-.chat-item-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
-.chat-item-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.chat-item-delete { opacity: 0; background: transparent; padding: 4px; border-radius: 6px; color: var(--text-muted); transition: opacity 0.15s, color 0.15s, background 0.15s; }
-.chat-item:hover .chat-item-delete { opacity: 1; }
-.chat-item-delete:hover { color: var(--danger); background: var(--danger-light); }
-.chat-item-delete svg { width: 14px; height: 14px; display: block; }
-.sidebar-footer { border-top: 1px solid var(--border); padding: 12px; flex-shrink: 0; }
-.sidebar-footer-btn { width: 100%; padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 12px; color: var(--text-secondary); transition: background 0.15s, color 0.15s; }
-.sidebar-footer-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.sidebar-footer-btn svg { width: 20px; height: 20px; }
-
-/* ============ MAIN ============ */
-.main { display: flex; flex-direction: column; background: var(--bg-primary); min-width: 0; position: relative; height: 100%; overflow: hidden; }
-.topbar { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--bg-secondary); flex-shrink: 0; }
-.topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.menu-toggle { display: none; width: 42px; height: 42px; border-radius: 12px; align-items: center; justify-content: center; color: var(--text-primary); background: var(--bg-tertiary); transition: background 0.15s; }
-.menu-toggle:hover { background: var(--border); }
-.menu-toggle svg { width: 22px; height: 22px; }
-.topbar-title { min-width: 0; }
-.topbar-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.topbar-title p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-.status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 20px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-.topbar-actions { display: flex; align-items: center; gap: 8px; }
-.icon-btn { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: background 0.15s, color 0.15s, transform 0.1s; }
-.icon-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.icon-btn:active { transform: scale(0.92); }
-.icon-btn svg { width: 20px; height: 20px; }
-
-/* ============ CHAT ============ */
-.chat-container { flex: 1; overflow-y: auto; scroll-behavior: smooth; position: relative; min-height: 0; }
-.welcome { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
-.welcome-avatar { width: 88px; height: 88px; background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 28px; box-shadow: 0 20px 40px var(--accent-glow); position: relative; animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.welcome-avatar svg { width: 46px; height: 46px; color: #fff; }
-.welcome-avatar::before { content: ''; position: absolute; inset: -6px; border-radius: 30px; border: 2px solid var(--accent); opacity: 0.3; animation: ripple 2s ease infinite; }
-@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.15); opacity: 0; } }
-@keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
-.welcome h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
-.welcome p { font-size: 16px; color: var(--text-secondary); margin-bottom: 40px; max-width: 520px; line-height: 1.6; }
-.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; width: 100%; max-width: 820px; }
-.quick-btn { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 20px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; text-align: left; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
-.quick-btn:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow-md); }
-.quick-btn-icon { font-size: 26px; line-height: 1; }
-.quick-btn-text { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-.quick-btn-desc { font-size: 12px; color: var(--text-muted); }
-
-.messages { padding: 24px 0 40px; max-width: 860px; margin: 0 auto; width: 100%; }
-.message { display: flex; gap: 16px; padding: 16px 24px; margin-bottom: 8px; animation: messageIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-@keyframes messageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.message-avatar { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
-.message.user .message-avatar { background: var(--bg-tertiary); color: var(--text-secondary); }
-.message.ai .message-avatar { background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%); color: #fff; box-shadow: 0 8px 16px var(--accent-glow); }
-.message-avatar svg { width: 22px; height: 22px; }
-.message-content { flex: 1; min-width: 0; }
-.message-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.message-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-.message-time { font-size: 11px; color: var(--text-muted); }
-.message-body { font-size: 15px; line-height: 1.75; color: var(--text-primary); word-wrap: break-word; overflow-wrap: break-word; }
-.message-body p { margin: 0 0 16px; }
-.message-body p:last-child { margin-bottom: 0; }
-.message-body ul, .message-body ol { margin: 12px 0 16px; padding-left: 24px; }
-.message-body li { margin: 6px 0; }
-.message-body h1, .message-body h2, .message-body h3, .message-body h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; margin: 24px 0 12px; line-height: 1.3; }
-.message-body h1 { font-size: 24px; }
-.message-body h2 { font-size: 20px; }
-.message-body h3 { font-size: 18px; }
-.message-body h4 { font-size: 16px; }
-.message-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-.message-body blockquote { border-left: 3px solid var(--accent); padding: 8px 16px; margin: 16px 0; color: var(--text-secondary); background: var(--accent-light); border-radius: 0 12px 12px 0; }
-.message-body code:not(pre code) { background: var(--bg-tertiary); padding: 3px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); }
-.message-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; border-radius: 12px; overflow: hidden; }
-.message-body th, .message-body td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
-.message-body th { background: var(--bg-tertiary); font-weight: 700; }
-
-.code-block-wrapper { position: relative; margin: 16px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-.code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--code-bg); color: #94a3b8; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-.code-block-header .lang { font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.code-copy-btn { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 6px; background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 11px; font-weight: 600; transition: background 0.15s, color 0.15s; }
-.code-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.code-copy-btn svg { width: 14px; height: 14px; }
-.code-block-wrapper pre { margin: 0; }
-.code-block-wrapper pre code { display: block; padding: 16px; background: var(--code-bg); color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; overflow-x: auto; }
-
-.message-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-.action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; color: var(--text-secondary); background: var(--bg-tertiary); transition: background 0.15s, color 0.15s, transform 0.1s; }
-.action-btn:hover { background: var(--accent-light); color: var(--accent); }
-.action-btn:active { transform: scale(0.95); }
-.action-btn svg { width: 14px; height: 14px; }
-.action-btn.danger:hover { background: var(--danger-light); color: var(--danger); }
-.action-btn.active { background: var(--accent-light); color: var(--accent); }
-.action-btn.downloading { opacity: 0.6; pointer-events: none; }
-
-.typing-indicator { display: inline-flex; align-items: center; gap: 4px; padding: 8px 0; }
-.typing-indicator span { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: typingDot 1.4s infinite ease-in-out; }
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typingDot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
-
-/* ============ INPUT AREA ============ */
-.input-area { padding: 16px 24px 24px; background: var(--bg-primary); flex-shrink: 0; }
-.input-wrapper { max-width: 860px; margin: 0 auto; background: var(--bg-secondary); border: 1px solid var(--border-strong); border-radius: 20px; padding: 10px; display: flex; align-items: flex-end; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-md); }
-.input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-light); }
-.input-tools { display: flex; gap: 2px; padding: 4px; }
-.input-tool-btn { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: background 0.15s, color 0.15s; }
-.input-tool-btn:hover { background: var(--bg-tertiary); color: var(--accent); }
-.input-tool-btn.recording { background: var(--danger-light); color: var(--danger); animation: pulse 1s infinite; }
-.input-tool-btn svg { width: 20px; height: 20px; }
-.chat-input { flex: 1; border: none; background: transparent; color: var(--text-primary); font-size: 15px; line-height: 1.6; padding: 10px 8px; max-height: 200px; outline: none; }
-.chat-input::placeholder { color: var(--text-muted); }
-.send-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s, transform 0.1s, opacity 0.2s; box-shadow: 0 8px 16px var(--accent-glow); }
-.send-btn:hover { background: var(--accent-hover); }
-.send-btn:active { transform: scale(0.92); }
-.send-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
-.send-btn.stop { background: var(--danger); box-shadow: 0 8px 16px rgba(220, 38, 38, 0.3); }
-.send-btn svg { width: 22px; height: 22px; }
-.input-hint { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 12px; max-width: 860px; margin-left: auto; margin-right: auto; }
-.input-hint kbd { background: var(--bg-tertiary); padding: 2px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; border: 1px solid var(--border); }
-
-/* ============ MODALS ============ */
-.modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal { background: var(--bg-secondary); border-radius: 24px; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; transform: scale(0.95) translateY(10px); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
-.modal-overlay.active .modal { transform: scale(1) translateY(0); }
-.modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg-secondary); z-index: 2; }
-.modal-header h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-.modal-close { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: background 0.15s, color 0.15s; }
-.modal-close:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.modal-close svg { width: 22px; height: 22px; }
-.modal-body { padding: 24px; }
-.modal-body h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; margin: 24px 0 12px; color: var(--text-primary); letter-spacing: -0.2px; }
-.modal-body h3:first-child { margin-top: 0; }
-.modal-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.7; }
-.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 16px; }
-.setting-row:last-child { border-bottom: none; }
-.setting-label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-.setting-label small { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
-
-.select { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 36px 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; min-width: 150px; max-width: 220px; transition: border-color 0.15s, background 0.15s; }
-.select:focus { outline: none; border-color: var(--accent); }
-.select:hover { background-color: var(--border); }
-
-.toggle { position: relative; width: 44px; height: 26px; background: var(--bg-tertiary); border-radius: 14px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border); flex-shrink: 0; }
-.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-.toggle.on { background: var(--accent); border-color: var(--accent); }
-.toggle.on::after { transform: translateX(18px); }
-
-.btn { padding: 12px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s, transform 0.1s, border-color 0.15s, color 0.15s; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); }
-.btn:hover { background: var(--border); }
-.btn:active { transform: scale(0.97); }
-.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn.primary:hover { background: var(--accent-hover); }
-.btn.danger { background: var(--danger-light); color: var(--danger); border-color: transparent; }
-.btn.danger:hover { background: var(--danger); color: #fff; }
-.btn svg { width: 16px; height: 16px; }
-.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-
-.about-logo { width: 72px; height: 72px; background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 16px 32px var(--accent-glow); }
-.about-logo svg { width: 36px; height: 36px; color: #fff; }
-.about-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 24px 0; }
-.about-stat { background: var(--bg-tertiary); padding: 16px; border-radius: 14px; text-align: center; }
-.about-stat-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: var(--accent); }
-.about-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-
-/* ============ TOAST ============ */
-.toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-.toast { background: var(--bg-secondary); border: 1px solid var(--border); padding: 14px 18px; border-radius: 14px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-lg); animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: auto; min-width: 260px; max-width: 380px; }
-.toast.success { border-left: 4px solid var(--accent); }
-.toast.error { border-left: 4px solid var(--danger); }
-.toast.info { border-left: 4px solid var(--amber); }
-.toast svg { width: 20px; height: 20px; flex-shrink: 0; }
-.toast.success svg { color: var(--accent); }
-.toast.error svg { color: var(--danger); }
-.toast.info svg { color: var(--amber); }
-@keyframes toastIn { from { opacity: 0; transform: translateX(40px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
-.toast.out { animation: toastOut 0.3s ease forwards; }
-@keyframes toastOut { to { opacity: 0; transform: translateX(40px) scale(0.95); } }
-
-/* ============ MOBILE ============ */
-.sidebar-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-.sidebar-overlay.active { opacity: 1; pointer-events: auto; }
-@media (max-width: 900px) {
-  .app { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; top: 0; left: 0; width: 288px; height: 100%; transform: translateX(-100%); box-shadow: var(--shadow-lg); }
-  .sidebar.open { transform: translateX(0); }
-  .menu-toggle { display: flex; }
-  .topbar { padding: 14px 18px; }
-  .topbar-title h1 { font-size: 17px; }
-  .topbar-title p { font-size: 11px; }
-  .input-area { padding: 12px 16px 18px; }
-  .input-wrapper { border-radius: 18px; }
-  .chat-input { font-size: 16px; }
-  .message { padding: 12px 18px; }
-  .messages { padding: 20px 0 32px; }
-  .modal { max-width: calc(100vw - 32px); border-radius: 20px; }
-  .toast-container { bottom: 88px; right: 16px; left: 16px; }
-  .toast { min-width: 0; }
-  .select { max-width: 160px; min-width: 130px; font-size: 12px; }
+.input:focus,.select:focus,.textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(236,72,153,.15)}
+.input::placeholder,.textarea::placeholder{color:var(--muted2)}
+.textarea{resize:vertical;min-height:88px;line-height:1.6}
+.select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238f94ab' d='M6 8 0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.select option{background:var(--surface2)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:700;border:1px solid transparent;
+  transition:all .18s ease;white-space:nowrap;min-height:42px;
 }
-@media (max-width: 480px) {
-  .quick-actions { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .quick-btn { padding: 16px 14px; }
-  .landing h1 { font-size: 32px; letter-spacing: -1px; }
-  .features-grid { grid-template-columns: 1fr; gap: 16px; margin-top: 48px; }
-  .feature-card { padding: 24px 20px; }
-  .message-body { font-size: 14px; }
-  .input-tool-btn { width: 34px; height: 34px; }
-  .send-btn { width: 38px; height: 38px; }
-  .icon-btn { width: 38px; height: 38px; }
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 6px 20px rgba(236,72,153,.32)}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 26px rgba(236,72,153,.42)}
+.btn-ghost{background:var(--surface2);color:var(--text);border-color:var(--border)}
+.btn-ghost:hover:not(:disabled){border-color:var(--border2);background:var(--surface3)}
+.btn-amber{background:linear-gradient(135deg,#f59e0b,#f97316);color:#1a1205;box-shadow:0 6px 18px rgba(245,158,11,.3)}
+.btn-ok{background:linear-gradient(135deg,#10b981,#34d399);color:#04231a}
+.btn-danger{background:rgba(248,113,113,.12);color:var(--err);border-color:rgba(248,113,113,.35)}
+.btn-danger:hover:not(:disabled){background:rgba(248,113,113,.2)}
+.btn-sm{padding:8px 13px;min-height:34px;font-size:12px;border-radius:10px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.badge.pink{background:rgba(236,72,153,.15);color:#f9a8d4;border:1px solid rgba(236,72,153,.3)}
+.badge.purple{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)}
+.badge.amber{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.badge.green{background:rgba(52,211,153,.13);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
+.badge.red{background:rgba(248,113,113,.13);color:#fca5a5;border:1px solid rgba(248,113,113,.3)}
+.badge.gray{background:var(--surface3);color:var(--muted);border:1px solid var(--border)}
+
+/* toggle */
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:var(--surface3);border:1px solid var(--border);border-radius:99px;transition:.25s;cursor:pointer}
+.slider:before{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#8f94ab;top:50%;left:3px;transform:translateY(-50%);transition:.25s}
+.switch input:checked+.slider{background:linear-gradient(135deg,#ec4899,#a855f7);border-color:transparent}
+.switch input:checked+.slider:before{left:23px;background:#fff}
+.toggle-row{display:flex;align-items:center;gap:13px;padding:13px 0}
+.toggle-row .tt{font-size:13.5px;font-weight:700}
+.toggle-row .td{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* stat */
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden}
+.stat-card:after{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:var(--grad);opacity:.09;filter:blur(6px)}
+.stat-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px;background:rgba(236,72,153,.13);border:1px solid rgba(236,72,153,.25)}
+.stat-val{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.stat-lab{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+
+/* dropzone */
+.dropzone{
+  border:2px dashed var(--border2);border-radius:var(--radius);padding:42px 24px;text-align:center;
+  background:var(--surface);cursor:pointer;transition:all .2s ease;
 }
-@media print { .sidebar, .topbar, .input-area, .modal-overlay { display: none; } .main { display: block; } .chat-container { overflow: visible; height: auto; } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-.hidden { display: none !important; }
+.dropzone:hover,.dropzone.drag{border-color:var(--acc);background:linear-gradient(160deg,rgba(236,72,153,.08),rgba(168,85,247,.06))}
+.dz-ico{width:66px;height:66px;margin:0 auto 16px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 10px 26px rgba(236,72,153,.35)}
+.dz-title{font-size:16px;font-weight:800}
+.dz-sub{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
+.dz-formats{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+
+/* media item */
+.media-item{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px;animation:fadeUp .3s ease}
+.media-item.sel{border-color:var(--acc)}
+.mi-top{display:flex;gap:14px;align-items:flex-start}
+.mi-thumb{width:86px;height:86px;border-radius:12px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--border)}
+.mi-thumb.video-thumb{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--muted)}
+.mi-info{flex:1;min-width:0}
+.mi-name{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi-meta{font-size:11.5px;color:var(--muted);margin-top:3px}
+.mi-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.mi-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.mi-caption{margin-top:12px}
+.score-pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12.5px;padding:5px 12px;border-radius:99px}
+.score-pill.s-high{background:rgba(52,211,153,.14);color:#6ee7b7}
+.score-pill.s-mid{background:rgba(245,158,11,.14);color:#fcd34d}
+.score-pill.s-low{background:rgba(248,113,113,.14);color:#fca5a5}
+.hashtag-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.hchip{font-size:11.5px;font-weight:600;color:#d8b4fe;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);padding:4px 10px;border-radius:99px}
+
+/* gauge */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.gauge{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.gauge:before{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--surface2)}
+.gauge-val{position:relative;font-size:36px;font-weight:800;z-index:1}
+.gauge-val small{font-size:14px;color:var(--muted);font-weight:700}
+.gauge-lab{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.bar-row{margin-bottom:13px}
+.bar-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px}
+.bar-top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--grad);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+
+/* log console */
+.console{background:#0a0c15;border:1px solid var(--border);border-radius:14px;padding:14px;font-family:'Fira Code',ui-monospace,'Cascadia Code',Consolas,monospace;font-size:12px;line-height:1.75;max-height:230px;overflow-y:auto}
+.console .ln{display:flex;gap:10px}
+.console .t{color:var(--muted2);flex-shrink:0}
+.console .m.ok{color:#6ee7b7}.console .m.err{color:#fca5a5}.console .m.info{color:#7dd3fc}.console .m.warn{color:#fcd34d}.console .m{color:#c3c8db;word-break:break-word}
+
+/* chat */
+.chat-box{display:flex;flex-direction:column;gap:11px;max-height:380px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
+.msg{max-width:85%;padding:11px 15px;border-radius:15px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.msg.user{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:5px}
+.msg.bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:5px}
+.chat-input-row{display:flex;gap:10px}
+.chat-input-row .input{flex:1}
+
+/* list rows */
+.row-item{display:flex;align-items:center;gap:13px;padding:13px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;margin-top:10px;flex-wrap:wrap}
+.row-item .ri-ico{width:44px;height:44px;border-radius:12px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.ri-main{flex:1;min-width:200px}
+.ri-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.ri-sub{font-size:11.5px;color:var(--muted);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.ri-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8}
+.empty .big{font-size:34px;display:block;margin-bottom:8px}
+
+/* accordion */
+details.acc{background:var(--surface2);border:1px solid var(--border);border-radius:13px;margin-top:10px;overflow:hidden}
+details.acc summary{padding:14px 16px;font-size:13.5px;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary:after{content:"+";margin-left:auto;font-size:17px;color:var(--muted)}
+details.acc[open] summary:after{content:"–"}
+details.acc .acc-body{padding:0 16px 15px;font-size:12.5px;color:var(--muted);line-height:1.8}
+details.acc .acc-body b{color:var(--text)}
+details.acc .acc-body ol,.acc-body ul{padding-left:20px;margin:8px 0}
+kbd{background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:1px 7px;font-size:11px;font-family:inherit}
+
+/* tips list */
+.tips-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.tips-list li{display:flex;gap:10px;font-size:13px;line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px}
+.tips-list li .n{width:22px;height:22px;border-radius:8px;background:var(--grad);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* modal */
+.modal-mask{position:fixed;inset:0;background:rgba(4,5,10,.72);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-mask.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:440px;box-shadow:0 24px 70px rgba(0,0,0,.6);animation:fadeUp .25s ease}
+.modal h3{font-size:16px;font-weight:800;margin-bottom:5px}
+.modal .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+/* toast */
+#toasts{position:fixed;top:18px;right:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:360px}
+.toast{background:var(--surface);border:1px solid var(--border2);border-left:4px solid var(--acc);border-radius:13px;padding:13px 16px;font-size:13px;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:slideIn .3s ease;line-height:1.5}
+.toast.ok{border-left-color:var(--ok)}.toast.err{border-left-color:var(--err)}.toast.warn{border-left-color:var(--amber)}
+.toast b{display:block;font-size:12.5px;margin-bottom:2px}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+/* misc */
+.result-box{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:15px;font-size:13px;line-height:1.7;margin-top:14px;white-space:pre-wrap;word-break:break-word}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notice{display:flex;gap:11px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:13px;padding:13px 15px;font-size:12.5px;line-height:1.65;color:#fcd34d;margin-bottom:16px}
+.notice.info{background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#7dd3fc}
+.notice.green{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#6ee7b7}
+.img-result{max-width:100%;border-radius:13px;border:1px solid var(--border);margin-top:14px;display:block}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.fchip{padding:8px 15px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.fchip.active{background:var(--grad);color:#fff;border-color:transparent}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,5,10,.6);z-index:45}
+.overlay.show{display:block}
+
+/* responsive */
+@media (max-width:1020px){
+  .grid.g4{grid-template-columns:1fr 1fr}
+  .grid.g3{grid-template-columns:1fr}
+  .grid.g2{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:none;box-shadow:0 0 60px rgba(0,0,0,.6)}
+  .main{margin-left:0}
+  .hamburger{display:flex;align-items:center;justify-content:center}
+  .content{padding:16px}
+  .topbar{padding:12px 16px}
+  .clock,.hide-m{display:none}
+}
+@media (max-width:560px){
+  .grid.g4{grid-template-columns:1fr}
+  .dz-title{font-size:14.5px}
+  .stat-val{font-size:22px}
+  #toasts{left:12px;right:12px;max-width:none}
+}
 </style>
 </head>
 <body>
+<div class="app">
 
-<!-- ============ LANDING PAGE ============ -->
-<div class="landing" id="landing">
-  <div class="landing-bg">
-    <div class="landing-blob b1"></div>
-    <div class="landing-blob b2"></div>
-    <div class="landing-blob b3"></div>
-  </div>
-  <div class="landing-content">
-    <div class="landing-logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <div class="logo-text">
-        <span class="t1">Tanya</span><span class="t2">MAS BAYU</span><span class="t3">AI</span>
-      </div>
-    </div>
-    <h1>Teman Pintar untuk <span class="grad">Semua Kebutuhan</span></h1>
-    <p class="tagline">Tanya apa saja, Mas Bayu bantu jawab dengan AI. Belajar, bekerja, coding, menulis, dan membuat konten jadi lebih mudah.</p>
-    <button class="btn-cta" id="startBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      MULAI BERTANYA
-    </button>
-    <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">🤖</div><h3>AI Pintar</h3><p>Didukung Puter AI dengan model terkini untuk jawaban akurat dan terstruktur.</p></div>
-      <div class="feature-card"><div class="feature-icon">⚡</div><h3>Cepat &amp; Mudah</h3><p>Tinggal ketik pertanyaan dan langsung dapatkan jawaban dalam hitungan detik.</p></div>
-      <div class="feature-card"><div class="feature-icon">📚</div><h3>Banyak Kegunaan</h3><p>Belajar, bisnis, coding, menulis, terjemahan, dan berbagai kebutuhan kreatif.</p></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ APP ============ -->
-<div class="app" id="app">
+  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-      <div class="sidebar-title">MAS BAYU AI<small>TANYA APA SAJA</small></div>
+    <div class="brand">
+      <div class="brand-logo">🎬</div>
+      <div>
+        <div class="brand-name">Reel<span>Pro AI</span></div>
+        <div class="brand-sub">FB Pro Auto Uploader</div>
+      </div>
     </div>
-    <button class="new-chat-btn" id="newChatBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Chat Baru
-    </button>
-    <div class="sidebar-section"><div class="sidebar-section-title"><span>Riwayat Chat</span></div></div>
-    <div class="chat-list" id="chatList"><div class="chat-list-empty">Belum ada percakapan.<br>Mulai chat baru sekarang!</div></div>
-    <div class="sidebar-footer">
-      <button class="sidebar-footer-btn" id="settingsBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Pengaturan
-      </button>
-      <button class="sidebar-footer-btn" id="aboutBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        Tentang
-      </button>
+    <nav class="nav" aria-label="Navigasi utama">
+      <div class="nav-label">Menu</div>
+      <button class="nav-item active" data-nav="home"><span class="ico">🏠</span> Beranda</button>
+      <button class="nav-item" data-nav="compose"><span class="ico">⬆️</span> Buat Post</button>
+      <button class="nav-item" data-nav="ai"><span class="ico">🤖</span> AI Studio</button>
+      <button class="nav-item" data-nav="queue"><span class="ico">📅</span> Antrean Otomatis</button>
+      <button class="nav-item" data-nav="history"><span class="ico">📜</span> Riwayat</button>
+      <div class="nav-label">Sistem</div>
+      <button class="nav-item" data-nav="settings"><span class="ico">⚙️</span> Pengaturan</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="credit-card">
+        <b>Puter AI</b> — pembaca algoritma &amp; generator caption.
+        <div class="status-row"><span class="dot warn" id="dotPuter"></span><span id="txtPuter">Memeriksa Puter AI…</span></div>
+        <div class="status-row"><span class="dot warn" id="dotFb"></span><span id="txtFb">Facebook: memeriksa…</span></div>
+        <div class="status-row"><span class="dot warn" id="dotEng"></span><span id="txtEng">Engine server: memeriksa…</span></div>
+      </div>
     </div>
   </aside>
+  <div class="overlay" id="overlay"></div>
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <main class="main">
+  <!-- ============ MAIN ============ -->
+  <div class="main">
     <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-toggle" id="menuToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        <div class="topbar-title">
-          <h1>TANYA KE MAS BAYU AI</h1>
-          <p>Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi.</p>
-          <div class="status-badge"><span class="status-dot"></span>AI ONLINE</div>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <button class="icon-btn" id="themeToggle" title="Ganti Tema">
-          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </button>
-        <button class="icon-btn" id="exportBtn" title="Export Chat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </button>
+      <button class="hamburger" id="hamburger" aria-label="Buka menu">☰</button>
+      <div class="page-title" id="pageTitle">Beranda<small id="pageSub">Ringkasan performa &amp; algoritma kamu</small></div>
+      <div class="top-right">
+        <span class="chip hide-m">🟣 Puter AI: <b id="chipPuter">cek…</b></span>
+        <span class="chip">⚙️ Engine: <b id="chipEng">…</b></span>
+        <span class="chip clock" id="clock">--:--:--</span>
       </div>
     </header>
 
-    <div class="chat-container" id="chatContainer"></div>
+    <main class="content">
 
-    <div class="input-area">
-      <div class="input-wrapper">
-        <div class="input-tools">
-          <button class="input-tool-btn" id="voiceBtn" title="Input Suara">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
+      <!-- ======== HALAMAN: BERANDA ======== -->
+      <section class="page active" id="page-home" aria-label="Beranda">
+        <div class="notice green">
+          <span>☁️</span>
+          <span><b>Engine posting 24/7 aktif di server</b> — posting terjadwal tetap berjalan walau PC, laptop, atau browser kamu dimatikan. Media &amp; antrean tersimpan aman di server.</span>
         </div>
-        <textarea class="chat-input" id="chatInput" placeholder="Tulis pertanyaan kamu di sini..." rows="1"></textarea>
-        <button class="send-btn" id="sendBtn" title="Kirim">
-          <svg id="sendIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-      <div class="input-hint"><kbd>Enter</kbd> kirim • <kbd>Shift + Enter</kbd> baris baru • Mas Bayu siap membantu kapan saja</div>
-    </div>
-  </main>
-</div>
-
-<!-- ============ SETTINGS MODAL ============ -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Pengaturan</h2>
-      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <h3>Tampilan</h3>
-      <div class="setting-row">
-        <div class="setting-label">Tema<small>Pilih tampilan aplikasi</small></div>
-        <select class="select" id="settingTheme"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select>
-      </div>
-
-      <h3>Chat</h3>
-      <div class="setting-row"><div class="setting-label">Enter untuk mengirim<small>Matikan untuk Enter = baris baru</small></div><div class="toggle on" id="settingEnter"></div></div>
-      <div class="setting-row"><div class="setting-label">Tampilkan timestamp<small>Tampilkan waktu pada setiap pesan</small></div><div class="toggle on" id="settingTimestamp"></div></div>
-      <div class="setting-row"><div class="setting-label">Simpan riwayat<small>Simpan percakapan di perangkat</small></div><div class="toggle on" id="settingSaveHistory"></div></div>
-
-      <h3>AI</h3>
-      <div class="setting-row">
-        <div class="setting-label">Model AI<small>Pilih model Puter AI</small></div>
-        <select class="select" id="settingModel">
-          <option value="gpt-4o-mini">GPT-4o Mini (Cepat)</option>
-          <option value="gpt-4o">GPT-4o (Pintar)</option>
-          <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
-          <option value="claude-3-haiku">Claude 3 Haiku</option>
-          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <div class="setting-label">Panjang jawaban<small>Kontrol panjang respons AI</small></div>
-        <select class="select" id="settingLength"><option value="short">Pendek</option><option value="medium">Sedang</option><option value="long">Panjang</option></select>
-      </div>
-
-      <h3>🔊 Suara Bacakan (Text-to-Speech)</h3>
-      <div class="setting-row">
-        <div class="setting-label">Suara Browser<small>Pilih suara untuk fitur "Bacakan"</small></div>
-        <select class="select" id="settingTtsVoice"><option value="">Default Browser</option></select>
-      </div>
-      <div class="setting-row">
-        <div class="setting-label">Bahasa Suara<small>Filter bahasa untuk TTS</small></div>
-        <select class="select" id="settingTtsLang">
-          <option value="all">Semua Bahasa</option>
-          <option value="id">Indonesia</option>
-          <option value="en">Inggris</option>
-          <option value="ar">Arab</option>
-          <option value="zh">Cina</option>
-          <option value="ja">Jepang</option>
-          <option value="ko">Korea</option>
-          <option value="es">Spanyol</option>
-          <option value="fr">Prancis</option>
-          <option value="de">Jerman</option>
-          <option value="it">Italia</option>
-          <option value="pt">Portugis</option>
-          <option value="ru">Rusia</option>
-        </select>
-      </div>
-
-      <h3>💾 Download MP3 (Puter AI)</h3>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Unduh jawaban AI sebagai file MP3 menggunakan Puter AI TTS. Gratis, tanpa limit, dan mendukung bahasa Indonesia secara otomatis.</p>
-      <div class="setting-row">
-        <div class="setting-label">Tes Suara Puter AI<small>Dengar preview suara download</small></div>
-        <button class="btn primary" id="testDownloadVoice">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Tes Suara
-        </button>
-      </div>
-
-      <h3>Data</h3>
-      <div class="setting-row">
-        <div class="setting-label">Export chat<small>Unduh semua percakapan</small></div>
-        <div class="btn-group" style="margin-top:0">
-          <button class="btn" id="exportTxt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>TXT</button>
-          <button class="btn" id="exportJson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>JSON</button>
-          <button class="btn" id="exportMd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>MD</button>
-        </div>
-      </div>
-      <div class="setting-row">
-        <div class="setting-label">Import chat<small>Muat file JSON percakapan</small></div>
-        <button class="btn" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button>
-        <input type="file" id="importFile" accept=".json" style="display:none">
-      </div>
-      <div class="setting-row">
-        <div class="setting-label">Hapus semua riwayat<small>Tindakan ini tidak dapat dibatalkan</small></div>
-        <button class="btn danger" id="clearAllBtn">Hapus Semua</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ ABOUT MODAL ============ -->
-<div class="modal-overlay" id="aboutModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Tentang Aplikasi</h2>
-      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body" style="text-align:center">
-      <div class="about-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-      <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;margin-bottom:6px;letter-spacing:-0.5px;">Tanya ke Mas Bayu AI</h2>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Versi 2.4.0 • Powered by Puter AI</p>
-      <p style="text-align:left">Tanya ke Mas Bayu adalah aplikasi asisten AI yang dirancang untuk membantu pengguna mendapatkan informasi, belajar, menyelesaikan pekerjaan, membuat konten, dan mencari solusi dengan cara yang sederhana dan mudah digunakan.</p>
-      <div class="about-stats">
-        <div class="about-stat"><div class="about-stat-num">10+</div><div class="about-stat-label">Kategori Bantuan</div></div>
-        <div class="about-stat"><div class="about-stat-num">∞</div><div class="about-stat-label">Pertanyaan</div></div>
-        <div class="about-stat"><div class="about-stat-num">ID</div><div class="about-stat-label">Bahasa Indonesia</div></div>
-        <div class="about-stat"><div class="about-stat-num">MP3</div><div class="about-stat-label">Download Audio</div></div>
-      </div>
-      <h3 style="text-align:left">AI Engine</h3>
-      <p style="text-align:left">Aplikasi ini menggunakan <strong style="color:var(--accent)">Puter AI</strong> sebagai mesin AI utama. Puter AI menyediakan akses ke berbagai model AI seperti GPT-4o, Claude, dan Gemini tanpa perlu API key di frontend.</p>
-      <h3 style="text-align:left">Fitur Utama</h3>
-      <p style="text-align:left">✓ Chat AI dengan streaming respons<br>✓ Riwayat percakapan tersimpan otomatis<br>✓ Input suara & text-to-speech<br>✓ <strong>Download jawaban sebagai MP3 (Powered by Puter AI)</strong><br>✓ Copy jawaban & kode<br>✓ Regenerate jawaban<br>✓ Dark & light mode<br>✓ Export & import chat<br>✓ Responsif untuk semua perangkat</p>
-      <p style="margin-top:18px;font-size:12px;color:var(--text-muted)">© 2026 Tanya ke Mas Bayu • Powered by Mas Bayu</p>
-    </div>
-  </div>
-</div>
-
-<!-- ============ EXPORT MODAL ============ -->
-<div class="modal-overlay" id="exportModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Export Chat</h2>
-      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <p>Pilih format untuk mengunduh percakapan saat ini:</p>
-      <div class="btn-group" style="flex-direction:column">
-        <button class="btn" data-export="txt" style="justify-content:flex-start;width:100%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="text-align:left"><div>Download sebagai TXT</div><small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format teks biasa</small></div></button>
-        <button class="btn" data-export="json" style="justify-content:flex-start;width:100%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="text-align:left"><div>Download sebagai JSON</div><small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format data terstruktur</small></div></button>
-        <button class="btn" data-export="md" style="justify-content:flex-start;width:100%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="text-align:left"><div>Download sebagai Markdown</div><small style="display:block;font-size:11px;color:var(--text-muted);font-weight:400">Format markdown</small></div></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast-container" id="toastContainer"></div>
-
-<script>
-/* ====================================================================
-   TANYA KE MAS BAYU AI — Main Application v2.4
-   ==================================================================== */
-
-// ============ CONFIG ============
-const AI_CONFIG = {
-  provider: "puter",
-  model: "gpt-4o-mini",
-  temperature: 0.7,
-  systemPrompt: `Kamu adalah Mas Bayu AI, asisten AI yang ramah, cerdas, membantu, dan mudah dipahami. Jawablah pertanyaan pengguna secara akurat dan terstruktur. Gunakan bahasa Indonesia sebagai bahasa utama kecuali pengguna meminta bahasa lain. Jika pertanyaan membutuhkan langkah-langkah, berikan langkah secara berurutan. Jika pengguna meminta kode, berikan kode lengkap dan jelaskan cara menggunakannya. Jangan mengarang informasi yang tidak diketahui. Jika informasi tidak cukup, katakan apa yang masih diperlukan. Gunakan markdown untuk formatting: **bold**, *italic*, daftar, dan blok kode dengan bahasa pemrograman yang sesuai.`
-};
-
-// ============ STATE ============
-const state = {
-  currentChatId: null,
-  chats: [],
-  isGenerating: false,
-  shouldStop: false,
-  recognition: null,
-  isRecording: false,
-  ttsPlaying: false,
-  ttsUtterance: null,
-  ttsMessageId: null,
-  downloadingMp3: new Set(),
-  settings: {
-    theme: 'light',
-    enterToSend: true,
-    showTimestamp: true,
-    saveHistory: true,
-    model: 'gpt-4o-mini',
-    responseLength: 'medium',
-    ttsVoice: '',
-    ttsLang: 'all',
-  }
-};
-
-const lengthMap = {
-  short: 'Berikan jawaban yang singkat dan padat.',
-  medium: 'Berikan jawaban yang cukup detail namun tetap mudah dipahami.',
-  long: 'Berikan jawaban yang sangat detail, lengkap, dan komprehensif.'
-};
-
-const QUICK_ACTIONS = [
-  { icon: '📚', title: 'Bantu belajar', desc: 'Penjelasan materi', prompt: 'Jelaskan apa itu fotosintesis dengan bahasa yang mudah dipahami untuk pelajar SD.' },
-  { icon: '🧮', title: 'Pecahkan soal', desc: 'Matematika & logika', prompt: 'Berapakah hasil dari 2x + 5 = 15? Jelaskan langkah-langkahnya.' },
-  { icon: '💻', title: 'Bantu coding', desc: 'HTML, CSS, JS, dll', prompt: 'Buatkan contoh kode HTML sederhana untuk halaman profil pribadi yang menarik.' },
-  { icon: '✍️', title: 'Buat tulisan', desc: 'Artikel, surat, dll', prompt: 'Tuliskan caption Instagram yang menarik untuk promosi jualan kopi.' },
-  { icon: '💡', title: 'Cari ide bisnis', desc: 'Inspirasi usaha', prompt: 'Berikan 5 ide bisnis modal kecil yang cocok untuk mahasiswa dengan budget Rp 100.000.' },
-  { icon: '📱', title: 'Buat konten', desc: 'Ide & script kreatif', prompt: 'Buatkan ide konten TikTok selama 7 hari bertema produktivitas harian.' },
-  { icon: '🤖', title: 'Buat prompt AI', desc: 'Prompt gambar & teks', prompt: 'Buatkan prompt AI yang detail untuk menghasilkan gambar pemandangan kota futuristik saat malam hari.' },
-  { icon: '📊', title: 'Analisis data', desc: 'Insight & strategi', prompt: 'Bagaimana cara menganalisis data penjualan sederhana untuk UMKM? Jelaskan langkah-langkahnya.' },
-  { icon: '🌐', title: 'Terjemahkan', desc: 'Multi bahasa', prompt: 'Terjemahkan kalimat berikut ke bahasa Inggris: "Saya senang belajar hal baru setiap hari."' },
-  { icon: '🧠', title: 'Jelaskan sesuatu', desc: 'Konsep sederhana', prompt: 'Jelaskan apa itu kecerdasan buatan (AI) dengan bahasa yang sangat sederhana seperti menjelaskan ke anak kecil.' }
-];
-
-// ============ DOM HELPERS ============
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => document.querySelectorAll(s);
-
-// ============ STORAGE ============
-function loadChats() {
-  try {
-    const data = localStorage.getItem('tanyaMasBayuChats');
-    state.chats = data ? JSON.parse(data) : [];
-  } catch (e) { state.chats = []; }
-}
-function saveChats() {
-  if (!state.settings.saveHistory) return;
-  try { localStorage.setItem('tanyaMasBayuChats', JSON.stringify(state.chats)); } catch (e) { showToast('Gagal menyimpan riwayat chat', 'error'); }
-}
-function loadSettings() {
-  try {
-    const data = localStorage.getItem('tanyaMasBayuSettings');
-    if (data) Object.assign(state.settings, JSON.parse(data));
-  } catch (e) {}
-}
-function saveSettings() {
-  try { localStorage.setItem('tanyaMasBayuSettings', JSON.stringify(state.settings)); } catch (e) {}
-}
-
-// ============ CHAT MANAGEMENT ============
-function generateId() { return 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); }
-function createNewChat() {
-  const chat = { id: generateId(), title: 'Chat Baru', messages: [], createdAt: Date.now(), updatedAt: Date.now() };
-  state.chats.unshift(chat);
-  state.currentChatId = chat.id;
-  saveChats();
-  renderSidebar();
-  renderChat();
-  closeSidebar();
-  $('#chatInput').focus();
-}
-function deleteChat(id) {
-  if (!confirm('Hapus percakapan ini?')) return;
-  state.chats = state.chats.filter(c => c.id !== id);
-  if (state.currentChatId === id) state.currentChatId = state.chats[0]?.id || null;
-  saveChats();
-  renderSidebar();
-  renderChat();
-  showToast('Chat berhasil dihapus', 'success');
-}
-function getCurrentChat() { return state.chats.find(c => c.id === state.currentChatId); }
-function generateTitle(text) {
-  const clean = text.trim().replace(/\s+/g, ' ');
-  return clean.length > 32 ? clean.substr(0, 32) + '...' : clean;
-}
-
-// ============ RENDERING ============
-function renderSidebar() {
-  const list = $('#chatList');
-  if (state.chats.length === 0) {
-    list.innerHTML = '<div class="chat-list-empty">Belum ada percakapan.<br>Mulai chat baru sekarang!</div>';
-    return;
-  }
-  list.innerHTML = state.chats.map(chat => `
-    <div class="chat-item ${chat.id === state.currentChatId ? 'active' : ''}" data-id="${chat.id}">
-      <svg class="chat-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <div class="chat-item-content">
-        <div class="chat-item-title">${escapeHtml(chat.title)}</div>
-        <div class="chat-item-time">${formatRelativeTime(chat.updatedAt)}</div>
-      </div>
-      <button class="chat-item-delete" data-delete="${chat.id}" title="Hapus">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      </button>
-    </div>
-  `).join('');
-  
-  $$('.chat-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      if (e.target.closest('[data-delete]')) return;
-      const id = item.dataset.id;
-      state.currentChatId = id;
-      renderSidebar();
-      renderChat();
-      closeSidebar();
-    });
-  });
-  $$('[data-delete]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      deleteChat(btn.dataset.delete);
-    });
-  });
-}
-
-function renderChat() {
-  const container = $('#chatContainer');
-  const chat = getCurrentChat();
-  if (!chat || chat.messages.length === 0) {
-    container.innerHTML = renderWelcome();
-    bindQuickActions();
-    return;
-  }
-  container.innerHTML = `<div class="messages" id="messages">${chat.messages.map(m => renderMessage(m)).join('')}</div>`;
-  bindMessageActions();
-  highlightCode();
-  scrollToBottom();
-}
-
-function renderWelcome() {
-  return `
-    <div class="welcome">
-      <div class="welcome-avatar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <h2>👋 Halo! Saya Mas Bayu AI</h2>
-      <p>Mau tanya apa hari ini? Pilih topik di bawah atau ketik pertanyaan kamu sendiri.</p>
-      <div class="quick-actions">
-        ${QUICK_ACTIONS.map((a, i) => `
-          <button class="quick-btn" data-prompt="${i}">
-            <div class="quick-btn-icon">${a.icon}</div>
-            <div class="quick-btn-text">${a.title}</div>
-            <div class="quick-btn-desc">${a.desc}</div>
-          </button>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function renderMessage(msg) {
-  const isUser = msg.role === 'user';
-  const time = state.settings.showTimestamp ? `<span class="message-time">${formatTime(msg.timestamp)}</span>` : '';
-  const avatar = isUser 
-    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`;
-  
-  let actions = '';
-  if (!isUser && msg.content) {
-    actions = `
-      <div class="message-actions">
-        <button class="action-btn" data-action="copy" data-msg-id="${msg.id}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy
-        </button>
-        <button class="action-btn" data-action="speak" data-msg-id="${msg.id}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 5 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          <span class="speak-label">Bacakan</span>
-        </button>
-        <button class="action-btn" data-action="download" data-msg-id="${msg.id}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span class="download-label">MP3</span>
-        </button>
-        <button class="action-btn" data-action="regenerate" data-msg-id="${msg.id}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Jawab Lagi
-        </button>
-      </div>
-    `;
-  }
-  
-  const bodyContent = isUser 
-    ? escapeHtml(msg.content).replace(/\n/g, '<br>')
-    : renderMarkdown(msg.content);
-  
-  return `
-    <div class="message ${isUser ? 'user' : 'ai'}" data-msg-id="${msg.id}">
-      <div class="message-avatar">${avatar}</div>
-      <div class="message-content">
-        <div class="message-header"><span class="message-name">${isUser ? 'Kamu' : 'Mas Bayu AI'}</span>${time}</div>
-        <div class="message-body">${bodyContent}</div>
-        ${actions}
-      </div>
-    </div>
-  `;
-}
-
-function renderMarkdown(text) {
-  if (!text) return '';
-  try {
-    marked.setOptions({ breaks: true, gfm: true, headerIds: false, mangle: false });
-    return marked.parse(text);
-  } catch (e) { return escapeHtml(text).replace(/\n/g, '<br>'); }
-}
-
-function highlightCode() {
-  $$('pre code').forEach(block => {
-    try { hljs.highlightElement(block); } catch (e) {}
-    if (!block.parentElement.parentElement.classList.contains('code-block-wrapper')) {
-      const pre = block.parentElement;
-      const wrapper = document.createElement('div');
-      wrapper.className = 'code-block-wrapper';
-      pre.parentNode.insertBefore(wrapper, pre);
-      const header = document.createElement('div');
-      header.className = 'code-block-header';
-      const lang = block.className.match(/language-(\w+)/);
-      header.innerHTML = `<span class="lang">${lang ? lang[1] : 'code'}</span>`;
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'code-copy-btn';
-      copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code`;
-      copyBtn.onclick = () => { copyToClipboard(block.textContent); showToast('Kode berhasil disalin', 'success'); };
-      header.appendChild(copyBtn);
-      wrapper.appendChild(header);
-      wrapper.appendChild(pre);
-    }
-  });
-}
-
-function bindQuickActions() {
-  $$('.quick-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.prompt);
-      const prompt = QUICK_ACTIONS[idx].prompt;
-      $('#chatInput').value = prompt;
-      autoResizeTextarea();
-      sendMessage();
-    });
-  });
-}
-
-function bindMessageActions() {
-  $$('[data-action]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const action = btn.dataset.action;
-      const msgId = btn.dataset.msgId;
-      const chat = getCurrentChat();
-      if (!chat) return;
-      const msg = chat.messages.find(m => m.id === msgId);
-      if (!msg) return;
-      
-      if (action === 'copy') {
-        copyToClipboard(msg.content);
-        showToast('Jawaban berhasil disalin', 'success');
-      } else if (action === 'speak') {
-        toggleTTS(msgId, msg.content);
-      } else if (action === 'download') {
-        downloadMP3(msgId, msg.content);
-      } else if (action === 'regenerate') {
-        regenerateAnswer(msgId);
-      }
-    });
-  });
-}
-
-// ============ AI INTEGRATION ============
-async function sendToAI(messages) {
-  const chat = getCurrentChat();
-  if (!chat) return;
-  
-  state.isGenerating = true;
-  state.shouldStop = false;
-  updateSendButton();
-  showTypingIndicator();
-  
-  const aiMessages = [
-    { role: 'system', content: AI_CONFIG.systemPrompt + ' ' + lengthMap[state.settings.responseLength] },
-    ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }))
-  ];
-  
-  try {
-    if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) throw new Error('Puter AI not available');
-    
-    const response = await puter.ai.chat(aiMessages, {
-      model: state.settings.model,
-      temperature: state.settings.temperature,
-      stream: true
-    });
-    
-    hideTypingIndicator();
-    
-    let fullText = '';
-    const msgId = 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    const newMsg = { id: msgId, role: 'assistant', content: '', timestamp: Date.now() };
-    chat.messages.push(newMsg);
-    
-    appendStreamingMessage(newMsg);
-    
-    let renderTimer = null;
-    
-    try {
-      for await (const part of response) {
-        if (state.shouldStop) break;
-        let chunk = '';
-        if (typeof part === 'string') chunk = part;
-        else if (part?.message?.content) chunk = part.message.content;
-        else chunk = part?.text || part?.delta || '';
-        
-        if (chunk) {
-          fullText += chunk;
-          newMsg.content = fullText;
-          if (!renderTimer) {
-            renderTimer = setTimeout(() => {
-              const el = $(`[data-msg-id="${msgId}"] .message-body`);
-              if (el) el.innerHTML = renderMarkdown(fullText);
-              scrollToBottom();
-              renderTimer = null;
-            }, 50);
-          }
-        }
-      }
-    } catch (streamErr) {
-      if (!fullText) {
-        const resp = await puter.ai.chat(aiMessages, { model: state.settings.model, temperature: state.settings.temperature });
-        fullText = typeof resp === 'string' ? resp : (resp?.message?.content || resp?.text || JSON.stringify(resp));
-        newMsg.content = fullText;
-      }
-    }
-    
-    if (renderTimer) { clearTimeout(renderTimer); renderTimer = null; }
-    if (!fullText.trim()) {
-      fullText = 'Maaf, saya tidak dapat memberikan jawaban saat ini. Silakan coba pertanyaan lain.';
-      newMsg.content = fullText;
-    }
-    
-    const el = $(`[data-msg-id="${msgId}"] .message-body`);
-    if (el) el.innerHTML = renderMarkdown(fullText);
-    highlightCode(); 
-    finalizeStreamMessage(msgId, newMsg);
-    
-    chat.updatedAt = Date.now();
-    saveChats();
-    renderSidebar();
-    
-  } catch (err) {
-    hideTypingIndicator();
-    handleAIError(err);
-  } finally {
-    state.isGenerating = false;
-    state.shouldStop = false;
-    updateSendButton();
-  }
-}
-
-function handleAIError(err) {
-  console.error('AI Error:', err);
-  let errorMsg = 'Maaf, Mas Bayu AI sedang mengalami kendala. Silakan coba lagi.';
-  if (err && (err.message?.includes('auth') || err.message?.includes('login') || err.message?.includes('Puter'))) {
-    errorMsg = 'Silakan hubungkan akun Puter terlebih dahulu untuk menggunakan AI. Klik tombol di bawah untuk masuk.';
-  }
-  const msgId = 'm_err_' + Date.now();
-  const errHtml = `
-    <div class="message ai" data-msg-id="${msgId}">
-      <div class="message-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-      <div class="message-content">
-        <div class="message-header"><span class="message-name">Mas Bayu AI</span></div>
-        <div class="message-body">
-          <p>${escapeHtml(errorMsg)}</p>
-          <div class="message-actions">
-            <button class="action-btn" onclick="window.retryLastMessage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>Coba Lagi</button>
-            ${err.message?.includes('Puter') ? `<button class="action-btn" onclick="window.loginPuter()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Login Puter</button>` : ''}
+        <div class="grid g4 mb">
+          <div class="stat-card">
+            <div class="stat-ico">🚀</div>
+            <div class="stat-val" id="stPosted">0</div>
+            <div class="stat-lab">Total Terpost ke FB</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico">📅</div>
+            <div class="stat-val" id="stQueued">0</div>
+            <div class="stat-lab">Antrean di Server</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico">🧠</div>
+            <div class="stat-val" id="stScore">—</div>
+            <div class="stat-lab">Rata-rata Skor Algoritma</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico">✨</div>
+            <div class="stat-val" id="stAi">0</div>
+            <div class="stat-lab">Caption AI Dibuat</div>
           </div>
         </div>
-      </div>
-    </div>
-  `;
-  const messages = $('#messages');
-  if (messages) messages.insertAdjacentHTML('beforeend', errHtml);
-  else $('#chatContainer').innerHTML = `<div class="messages" id="messages">${errHtml}</div>`;
-  scrollToBottom();
-}
 
-window.retryLastMessage = function() {
-  const chat = getCurrentChat();
-  if (!chat) return;
-  const errMsg = chat.messages.find(m => m.role === 'assistant' && m.content.includes('kendala'));
-  if (errMsg) chat.messages.pop();
-  renderChat();
-  const lastUser = [...chat.messages].reverse().find(m => m.role === 'user');
-  if (lastUser) {
-    const idx = chat.messages.indexOf(lastUser);
-    const history = chat.messages.slice(0, idx + 1);
-    sendToAI(history);
-  }
-};
-
-window.loginPuter = async function() {
-  try {
-    if (typeof puter !== 'undefined' && puter.auth) {
-      await puter.auth.signIn();
-      showToast('Berhasil masuk ke Puter', 'success');
-      window.retryLastMessage();
-    } else showToast('Puter tidak tersedia', 'error');
-  } catch (e) { showToast('Gagal masuk ke Puter', 'error'); }
-};
-
-// ============ TYPING INDICATOR ============
-function showTypingIndicator() {
-  const messages = $('#messages');
-  if (!messages) $('#chatContainer').innerHTML = `<div class="messages" id="messages"></div>`;
-  const msg = $('#messages');
-  msg.insertAdjacentHTML('beforeend', `
-    <div class="message ai" id="typingIndicator">
-      <div class="message-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-      <div class="message-content">
-        <div class="message-header"><span class="message-name">Mas Bayu AI</span></div>
-        <div class="message-body"><div class="typing-indicator"><span></span><span></span><span></span></div></div>
-      </div>
-    </div>
-  `);
-  scrollToBottom();
-}
-function hideTypingIndicator() { const el = $('#typingIndicator'); if (el) el.remove(); }
-function appendStreamingMessage(msg) {
-  const messages = $('#messages');
-  if (!messages) $('#chatContainer').innerHTML = `<div class="messages" id="messages"></div>`;
-  const container = $('#messages');
-  container.insertAdjacentHTML('beforeend', renderMessage(msg));
-  scrollToBottom();
-}
-function finalizeStreamMessage(msgId, msgData) {
-  const msgEl = $(`[data-msg-id="${msgId}"]`);
-  if (msgEl) {
-    const contentEl = msgEl.querySelector('.message-content');
-    if (contentEl && !contentEl.querySelector('.message-actions')) {
-      const actionsHtml = `
-        <div class="message-actions">
-          <button class="action-btn" data-action="copy" data-msg-id="${msgId}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
-          <button class="action-btn" data-action="speak" data-msg-id="${msgId}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 5 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span class="speak-label">Bacakan</span></button>
-          <button class="action-btn" data-action="download" data-msg-id="${msgId}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="download-label">MP3</span></button>
-          <button class="action-btn" data-action="regenerate" data-msg-id="${msgId}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Jawab Lagi</button>
+        <div class="card">
+          <div class="card-head">
+            <h3>🧠 Insight Algoritma Hari Ini</h3>
+            <span class="badge purple">Puter AI</span>
+            <div class="spacer"></div>
+            <button class="btn btn-ghost btn-sm" id="btnInsight">🔄 Muat Ulang Insight</button>
+          </div>
+          <div id="insightBody" class="small muted" style="line-height:1.8">Klik "Muat Ulang Insight" — AI akan membaca kondisi algoritma Facebook hari ini dan memberi rekomendasi posting terbaik untukmu.</div>
         </div>
-      `;
-      contentEl.insertAdjacentHTML('beforeend', actionsHtml);
-      bindMessageActions(); 
-    }
-  }
-}
 
-// ============ SEND MESSAGE ============
-async function sendMessage() {
-  if (state.isGenerating) return;
-  const input = $('#chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-  let chat = getCurrentChat();
-  if (!chat) { createNewChat(); chat = getCurrentChat(); }
-  const userMsg = { id: 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9), role: 'user', content: text, timestamp: Date.now() };
-  chat.messages.push(userMsg);
-  if (chat.messages.filter(m => m.role === 'user').length === 1) chat.title = generateTitle(text);
-  chat.updatedAt = Date.now();
-  saveChats();
-  input.value = '';
-  autoResizeTextarea();
-  renderChat();
-  renderSidebar();
-  await sendToAI(chat.messages.slice(0, -1).concat([userMsg]));
-}
+        <div class="grid g3">
+          <div class="card" style="cursor:pointer" data-goto="compose">
+            <div class="stat-ico">⬆️</div>
+            <h3 style="font-size:14.5px">Upload Reel / Foto / Video</h3>
+            <p class="small muted" style="margin-top:7px;line-height:1.65">Unggah media (tersimpan di server), AI membuat caption &amp; hashtag, lalu diposting otomatis.</p>
+          </div>
+          <div class="card" style="cursor:pointer" data-goto="ai">
+            <div class="stat-ico">🤖</div>
+            <h3 style="font-size:14.5px">Pembaca Algoritma</h3>
+            <p class="small muted" style="margin-top:7px;line-height:1.65">Analisis skor potensi viral, waktu posting terbaik, dan tips algoritma dari AI.</p>
+          </div>
+          <div class="card" style="cursor:pointer" data-goto="settings">
+            <div class="stat-ico">🔗</div>
+            <h3 style="font-size:14.5px">Hubungkan Facebook Pro</h3>
+            <p class="small muted" style="margin-top:7px;line-height:1.65">Sambungkan Halaman / profil profesional dengan Access Token untuk auto-posting.</p>
+          </div>
+        </div>
 
-async function regenerateAnswer(msgId) {
-  if (state.isGenerating) return;
-  const chat = getCurrentChat();
-  if (!chat) return;
-  const msgIdx = chat.messages.findIndex(m => m.id === msgId);
-  if (msgIdx === -1) return;
-  let userIdx = msgIdx - 1;
-  while (userIdx >= 0 && chat.messages[userIdx].role !== 'user') userIdx--;
-  if (userIdx < 0) return;
-  chat.messages.splice(msgIdx, 1);
-  saveChats();
-  renderChat();
-  const history = chat.messages.slice(0, userIdx + 1);
-  await sendToAI(history);
-}
+        <div class="card">
+          <div class="card-head"><h3>🕒 Aktivitas Terakhir (Server)</h3></div>
+          <div id="homeRecent"><div class="empty"><span class="big">📭</span>Belum ada aktivitas. Mulai dengan upload media pertamamu!</div></div>
+        </div>
+      </section>
 
-function stopGeneration() {
-  state.shouldStop = true;
-  if (state.ttsPlaying) stopTTS();
-}
+      <!-- ======== HALAMAN: BUAT POST ======== -->
+      <section class="page" id="page-compose" aria-label="Buat Post">
+        <div class="notice" id="simNotice">
+          <span>⚠️</span>
+          <span><b>Mode Simulasi aktif</b> — posting disimulasikan (tanpa benar-benar terkirim) sampai kamu menghubungkan token Facebook di <a href="#" data-goto="settings" style="color:inherit">Pengaturan</a>.</span>
+        </div>
 
-function updateSendButton() {
-  const btn = $('#sendBtn');
-  const icon = $('#sendIcon');
-  if (state.isGenerating) {
-    btn.classList.add('stop');
-    btn.title = 'Stop';
-    icon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
-  } else {
-    btn.classList.remove('stop');
-    btn.title = 'Kirim';
-    icon.innerHTML = '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>';
-  }
-}
+        <div class="card">
+          <div class="card-head">
+            <h3>📤 1. Upload Media</h3>
+            <span class="badge pink">Reel · Foto · Video</span>
+            <span class="badge green">☁️ Tersimpan di Server</span>
+            <div class="spacer"></div>
+            <label class="toggle-row" style="padding:0" title="Setelah upload + AI, langsung masuk antrean posting">
+              <div>
+                <div class="tt">Auto-Pilot Instan</div>
+                <div class="td">Optimasi AI + langsung posting setelah upload</div>
+              </div>
+              <span class="switch"><input type="checkbox" id="chkInstant"><span class="slider"></span></span>
+            </label>
+          </div>
+          <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Klik atau seret file untuk upload">
+            <div class="dz-ico">🎬</div>
+            <div class="dz-title">Seret &amp; letakkan file di sini, atau klik untuk pilih</div>
+            <div class="dz-sub">Media diunggah ke server sehingga antrean tetap berjalan <b>24/7 walau PC mati</b>. Video otomatis jadi <b>Reel</b>, foto jadi <b>post feed</b>.</div>
+            <div class="dz-formats">
+              <span class="badge green">MP4 / MOV</span>
+              <span class="badge pink">JPG / PNG / WEBP</span>
+              <span class="badge amber">Maks video ±1 GB</span>
+            </div>
+          </div>
+          <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" hidden>
+          <div id="mediaList"></div>
+        </div>
 
-function autoResizeTextarea() {
-  const ta = $('#chatInput');
-  ta.style.height = 'auto';
-  ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
-}
+        <div class="card">
+          <div class="card-head">
+            <h3>🛠️ 2. Aksi Cepat</h3>
+            <span class="badge purple">Puter AI</span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="btnAiAll">✨ Buat Caption AI untuk Semua</button>
+            <button class="btn btn-amber" id="btnScoreAll">🎯 Analisis Skor Semua</button>
+            <button class="btn btn-ok" id="btnPostAll">🚀 Post Semua Sekarang</button>
+            <button class="btn btn-ghost" id="btnScheduleAll">📅 Jadwalkan Semua…</button>
+            <button class="btn btn-danger" id="btnClearMedia">🗑️ Kosongkan Daftar</button>
+          </div>
+          <p class="small muted" style="margin-top:12px;line-height:1.7">💡 Alur: upload (ke server) → AI buat caption + hashtag → analisis algoritma → masuk antrean server → diposting ke Facebook Pro tepat waktu — bahkan saat kamu offline.</p>
+        </div>
 
-function scrollToBottom() {
-  const container = $('#chatContainer');
-  requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
-}
+        <div class="card">
+          <div class="card-head"><h3>🖥️ Log Proses</h3><div class="spacer"></div><button class="btn btn-ghost btn-sm" id="btnClearLog">Bersihkan</button></div>
+          <div class="console" id="console"><div class="ln"><span class="t">--:--:--</span><span class="m info">ReelPro AI siap. Menunggu perintah…</span></div></div>
+        </div>
+      </section>
 
-// ============ UTILITIES ============
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-function copyToClipboard(text) {
-  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-  else fallbackCopy(text);
-}
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); } catch (e) {}
-  document.body.removeChild(ta);
-}
-function formatTime(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-}
-function formatRelativeTime(ts) {
-  if (!ts) return '';
-  const now = Date.now();
-  const diff = now - ts;
-  const min = 60 * 1000, hour = 60 * min, day = 24 * hour;
-  if (diff < min) return 'Baru saja';
-  if (diff < hour) return Math.floor(diff / min) + ' mnt lalu';
-  if (diff < day) return Math.floor(diff / hour) + ' jam lalu';
-  if (diff < 7 * day) return Math.floor(diff / day) + ' hari lalu';
-  const d = new Date(ts);
-  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-}
+      <!-- ======== HALAMAN: AI STUDIO ======== -->
+      <section class="page" id="page-ai" aria-label="AI Studio">
+        <div class="card">
+          <div class="card-head">
+            <h3>🧠 Pembaca Algoritma Facebook</h3>
+            <span class="badge purple">Puter AI</span>
+            <div class="spacer"></div>
+            <select class="select" id="selModel" style="width:auto;min-width:190px">
+              <option value="gpt-4o-mini">Model: GPT-4o mini</option>
+              <option value="gpt-4o">Model: GPT-4o</option>
+              <option value="gpt-5-nano">Model: GPT-5 Nano</option>
+              <option value="claude-sonnet-4">Model: Claude Sonnet</option>
+              <option value="deepseek-chat">Model: DeepSeek Chat</option>
+            </select>
+          </div>
+          <div class="grid g2">
+            <div>
+              <label class="label" for="aiTopic">Deskripsi konten kamu</label>
+              <textarea class="textarea" id="aiTopic" placeholder="Contoh: video masak resep rendang 30 detik dengan bumbu instan, target ibu muda…"></textarea>
+              <div class="grid g2" style="margin-top:12px">
+                <div>
+                  <label class="label" for="aiType">Jenis Konten</label>
+                  <select class="select" id="aiType">
+                    <option value="Reel video">Reel Video</option>
+                    <option value="Foto tunggal">Foto Tunggal</option>
+                    <option value="Carousel foto">Carousel Foto</option>
+                    <option value="Video panjang">Video Panjang</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="label" for="aiAudience">Target Audiens</label>
+                  <input class="input" id="aiAudience" placeholder="Contoh: ibu muda 25-35 th">
+                </div>
+              </div>
+              <div style="margin-top:12px">
+                <label class="label" for="aiTime">Rencana Waktu Posting</label>
+                <input class="input" id="aiTime" type="time" value="19:00">
+              </div>
+              <button class="btn btn-primary" id="btnAnalyze" style="width:100%;margin-top:16px">🎯 Analisis Algoritma Sekarang</button>
+            </div>
+            <div id="analyzeResult">
+              <div class="empty" style="background:var(--surface2);border:1px dashed var(--border2);border-radius:14px">
+                <span class="big">📊</span>Hasil analisis akan muncul di sini:<br>skor viral, breakdown penilaian, tips algoritma,<br>hashtag rekomendasi &amp; waktu terbaik.
+              </div>
+            </div>
+          </div>
+        </div>
 
-// ============ TOAST ============
-function showToast(message, type = 'info') {
-  const container = $('#toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  const icons = {
-    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
-  };
-  toast.innerHTML = `${icons[type] || icons.info}<span>${escapeHtml(message)}</span>`;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.add('out');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
+        <div class="grid g2">
+          <div class="card">
+            <div class="card-head"><h3>💬 Tanya Ahli Algoritma</h3><span class="badge green">Chat AI</span></div>
+            <div class="chat-box" id="chatBox">
+              <div class="msg bot">Halo! 👋 Aku asisten AI yang paham algoritma Facebook. Tanya apa saja — misal: <b>"kapan jam terbaik posting reel?"</b> atau <b>"kenapa reach akunku turun?"</b></div>
+            </div>
+            <div class="chat-input-row">
+              <input class="input" id="chatInput" placeholder="Tulis pertanyaanmu…" aria-label="Pertanyaan chat">
+              <button class="btn btn-primary" id="btnChat">Kirim</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>🖼️ Generator Gambar AI</h3><span class="badge amber">Bonus</span></div>
+            <label class="label" for="imgPrompt">Deskripsi gambar</label>
+            <textarea class="textarea" id="imgPrompt" style="min-height:70px" placeholder="Contoh: thumbnail makanan rendang menggoda dengan steam, gaya fotografi komersial"></textarea>
+            <button class="btn btn-amber" id="btnGenImg" style="width:100%;margin-top:12px">🎨 Buat Gambar dengan AI</button>
+            <div id="imgResult"></div>
+          </div>
+        </div>
+      </section>
 
-// ============ THEME ============
-function applyTheme(theme) {
-  const html = document.documentElement;
-  let actualTheme = theme;
-  if (theme === 'system') actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  html.setAttribute('data-theme', actualTheme);
-  updateThemeIcon(actualTheme);
-}
-function updateThemeIcon(theme) {
-  const icon = $('#themeIcon');
-  if (theme === 'dark') icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  else icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-}
-function toggleTheme() {
-  const current = state.settings.theme;
-  const newTheme = current === 'dark' ? 'light' : 'dark';
-  state.settings.theme = newTheme;
-  applyTheme(newTheme);
-  saveSettings();
-  $('#settingTheme').value = newTheme;
-}
+      <!-- ======== HALAMAN: ANTREAN ======== -->
+      <section class="page" id="page-queue" aria-label="Antrean Otomatis">
+        <div class="card">
+          <div class="card-head">
+            <h3>☁️ Engine Server 24/7</h3>
+            <span class="badge gray" id="engBadge">CEK…</span>
+          </div>
+          <div class="grid g2">
+            <div>
+              <div class="result-box" style="margin-top:0" id="engStatus">Memeriksa engine server…</div>
+              <p class="small muted" style="margin-top:10px;line-height:1.7">Worker di server memeriksa antrean setiap 30 detik: caption AI (jika kosong) → posting ke Facebook Pro. <b>PC / tab boleh dimatikan.</b></p>
+            </div>
+            <div>
+              <div class="grid g2" style="gap:10px">
+                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engPending">0</div><div class="stat-lab">Menunggu</div></div>
+                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engDone">0</div><div class="stat-lab">Terkirim</div></div>
+                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engFailed">0</div><div class="stat-lab">Gagal</div></div>
+                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engTicks">0</div><div class="stat-lab">Siklus engine</div></div>
+              </div>
+              <p class="small muted" style="margin-top:8px">Tick terakhir: <span id="engLast">—</span></p>
+            </div>
+          </div>
+          <div class="notice info" style="margin:16px 0 0">
+            <span>💡</span>
+            <span>Posting terjadwal berjalan di server (database + worker). Selama aplikasi ini aktif di hosting/server, antrean tetap diproses <b>walau semua perangkat kamu mati</b>.</span>
+          </div>
+        </div>
 
-// ============ VOICE INPUT ============
-function initVoiceInput() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    $('#voiceBtn').addEventListener('click', () => showToast('Browser Anda belum mendukung input suara.', 'info'));
-    return;
-  }
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'id-ID';
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  let finalTranscript = '';
-  recognition.onstart = () => {
-    state.isRecording = true;
-    $('#voiceBtn').classList.add('recording');
-    showToast('Mendengarkan... Silakan bicara', 'info');
-  };
-  recognition.onresult = (e) => {
-    let interim = '';
-    finalTranscript = '';
-    for (let i = 0; i < e.results.length; i++) {
-      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
-    }
-    const input = $('#chatInput');
-    input.value = finalTranscript + interim;
-    autoResizeTextarea();
-  };
-  recognition.onerror = (e) => {
-    showToast('Error input suara: ' + e.error, 'error');
-    state.isRecording = false;
-    $('#voiceBtn').classList.remove('recording');
-  };
-  recognition.onend = () => {
-    state.isRecording = false;
-    $('#voiceBtn').classList.remove('recording');
-    if (finalTranscript.trim()) $('#chatInput').focus();
-  };
-  state.recognition = recognition;
-  $('#voiceBtn').addEventListener('click', () => {
-    if (state.isRecording) recognition.stop();
-    else { try { recognition.start(); } catch (e) { showToast('Tidak dapat memulai input suara', 'error'); } }
+        <div class="card">
+          <div class="card-head">
+            <h3>📅 Daftar Antrean (Server)</h3>
+            <span class="badge gray" id="queueCount">0 item</span>
+            <div class="spacer"></div>
+            <button class="btn btn-ghost btn-sm" id="btnRefreshQueue">🔄 Segarkan</button>
+          </div>
+          <div id="queueList"><div class="empty"><span class="big">🗓️</span>Memuat antrean…</div></div>
+        </div>
+      </section>
+
+      <!-- ======== HALAMAN: RIWAYAT ======== -->
+      <section class="page" id="page-history" aria-label="Riwayat">
+        <div class="card">
+          <div class="card-head">
+            <h3>📜 Riwayat Posting (Server)</h3>
+            <div class="spacer"></div>
+            <button class="btn btn-ghost btn-sm" id="btnRefreshHist">🔄 Segarkan</button>
+            <button class="btn btn-ghost btn-sm" id="btnExport">⬇️ Export JSON</button>
+            <button class="btn btn-danger btn-sm" id="btnClearHistory">🗑️ Hapus Riwayat</button>
+          </div>
+          <div class="filter-chips" id="histFilter">
+            <button class="fchip active" data-f="all">Semua</button>
+            <button class="fchip" data-f="Reel">Reel</button>
+            <button class="fchip" data-f="Foto">Foto</button>
+            <button class="fchip" data-f="Video">Video</button>
+            <button class="fchip" data-f="sim">Simulasi</button>
+          </div>
+          <div id="historyList"><div class="empty">Memuat…</div></div>
+        </div>
+      </section>
+
+      <!-- ======== HALAMAN: PENGATURAN ======== -->
+      <section class="page" id="page-settings" aria-label="Pengaturan">
+        <div class="card">
+          <div class="card-head">
+            <h3>📘 Koneksi Facebook Pro</h3>
+            <span class="badge gray" id="fbConnBadge">MEMERIKSA…</span>
+            <span class="badge purple" id="saveState" style="display:none">Menyimpan…</span>
+          </div>
+          <div class="grid g2">
+            <div>
+              <label class="label" for="inpPageId">ID Halaman / Profil Pro</label>
+              <input class="input" id="inpPageId" placeholder="Contoh: 123456789012345">
+              <p class="small muted" style="margin-top:6px;line-height:1.6">ID Halaman FB (dapat dari → Tentang Halaman, atau via Graph API Explorer). Profil mode profesional juga didukung.</p>
+            </div>
+            <div>
+              <label class="label" for="inpToken">Access Token</label>
+              <div style="display:flex;gap:8px">
+                <input class="input" id="inpToken" type="password" placeholder="EAAG… token halaman" style="flex:1">
+                <button class="btn btn-ghost" id="btnShowToken" aria-label="Tampilkan token">👁️</button>
+              </div>
+              <p class="small muted" style="margin-top:6px;line-height:1.6">Token tersimpan di <b>database server</b> agar worker 24/7 bisa memposting walau browser mati. Tidak dibagikan ke pihak lain.</p>
+            </div>
+          </div>
+          <div class="grid g2" style="margin-top:14px">
+            <div>
+              <label class="label" for="selApi">Versi Graph API</label>
+              <select class="select" id="selApi">
+                <option value="v19.0">v19.0</option>
+                <option value="v20.0">v20.0</option>
+                <option value="v21.0">v21.0</option>
+                <option value="v22.0">v22.0</option>
+                <option value="v23.0">v23.0</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Aksi</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" id="btnTestConn" style="min-height:42px">🔌 Test Koneksi</button>
+                <button class="btn btn-ghost btn-sm" id="btnPageToken" style="min-height:42px">🔑 Ambil Page Token</button>
+              </div>
+            </div>
+          </div>
+          <div id="fbTestResult"></div>
+          <details class="acc">
+            <summary>📖 Panduan: cara mendapatkan Access Token Facebook</summary>
+            <div class="acc-body">
+              <ol>
+                <li>Buka <b>developers.facebook.com</b> → login → menu <b>My Apps</b> → <b>Create App</b> (tipe <b>Business</b>).</li>
+                <li>Masuk ke <b>Graph API Explorer</b> (Tools → Graph API Explorer).</li>
+                <li>Pilih aplikasimu, lalu di bagian <b>Permissions</b> tambahkan: <kbd>pages_show_list</kbd>, <kbd>pages_manage_posts</kbd>, <kbd>pages_read_engagement</kbd>.</li>
+                <li>Klik <b>Generate Access Token</b> → izinkan semua.</li>
+                <li>Tempel token sementara di kolom atas → klik <b>Ambil Page Token</b> → token halaman (berlaku lama) otomatis tersimpan di server.</li>
+                <li>Salin <b>ID Halaman</b> dari hasil test koneksi, isi di kolom Page ID.</li>
+              </ol>
+              <b>Catatan:</b> Posting ke profil pribadi tidak didukung API Facebook — gunakan Halaman atau profil <b>mode profesional (FB Pro)</b>.
+            </div>
+          </details>
+          <details class="acc">
+            <summary>☁️ Cara kerja posting otomatis 24/7</summary>
+            <div class="acc-body">
+              Saat kamu menjadwalkan/posting, media sudah tersimpan di server dan item antrean masuk ke database. Worker server berjalan tiap 30 detik: mengambil item jatuh tempo → membuat caption AI (jika kosong) → mengunggah ke Facebook Graph API (foto: <kbd>/photos</kbd>, video: <kbd>/videos</kbd>, Reel: 3 fase <kbd>video_reels</kbd> + <kbd>rupload</kbd> — dari server jadi tanpa kendala CORS) → mencatat hasil ke riwayat. Karena diproses di server, <b>PC, laptop, dan browser kamu boleh dimatikan</b>.
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>🤖 Puter AI &amp; Perilaku Aplikasi</h3></div>
+          <div class="toggle-row">
+            <div style="flex:1">
+              <div class="tt">Mode Simulasi <span class="badge gray">SERVER</span></div>
+              <div class="td">Posting disimulasikan tanpa mengirim ke Facebook (untuk testing alur). Otomatis aktif saat token belum diisi.</div>
+            </div>
+            <span class="switch"><input type="checkbox" id="chkSim"><span class="slider"></span></span>
+          </div>
+          <div class="toggle-row">
+            <div style="flex:1">
+              <div class="tt">Otomatis analisis algoritma sebelum posting <span class="badge gray">PUTER AI</span></div>
+              <div class="td">Setiap media dianalisis skor algoritmanya oleh Puter AI sebelum masuk antrean (berlaku saat kamu online di aplikasi).</div>
+            </div>
+            <span class="switch"><input type="checkbox" id="chkAutoAnalyze" checked><span class="slider"></span></span>
+          </div>
+          <div class="toggle-row">
+            <div style="flex:1">
+              <div class="tt">Selalu tambahkan hashtag AI <span class="badge gray">SERVER</span></div>
+              <div class="td">Server menambahkan hashtag optimal jika caption belum memiliki hashtag. Caption kosong otomatis dibuat AI server.</div>
+            </div>
+            <span class="switch"><input type="checkbox" id="chkAutoHashtag" checked><span class="slider"></span></span>
+          </div>
+          <div class="result-box" id="puterStatus">Memeriksa koneksi ke Puter AI…</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>🗑️ Zona Berbahaya</h3></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-danger" id="btnResetAll">Reset Semua Data (token, antrean, riwayat)</button>
+          </div>
+          <p class="small muted" style="margin-top:10px">Menghapus konfigurasi, seluruh antrean, dan riwayat di server + preferensi browser ini.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <footer style="padding:20px 24px;border-top:1px solid var(--border);margin-top:auto">
+      <p class="small muted" style="text-align:center">ReelPro AI — dibuat dengan ❤️ bertenaga <b>Puter AI</b> (js.puter.com) + AI Server &amp; Facebook Graph API. Gunakan sesuai kebijakan konten Facebook.</p>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal jadwal -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">📅 Jadwalkan Posting</h3>
+    <p class="sub">Worker server akan memposting otomatis saat waktunya tiba — walau PC kamu mati.</p>
+    <label class="label" for="scheduleInput">Waktu posting</label>
+    <input class="input" id="scheduleInput" type="datetime-local">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btnModalCancel">Batal</button>
+      <button class="btn btn-primary" id="btnModalSave">Simpan Jadwal</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+<script>
+/* =====================================================
+   ReelPro AI — Auto Upload Reel/Foto/Video ke FB Pro
+   AI Browser: Puter (js.puter.com/v2) — tanpa API key
+   AI Server: z-ai-web-dev-sdk (untuk caption saat offline)
+   Engine posting 24/7: worker server + database
+   ===================================================== */
+'use strict';
+
+/* ---------- STATE LOKAL (preferensi UI saja) ---------- */
+const LS_KEY = 'reelpro_ui_v2';
+const defaultState = () => ({
+  prefs: { model: 'gpt-4o-mini', instant: false, autoAnalyze: true, aiCaptions: 0 },
+  insight: null, insightDate: null
+});
+let store = defaultState();
+try {
+  const raw = localStorage.getItem(LS_KEY);
+  if (raw) { store = Object.assign(defaultState(), JSON.parse(raw)); store.prefs = Object.assign(defaultState().prefs, store.prefs); }
+} catch (e) { console.warn('Gagal memuat state:', e); }
+const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(store)); } catch (e) { console.warn('Gagal simpan:', e); } };
+
+/* media sesi ini — file langsung diunggah ke server */
+let sessionMedia = []; // {id,name,size,isVideo,previewURL,serverName,mediaType,uploadState,uploadError,mode,caption,hashtags,score,tips,analysis}
+let serverSettings = { pageId: '', accessToken: '', apiVersion: 'v19.0', simulate: true, autoHashtag: true, pageName: '' };
+let serverQueue = [];   // hasil /api/queue
+let serverHistory = []; // hasil /api/history
+let uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+/* ---------- HELPERS ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : (b / 1024).toFixed(0) + ' KB';
+const fmtTime = ts => new Date(ts).toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const errMsg = e => (e && e.message) ? e.message : (typeof e === 'string' ? e : (e ? JSON.stringify(e).slice(0, 200) : 'kesalahan tidak diketahui'));
+function nowStr() { return new Date().toLocaleTimeString('id-ID', { hour12: false }); }
+
+async function api(path, opts = {}) {
+  const r = await fetch('/api' + path, {
+    headers: opts.body ? { 'Content-Type': 'application/json' } : {},
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
   });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || j.message || 'HTTP ' + r.status);
+  return j;
 }
 
-// ============ TEXT TO SPEECH (Browser) ============
-function getBrowserVoices() {
-  if (!('speechSynthesis' in window)) return [];
-  return speechSynthesis.getVoices();
+function toast(msg, type = '', title = '') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = (title ? `<b>${esc(title)}</b>` : '') + esc(msg);
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }, 4600);
+}
+function log(msg, cls = '') {
+  const c = $('#console');
+  const ln = document.createElement('div');
+  ln.className = 'ln';
+  ln.innerHTML = `<span class="t">${nowStr()}</span><span class="m ${cls}">${esc(msg)}</span>`;
+  c.appendChild(ln);
+  while (c.children.length > 120) c.firstChild.remove();
+  c.scrollTop = c.scrollHeight;
 }
 
-function populateBrowserVoices() {
-  const select = $('#settingTtsVoice');
-  if (!select) return;
-  const voices = getBrowserVoices();
-  const langFilter = state.settings.ttsLang;
-  
-  let filtered = voices;
-  if (langFilter !== 'all') {
-    filtered = voices.filter(v => v.lang.toLowerCase().startsWith(langFilter));
-    if (filtered.length === 0) filtered = voices;
-  }
-  
-  select.innerHTML = '<option value="">Default Browser</option>' + filtered.map((v, i) => {
-    const idx = voices.indexOf(v);
-    return `<option value="${idx}">${escapeHtml(v.name)} (${v.lang})${v.default ? ' ★' : ''}</option>`;
-  }).join('');
-  
-  if (state.settings.ttsVoice) select.value = state.settings.ttsVoice;
+/* ---------- NAVIGASI ---------- */
+const PAGE_META = {
+  home: ['Beranda', 'Ringkasan performa & algoritma kamu'],
+  compose: ['Buat Post', 'Upload reel, foto & video → optimasi AI → posting 24/7'],
+  ai: ['AI Studio', 'Pembaca algoritma, chat ahli & generator gambar'],
+  queue: ['Antrean Otomatis', 'Antrean di server — berjalan walau PC mati'],
+  history: ['Riwayat', 'Semua posting yang sudah diproses server'],
+  settings: ['Pengaturan', 'Koneksi Facebook Pro & preferensi AI']
+};
+function goto(page) {
+  $$('.page').forEach(p => p.classList.remove('active'));
+  $('#page-' + page).classList.add('active');
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === page));
+  $('#pageTitle').innerHTML = esc(PAGE_META[page][0]) + `<small>${esc(PAGE_META[page][1])}</small>`;
+  $('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+$$('[data-nav]').forEach(b => b.addEventListener('click', () => goto(b.dataset.nav)));
+document.addEventListener('click', e => { const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); goto(g.dataset.goto); } });
+$('#hamburger').addEventListener('click', () => { $('#sidebar').classList.add('open'); $('#overlay').classList.add('show'); });
+$('#overlay').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show'); });
+
+/* jam */
+setInterval(() => { $('#clock').textContent = new Date().toLocaleTimeString('id-ID', { hour12: false }); }, 1000);
+$('#clock').textContent = new Date().toLocaleTimeString('id-ID', { hour12: false });
+
+/* ---------- STATUS BADGE ---------- */
+function puterReady() { return typeof window.puter !== 'undefined' && window.puter && window.puter.ai && typeof window.puter.ai.chat === 'function'; }
+function fbConfigured() { return !!(serverSettings.pageId && serverSettings.accessToken); }
+function effectiveSimulate() { return serverSettings.simulate || !fbConfigured(); }
+
+function refreshStatus() {
+  const pOk = puterReady();
+  $('#dotPuter').className = 'dot ' + (pOk ? 'on' : 'off');
+  $('#txtPuter').textContent = 'Puter AI: ' + (pOk ? 'terhubung ✓' : 'memuat / gagal');
+  $('#chipPuter').textContent = pOk ? 'aktif' : '…';
+  $('#dotFb').className = 'dot ' + (fbConfigured() ? 'on' : 'off');
+  $('#txtFb').textContent = 'Facebook: ' + (fbConfigured() ? ('Halaman ' + (serverSettings.pageName || serverSettings.pageId)) : 'belum terhubung');
+  $('#fbConnBadge').textContent = fbConfigured() ? 'TERHUBUNG' : 'BELUM TERHUBUNG';
+  $('#fbConnBadge').className = 'badge ' + (fbConfigured() ? 'green' : 'gray');
+  $('#simNotice').style.display = effectiveSimulate() ? 'flex' : 'none';
+  if (puterReady()) $('#puterStatus').textContent = '✅ Puter AI aktif — model: ' + store.prefs.model + '. Pemakaian pertama bisa memunculkan popup login Puter (gratis, tanpa API key).';
+}
+function refreshEngine(data) {
+  const ok = data && data.worker && data.worker.running;
+  $('#dotEng').className = 'dot ' + (ok ? 'on' : 'off');
+  $('#txtEng').textContent = 'Engine 24/7: ' + (ok ? 'berjalan di server' : 'tidak aktif');
+  $('#chipEng').textContent = ok ? '24/7 ✓' : 'mati';
+  if (!data) return;
+  const w = data.worker;
+  $('#engBadge').textContent = ok ? 'BERJALAN' : 'MATI';
+  $('#engBadge').className = 'badge ' + (ok ? 'green' : 'red');
+  $('#engStatus').innerHTML = ok
+    ? `🟢 Worker aktif — memeriksa antrean setiap <b>${(w.intervalMs || 30000) / 1000} detik</b>. Posting terjadwal tetap jalan walau PC/tab kamu ditutup.`
+    : `🔴 Worker tidak berjalan. Muat ulang halaman / restart server.`;
+  $('#engPending').textContent = data.counts.pending;
+  $('#engDone').textContent = data.counts.done;
+  $('#engFailed').textContent = data.counts.failed;
+  $('#engTicks').textContent = w.ticks ?? 0;
+  $('#engLast').textContent = w.lastTick ? fmtTime(w.lastTick) : '—';
 }
 
-function toggleTTS(msgId, text) {
-  if (state.ttsPlaying && state.ttsMessageId === msgId) {
-    stopTTS();
-    return;
+/* ---------- UPLOAD MEDIA KE SERVER ---------- */
+const dz = $('#dropzone'), fi = $('#fileInput');
+dz.addEventListener('click', () => fi.click());
+dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } });
+['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
+['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+dz.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+fi.addEventListener('change', () => { addFiles(fi.files); fi.value = ''; });
+
+function addFiles(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+  let added = 0;
+  for (const f of files) {
+    const isImg = /^image\/(jpeg|png|webp)$/.test(f.type);
+    const isVid = /^video\/(mp4|quicktime|webm)$/.test(f.type);
+    if (!isImg && !isVid) { toast(`"${f.name}" dilewati — format tidak didukung.`, 'warn', 'Dilewati'); continue; }
+    if (f.size > 1024 * 1024 * 1024) { toast(`"${f.name}" melebihi 1 GB.`, 'err', 'Terlalu besar'); continue; }
+    const item = {
+      id: uid(), file: f, name: f.name, size: f.size, isVideo: isVid,
+      previewURL: isImg ? URL.createObjectURL(f) : null,
+      serverName: null, mediaType: isVid ? 'video' : 'photo',
+      uploadState: 'uploading', uploadError: '',
+      mode: 'auto', caption: '', hashtags: [], score: null, tips: null, analysis: null
+    };
+    sessionMedia.unshift(item); added++;
+    uploadToServer(item);
+    log(`📥 Media ditambahkan: ${f.name} (${fmtSize(f.size)}) — diunggah ke server…`, 'info');
   }
-  stopTTS();
-  if (!('speechSynthesis' in window)) {
-    showToast('Browser tidak mendukung text-to-speech', 'info');
-    return;
-  }
-  
-  const cleanText = text
-    .replace(/```[\s\S]*?```/g, ' blok kode ')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/[*#>_~`]/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\n+/g, '. ')
-    .trim();
-  
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.lang = 'id-ID';
-  utterance.rate = 1;
-  utterance.pitch = 1;
-  
-  const voices = getBrowserVoices();
-  if (state.settings.ttsVoice && voices[state.settings.ttsVoice]) {
-    utterance.voice = voices[state.settings.ttsVoice];
-    utterance.lang = voices[state.settings.ttsVoice].lang;
-  } else {
-    const idVoice = voices.find(v => v.lang.startsWith('id'));
-    if (idVoice) utterance.voice = idVoice;
-  }
-  
-  utterance.onstart = () => {
-    state.ttsPlaying = true;
-    state.ttsMessageId = msgId;
-    state.ttsUtterance = utterance;
-    updateTTSButton(msgId, true);
-  };
-  utterance.onend = () => {
-    state.ttsPlaying = false;
-    state.ttsMessageId = null;
-    state.ttsUtterance = null;
-    updateTTSButton(msgId, false);
-  };
-  utterance.onerror = () => {
-    state.ttsPlaying = false;
-    state.ttsMessageId = null;
-    state.ttsUtterance = null;
-    updateTTSButton(msgId, false);
-  };
-  speechSynthesis.speak(utterance);
+  if (added) { renderMedia(); updateStats(); }
 }
 
-function stopTTS() {
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
-  if (state.ttsMessageId) updateTTSButton(state.ttsMessageId, false);
-  state.ttsPlaying = false;
-  state.ttsMessageId = null;
-  state.ttsUtterance = null;
-}
-
-function updateTTSButton(msgId, playing) {
-  const btn = document.querySelector(`[data-action="speak"][data-msg-id="${msgId}"]`);
-  if (!btn) return;
-  if (playing) {
-    btn.classList.add('active');
-    btn.querySelector('.speak-label').textContent = 'Stop';
-  } else {
-    btn.classList.remove('active');
-    btn.querySelector('.speak-label').textContent = 'Bacakan';
-  }
-}
-
-// ============ DOWNLOAD MP3 (Puter AI TTS) ============
-async function downloadMP3(msgId, text) {
-  if (state.downloadingMp3.has(msgId)) {
-    showToast('Sedang mengunduh, tunggu sebentar...', 'info');
-    return;
-  }
-  
-  const btn = document.querySelector(`[data-action="download"][data-msg-id="${msgId}"]`);
-  if (btn) {
-    btn.classList.add('downloading');
-    const label = btn.querySelector('.download-label');
-    if (label) label.textContent = '...';
-  }
-  state.downloadingMp3.add(msgId);
-  
-  let cleanText = text
-    .replace(/```[\s\S]*?```/g, ' blok kode ')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/[*#>_~`]/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\n+/g, '. ')
-    .replace(/\s+/g, ' ')
-    .trim();
-    
-  showToast('Memproses suara dengan Puter AI...', 'info');
-  
+async function uploadToServer(item) {
   try {
-    if (typeof puter === 'undefined' || !puter.ai || !puter.ai.txt2speech) {
-      throw new Error('Puter AI TTS tidak tersedia');
-    }
-    
-    // Puter AI txt2speech mendukung bahasa Indonesia secara otomatis
-    const blob = await puter.ai.txt2speech(cleanText);
-    
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = `masbayu-ai-${Date.now()}.mp3`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-    
-    showToast(`✅ MP3 berhasil diunduh!`, 'success');
+    const fd = new FormData();
+    fd.append('file', item.file, item.name);
+    const r = await fetch('/api/upload', { method: 'POST', body: fd });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'Upload gagal (HTTP ' + r.status + ')');
+    item.serverName = j.serverName;
+    item.mediaType = j.mediaType;
+    item.uploadState = 'ready';
+    log(`☁️ "${item.name}" tersimpan di server (${fmtSize(j.size)}) — antrean 24/7 siap.`, 'ok');
+    toast(`"${item.name}" tersimpan di server.`, 'ok', '☁️ Upload server');
   } catch (err) {
-    console.error('Download MP3 error:', err);
-    showToast('❌ Gagal mengunduh MP3: ' + err.message, 'error');
-  } finally {
-    state.downloadingMp3.delete(msgId);
-    if (btn) {
-      btn.classList.remove('downloading');
-      const label = btn.querySelector('.download-label');
-      if (label) label.textContent = 'MP3';
-    }
+    item.uploadState = 'error';
+    item.uploadError = errMsg(err);
+    log(`❌ Upload server gagal untuk "${item.name}": ${item.uploadError}`, 'err');
+    toast(item.uploadError + ' — pastikan aplikasi dibuka via server/preview, bukan file lokal.', 'err', 'Upload gagal');
   }
+  renderMedia();
+  if (store.prefs.instant) checkInstantQueue();
 }
 
-// Test download voice (preview)
-async function testDownloadVoice() {
-  const testText = 'Halo, saya Mas Bayu AI. Ini adalah contoh suara dari Puter AI.';
-  showToast('Memutar preview suara Puter AI...', 'info');
-  try {
-    if (typeof puter === 'undefined' || !puter.ai || !puter.ai.txt2speech) {
-      throw new Error('Puter AI TTS tidak tersedia');
-    }
-    const blob = await puter.ai.txt2speech(testText);
-    const blobUrl = URL.createObjectURL(blob);
-    const audio = new Audio(blobUrl);
-    audio.play();
-    audio.onended = () => URL.revokeObjectURL(blobUrl);
-    showToast('Preview diputar', 'success');
-  } catch (err) {
-    showToast('Gagal memutar preview: ' + err.message, 'error');
-  }
+function allReady() { return sessionMedia.length && sessionMedia.every(m => m.uploadState === 'ready'); }
+
+function resolveMode(m) {
+  if (m.mode === 'auto') return m.isVideo ? 'reel' : 'photo';
+  return m.mode;
+}
+const MODE_LABEL = { auto: 'Otomatis', reel: 'Reel', video: 'Video Feed', photo: 'Foto Feed' };
+const TYPE_LABEL = { photo: 'Foto', video: 'Video', reel: 'Reel' };
+
+function scorePill(score) {
+  if (score == null) return '';
+  const cls = score >= 75 ? 's-high' : score >= 50 ? 's-mid' : 's-low';
+  const emoji = score >= 75 ? '🔥' : score >= 50 ? '⚡' : '🧪';
+  return `<span class="score-pill ${cls}">${emoji} Skor Algoritma: ${score}/100</span>`;
 }
 
-// ============ EXPORT / IMPORT ============
-function exportChat(format) {
-  const chat = getCurrentChat();
-  if (!chat || chat.messages.length === 0) {
-    showToast('Tidak ada chat untuk diexport', 'info');
-    return;
-  }
-  let content = '';
-  let filename = '';
-  let mimeType = '';
-  const dateStr = new Date().toISOString().slice(0, 10);
-  
-  if (format === 'json') {
-    content = JSON.stringify(chat, null, 2);
-    filename = `masbayu-chat-${dateStr}.json`;
-    mimeType = 'application/json';
-  } else if (format === 'txt') {
-    content = `TANYA KE MAS BAYU AI\nJudul: ${chat.title}\nTanggal: ${new Date(chat.createdAt).toLocaleString('id-ID')}\n${'='.repeat(50)}\n\n`;
-    chat.messages.forEach(m => {
-      const sender = m.role === 'user' ? 'KAMU' : 'MAS BAYU AI';
-      const time = new Date(m.timestamp).toLocaleString('id-ID');
-      content += `[${sender}] ${time}\n${m.content}\n\n`;
-    });
-    filename = `masbayu-chat-${dateStr}.txt`;
-    mimeType = 'text/plain';
-  } else if (format === 'md') {
-    content = `# ${chat.title}\n\n> Dibuat: ${new Date(chat.createdAt).toLocaleString('id-ID')}\n\n---\n\n`;
-    chat.messages.forEach(m => {
-      const sender = m.role === 'user' ? '🧑 Kamu' : '🤖 Mas Bayu AI';
-      content += `### ${sender}\n\n${m.content}\n\n---\n\n`;
-    });
-    filename = `masbayu-chat-${dateStr}.md`;
-    mimeType = 'text/markdown';
-  }
-  downloadFile(content, filename, mimeType);
-  showToast(`Chat berhasil diexport sebagai ${format.toUpperCase()}`, 'success');
-  closeModal('#exportModal');
-}
-function downloadFile(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 100);
-}
-function importChat(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.messages || !Array.isArray(data.messages)) {
-        showToast('Format file tidak valid', 'error');
-        return;
-      }
-      data.id = generateId();
-      data.title = data.title || 'Chat Import';
-      data.createdAt = Date.now();
-      data.updatedAt = Date.now();
-      data.messages = data.messages.map(m => ({ ...m, id: 'm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9), timestamp: m.timestamp || Date.now() }));
-      state.chats.unshift(data);
-      state.currentChatId = data.id;
-      saveChats();
-      renderSidebar();
-      renderChat();
-      showToast('Chat berhasil diimport', 'success');
-    } catch (err) { showToast('Gagal import: file tidak valid', 'error'); }
-  };
-  reader.readAsText(file);
+function uploadBadge(m) {
+  if (m.uploadState === 'ready') return `<span class="badge green">☁️ Di server</span>`;
+  if (m.uploadState === 'uploading') return `<span class="badge amber">⏳ Mengunggah…</span>`;
+  return `<span class="badge red">❌ ${esc(m.uploadError || 'Gagal upload')}</span>`;
 }
 
-// ============ SIDEBAR (MOBILE) ============
-function openSidebar() { $('#sidebar').classList.add('open'); $('#sidebarOverlay').classList.add('active'); }
-function closeSidebar() { $('#sidebar').classList.remove('open'); $('#sidebarOverlay').classList.remove('active'); }
-function openModal(sel) { $(sel).classList.add('active'); }
-function closeModal(sel) { $(sel).classList.remove('active'); }
-
-// ============ SETTINGS UI ============
-function applySettingsToUI() {
-  $('#settingTheme').value = state.settings.theme;
-  $('#settingEnter').classList.toggle('on', state.settings.enterToSend);
-  $('#settingTimestamp').classList.toggle('on', state.settings.showTimestamp);
-  $('#settingSaveHistory').classList.toggle('on', state.settings.saveHistory);
-  $('#settingModel').value = state.settings.model;
-  $('#settingLength').value = state.settings.responseLength;
-  $('#settingTtsLang').value = state.settings.ttsLang;
+function renderMedia() {
+  const wrap = $('#mediaList');
+  if (!sessionMedia.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = sessionMedia.map(m => `
+    <div class="media-item" data-id="${m.id}">
+      <div class="mi-top">
+        ${m.previewURL
+          ? `<img class="mi-thumb" src="${m.previewURL}" alt="Pratinjau ${esc(m.name)}">`
+          : `<div class="mi-thumb video-thumb">🎬</div>`}
+        <div class="mi-info">
+          <div class="mi-name">${esc(m.name)}</div>
+          <div class="mi-meta">${m.isVideo ? '🎥 Video' : '🖼️ Foto'} · ${fmtSize(m.size)} · mode: <b>${MODE_LABEL[m.mode]}</b>${m.analysis ? ' · ✅ dianalisis AI' : ''}</div>
+          <div class="mi-row">${uploadBadge(m)}${scorePill(m.score)}</div>
+          ${m.hashtags.length ? `<div class="hashtag-chips">${m.hashtags.map(h => `<span class="hchip">${esc(h)}</span>`).join('')}</div>` : ''}
+          <div class="mi-row">
+            <select class="select" data-act="mode" style="width:auto;padding:8px 34px 8px 12px;font-size:12px" aria-label="Mode posting">
+              <option value="auto" ${m.mode === 'auto' ? 'selected' : ''}>Mode: Otomatis</option>
+              ${m.isVideo ? `<option value="reel" ${m.mode === 'reel' ? 'selected' : ''}>Posting sebagai Reel</option>
+              <option value="video" ${m.mode === 'video' ? 'selected' : ''}>Posting sebagai Video Feed</option>` : ''}
+              ${!m.isVideo ? `<option value="photo" ${m.mode === 'photo' ? 'selected' : ''}>Posting sebagai Foto Feed</option>` : ''}
+            </select>
+          </div>
+        </div>
+        <div class="mi-actions">
+          <button class="btn btn-primary btn-sm" data-act="ai">✨ Caption AI</button>
+          <button class="btn btn-amber btn-sm" data-act="analyze">🎯 Analisis</button>
+          <button class="btn btn-ok btn-sm" data-act="post" ${m.uploadState !== 'ready' ? 'disabled' : ''}>🚀 Post</button>
+          <button class="btn btn-ghost btn-sm" data-act="queue" ${m.uploadState !== 'ready' ? 'disabled' : ''}>📅 Jadwal</button>
+          <button class="btn btn-danger btn-sm" data-act="del">✕</button>
+        </div>
+      </div>
+      <div class="mi-caption">
+        <textarea class="textarea" data-act="caption" style="min-height:70px;font-size:12.5px" placeholder="Tulis caption manual, atau biarkan AI yang membuat…">${esc(m.caption)}</textarea>
+      </div>
+      ${m.tips ? `<div class="result-box" style="margin-top:10px"><b>🎯 Catatan AI:</b>\n${esc(m.tips)}</div>` : ''}
+    </div>`).join('');
 }
 
-function bindSettings() {
-  $('#settingTheme').addEventListener('change', (e) => { state.settings.theme = e.target.value; applyTheme(e.target.value); saveSettings(); });
-  $('#settingEnter').addEventListener('click', (e) => { state.settings.enterToSend = !state.settings.enterToSend; e.target.classList.toggle('on', state.settings.enterToSend); saveSettings(); });
-  $('#settingTimestamp').addEventListener('click', (e) => { state.settings.showTimestamp = !state.settings.showTimestamp; e.target.classList.toggle('on', state.settings.showTimestamp); saveSettings(); renderChat(); });
-  $('#settingSaveHistory').addEventListener('click', (e) => {
-    state.settings.saveHistory = !state.settings.saveHistory;
-    e.target.classList.toggle('on', state.settings.saveHistory);
-    saveSettings();
-    if (!state.settings.saveHistory) {
-      if (confirm('Menonaktifkan riwayat akan menghapus semua chat tersimpan. Lanjutkan?')) {
-        localStorage.removeItem('tanyaMasBayuChats');
-        state.chats = [];
-        state.currentChatId = null;
-        renderSidebar();
-        renderChat();
-      } else { state.settings.saveHistory = true; e.target.classList.add('on'); saveSettings(); }
-    }
-  });
-  $('#settingModel').addEventListener('change', (e) => { state.settings.model = e.target.value; AI_CONFIG.model = e.target.value; saveSettings(); showToast('Model AI diganti ke ' + e.target.value, 'success'); });
-  $('#settingLength').addEventListener('change', (e) => { state.settings.responseLength = e.target.value; saveSettings(); });
-  
-  // TTS settings
-  $('#settingTtsVoice').addEventListener('change', (e) => { state.settings.ttsVoice = e.target.value; saveSettings(); });
-  $('#settingTtsLang').addEventListener('change', (e) => { state.settings.ttsLang = e.target.value; saveSettings(); populateBrowserVoices(); });
-  
-  // Download MP3 settings
-  $('#testDownloadVoice').addEventListener('click', testDownloadVoice);
-  
-  $('#exportTxt').addEventListener('click', () => exportChat('txt'));
-  $('#exportJson').addEventListener('click', () => exportChat('json'));
-  $('#exportMd').addEventListener('click', () => exportChat('md'));
-  $('#importBtn').addEventListener('click', () => $('#importFile').click());
-  $('#importFile').addEventListener('change', (e) => { if (e.target.files[0]) importChat(e.target.files[0]); e.target.value = ''; });
-  $('#clearAllBtn').addEventListener('click', () => {
-    if (confirm('Yakin ingin menghapus SEMUA riwayat chat? Tindakan ini tidak dapat dibatalkan.')) {
-      state.chats = [];
-      state.currentChatId = null;
-      saveChats();
-      renderSidebar();
-      renderChat();
-      showToast('Semua riwayat berhasil dihapus', 'success');
-    }
-  });
-}
-
-// ============ PWA / SERVICE WORKER ============
-function registerSW() {
-  if (!('serviceWorker' in navigator)) return;
-  const swCode = `
-    const CACHE = 'masbayu-v2';
-    self.addEventListener('install', e => self.skipWaiting());
-    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-    self.addEventListener('fetch', e => {
-      if (e.request.method !== 'GET') return;
-      e.respondWith(
-        fetch(e.request).then(resp => {
-          const copy = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
-          return resp;
-        }).catch(() => caches.match(e.request))
-      );
-    });
-  `;
-  try {
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const url = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(url).catch(() => {});
-  } catch (e) {}
-}
-function setupManifest() {
-  const manifest = {
-    name: "Tanya ke Mas Bayu AI",
-    short_name: "Mas Bayu AI",
-    description: "Asisten AI pintar untuk belajar, bekerja, membuat konten, coding, dan mencari solusi.",
-    start_url: ".", display: "standalone",
-    background_color: "#0f172a", theme_color: "#2563eb",
-    icons: [{ src: "data:image/svg+xml;base64," + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="42" fill="#2563eb"/><text x="96" y="120" font-family="Plus Jakarta Sans, sans-serif" font-size="80" font-weight="800" fill="white" text-anchor="middle">M</text></svg>`), sizes: "192x192", type: "image/svg+xml" }]
-  };
-  try {
-    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = url;
-    document.head.appendChild(link);
-  } catch (e) {}
-}
-
-// ============ INIT ============
-function init() {
-  loadSettings();
-  loadChats();
-  applyTheme(state.settings.theme);
-  applySettingsToUI();
-  
-  $('#startBtn').addEventListener('click', () => {
-    $('#landing').classList.add('hidden');
-    setTimeout(() => { $('#chatInput').focus(); }, 600);
-  });
-  
-  $('#newChatBtn').addEventListener('click', createNewChat);
-  $('#sendBtn').addEventListener('click', () => { if (state.isGenerating) stopGeneration(); else sendMessage(); });
-  
-  const input = $('#chatInput');
-  input.addEventListener('input', autoResizeTextarea);
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey && state.settings.enterToSend) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-  
-  $('#themeToggle').addEventListener('click', toggleTheme);
-  $('#exportBtn').addEventListener('click', () => openModal('#exportModal'));
-  $('#settingsBtn').addEventListener('click', () => openModal('#settingsModal'));
-  $('#aboutBtn').addEventListener('click', () => openModal('#aboutModal'));
-  
-  $$('[data-close]').forEach(btn => btn.addEventListener('click', () => $$('.modal-overlay').forEach(m => m.classList.remove('active'))));
-  $$('.modal-overlay').forEach(overlay => overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); }));
-  $$('[data-export]').forEach(btn => btn.addEventListener('click', () => exportChat(btn.dataset.export)));
-  
-  $('#menuToggle').addEventListener('click', openSidebar);
-  $('#sidebarOverlay').addEventListener('click', closeSidebar);
-  
-  bindSettings();
-  initVoiceInput();
-  
-  // Load browser voices
-  if ('speechSynthesis' in window) {
-    populateBrowserVoices();
-    speechSynthesis.onvoiceschanged = populateBrowserVoices;
-    // Some browsers need a delay
-    setTimeout(populateBrowserVoices, 500);
-    setTimeout(populateBrowserVoices, 1500);
-  }
-  
-  renderSidebar();
-  renderChat();
-  
-  setupManifest();
-  registerSW();
-}
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+$('#mediaList').addEventListener('input', e => {
+  const t = e.target; const itemEl = t.closest('.media-item'); if (!itemEl) return;
+  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
+  if (t.dataset.act === 'caption') m.caption = t.value;
+});
+$('#mediaList').addEventListener('change', e => {
+  const t = e.target; const itemEl = t.closest('.media-item'); if (!itemEl) return;
+  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
+  if (t.dataset.act === 'mode') { m.mode = t.value; renderMedia(); }
+});
+$('#mediaList').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-act]'); if (!btn || btn.disabled) return;
+  const itemEl = btn.closest('.media-item');
+  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
+  const act = btn.dataset.act;
+  if (act === 'del') { if (m.previewURL) URL.revokeObjectURL(m.previewURL); sessionMedia = sessionMedia.filter(x => x.id !== m.id); renderMedia(); log(`🗑️ ${m.name} dihapus dari daftar (file tetap aman bila sudah di server).`); }
+  if (act === 'ai') await aiCaptionFor(m, btn);
+  if (act === 'analyze') await analyzeFor(m, btn);
+  if (act === 'post') await publishMedia(m);
+  if (act === 'queue') openScheduleModal([m.id]);
+});
 </script>
+<script>
+/* ================= PUTER AI LAYER ================= */
+function extractAI(resp) {
+  if (resp == null) return '';
+  if (typeof resp === 'string') return resp;
+  if (typeof resp.text === 'string' && resp.text) return resp.text;
+  const c = resp?.message?.content ?? resp?.content;
+  if (typeof c === 'string') return c;
+  if (Array.isArray(c)) return c.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
+  try { return JSON.stringify(resp); } catch (_) { return String(resp); }
+}
+function withTimeout(promise, ms, label) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error((label || 'AI') + ' timeout setelah ' + (ms / 1000) + ' detik — kemungkinan perlu login Puter (popup terblokir?) atau koneksi lambat.')), ms);
+    promise.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+  });
+}
+async function aiChat(prompt, { model, timeoutMs } = {}) {
+  if (!puterReady()) throw new Error('Puter AI belum siap. Pastikan koneksi internet & izinkan popup Puter, lalu coba lagi.');
+  const resp = await withTimeout(
+    window.puter.ai.chat(prompt, { model: model || store.prefs.model || 'gpt-4o-mini' }),
+    timeoutMs || 45000,
+    'Puter AI'
+  );
+  return extractAI(resp).trim();
+}
+function parseAIJson(text) {
+  if (!text) return null;
+  let t = text.replace(/```json/gi, '```').split('```').filter(Boolean);
+  t = t.length ? t.reduce((a, b) => (b.includes('{') ? b : a), t[0]) : text;
+  const s = t.indexOf('{'); const e = t.lastIndexOf('}');
+  if (s === -1 || e === -1 || e <= s) return null;
+  try { return JSON.parse(t.slice(s, e + 1)); } catch (_) { return null; }
+}
+const HASHTAG_FALLBACK = ['#reels', '#viral', '#fyp', '#facebookreels', '#kontenkreator', '#viralindonesia', '#fypシ', '#explore'];
 
+/* ---------- CAPTION AI ---------- */
+async function aiCaptionFor(m, btn) {
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+  log(`✨ Puter AI sedang membuat caption untuk "${m.name}"…`, 'info');
+  try {
+    const jenis = m.isVideo ? 'video/reel pendek' : 'foto';
+    const prompt = `Kamu adalah content strategist Facebook berbahasa Indonesia yang sangat paham algoritma Facebook Reels & feed tahun ini.
+Buatkan caption Facebook untuk sebuah ${jenis} dengan nama file: "${m.name}".
+${m.caption && m.caption !== '' ? `Ide awal dari pengguna: "${m.caption}"` : 'Pengguna belum memberi ide — buat caption kreatif berdasarkan nama file tersebut.'}
+
+Aturan:
+- Hook 1-2 kata pertama harus bikin berhenti scroll.
+- Bahasa Indonesia santai, ada 2-4 emoji relevan.
+- Panjang caption 2-4 kalimat, diakhiri CTA (misal ajakan komen/simpan/bagi).
+- Hashtag 8-12 buah, campuran besar & niche, relevan Indonesia.
+
+Balas HANYA JSON valid tanpa penjelasan, format:
+{"caption":"...","hashtags":["#...","..."]}`;
+    const raw = await aiChat(prompt, { timeoutMs: 30000 });
+    const j = parseAIJson(raw);
+    if (j && j.caption) {
+      m.caption = String(j.caption);
+      m.hashtags = Array.isArray(j.hashtags) ? j.hashtags.slice(0, 12).map(h => h.startsWith('#') ? h : '#' + h) : HASHTAG_FALLBACK;
+      store.stats.aiCaptions++; save();
+      log(`✅ Caption AI selesai untuk "${m.name}" (+${m.hashtags.length} hashtag).`, 'ok');
+      toast('Caption berhasil dibuat AI.', 'ok', '✨ Caption AI');
+    } else {
+      m.caption = raw.slice(0, 900);
+      m.hashtags = HASHTAG_FALLBACK;
+      log('⚠️ AI tidak mengembalikan JSON valid — caption mentah dipakai.', 'warn');
+    }
+    renderMedia();
+  } catch (err) {
+    log('❌ Gagal membuat caption: ' + errMsg(err), 'err');
+    toast(errMsg(err), 'err', 'Caption AI gagal');
+  } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+
+/* ---------- ANALISIS ALGORITMA PER MEDIA ---------- */
+async function analyzeFor(m, btn) {
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+  log(`🎯 Menganalisis algoritma untuk "${m.name}"…`, 'info');
+  try {
+    const jenis = m.isVideo ? 'video/reel' : 'foto feed';
+    const prompt = `Kamu adalah pembaca algoritma Facebook. Analisis potensi performa algoritma Facebook untuk konten berikut.
+Jenis konten: ${jenis}
+Nama file: "${m.name}"
+Caption: "${(m.caption || '(belum ada caption)').slice(0, 600)}"
+
+Nilai aspek-aspek ini 0-100: hook (detik pertama menahan scroll), caption, hashtag_discovery, engagement_potential, timing.
+Skor total = rata-rata tertimbang. Beri 3-5 tips singkat & spesifik untuk menaikkan skor.
+Balas HANYA JSON valid:
+{"score":78,"hook":80,"caption":75,"hashtag":70,"engagement":85,"timing":72,"tips":["...","..."]}`;
+    const raw = await aiChat(prompt, { timeoutMs: 30000 });
+    const j = parseAIJson(raw);
+    if (j && typeof j.score === 'number') {
+      m.score = Math.max(0, Math.min(100, Math.round(j.score)));
+      m.tips = Array.isArray(j.tips) ? j.tips.join('\n• ') : null;
+      m.analysis = j;
+      log(`✅ Analisis "${m.name}": skor algoritma ${m.score}/100 ${m.score >= 75 ? '— potensi viral tinggi!' : m.score >= 50 ? '— cukup baik, bisa dioptimalkan.' : '— perlu perbaikan.'}`, m.score >= 50 ? 'ok' : 'warn');
+      if (m.tips) log('• ' + m.tips.replace(/\n/g, '\n• '), 'info');
+    } else {
+      log('⚠️ Hasil analisis tidak valid: ' + raw.slice(0, 140), 'warn');
+      toast('Analisis AI tidak mengembalikan data valid.', 'warn', 'Analisis');
+    }
+    renderMedia(); updateStats();
+  } catch (err) {
+    log('❌ Analisis gagal: ' + errMsg(err), 'err');
+    toast(errMsg(err), 'err', 'Analisis gagal');
+  } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+
+/* ---------- INSIGHT HARIAN ---------- */
+async function loadInsight(force) {
+  const today = new Date().toDateString();
+  if (!force && store.insight && store.insightDate === today) {
+    $('#insightBody').innerHTML = store.insight;
+    return;
+  }
+  $('#insightBody').innerHTML = '<span class="spin"></span> Puter AI sedang membaca algoritma hari ini…';
+  try {
+    const raw = await aiChat(`Kamu ahli algoritma Facebook Indonesia. Buat insight SINGKAT (maks 90 kata) tentang strategi posting hari ini untuk kreator: jam terbaik, jenis konten yang sedang difavoritkan algoritma, dan 1 trik engagement. Format HTML sederhana: <b>…</b>, <ul><li>…</li></ul>. Tanpa kalimat pembuka/penutup.`);
+    $('#insightBody').innerHTML = esc(raw).replace(/\n/g, '<br>');
+    store.insight = $('#insightBody').innerHTML; store.insightDate = today; save();
+    log('🧠 Insight algoritma harian diperbarui.', 'ok');
+  } catch (err) {
+    $('#insightBody').innerHTML = 'Gagal memuat insight: ' + esc(errMsg(err));
+    log('❌ Insight gagal: ' + errMsg(err), 'err');
+  }
+}
+$('#btnInsight').addEventListener('click', () => loadInsight(true));
+
+/* ---------- AI STUDIO: ANALISIS FORM ---------- */
+$('#btnAnalyze').addEventListener('click', async () => {
+  const btn = $('#btnAnalyze');
+  const topic = $('#aiTopic').value.trim();
+  if (!topic) { toast('Tulis dulu deskripsi kontenmu.', 'warn', 'Data kurang'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menganalisis…';
+  const type = $('#aiType').value, aud = $('#aiAudience').value.trim() || 'umum', time = $('#aiTime').value || '19:00';
+  log(`🎯 Analisis algoritma: "${topic.slice(0, 60)}"…`, 'info');
+  try {
+    const prompt = `Kamu pembaca algoritma Facebook. Analisis rencana konten berikut:
+- Deskripsi: ${topic}
+- Jenis: ${type}
+- Audiens target: ${aud}
+- Rencana posting jam: ${time}
+
+Nilai 0-100 aspek: hook, caption, hashtag, engagement, timing.
+Sertakan: skor_total, 4-5 tips singkat, 8 hashtag rekomendasi, jam terbaik alternatif, prediksi jangkauan singkat.
+Balas HANYA JSON valid:
+{"score":80,"hook":75,"caption":80,"hashtag":78,"engagement":82,"timing":85,"tips":["..."],"hashtags":["#..."],"bestTime":"19:30-21:00","prediction":"..."}`;
+    const raw = await aiChat(prompt, { timeoutMs: 30000 });
+    const j = parseAIJson(raw);
+    if (j && typeof j.score === 'number') {
+      const sc = Math.round(j.score);
+      const bars = [['Hook', j.hook], ['Caption', j.caption], ['Hashtag', j.hashtag], ['Engagement', j.engagement], ['Timing', j.timing]];
+      $('#analyzeResult').innerHTML = `
+        <div class="card" style="margin-top:0">
+          <div class="gauge-wrap" style="margin-bottom:16px">
+            <div class="gauge" style="background:conic-gradient(var(--acc) 0% ${sc}%, var(--surface3) ${sc}% 100%)">
+              <div class="gauge-val">${sc}<small>/100</small></div>
+            </div>
+            <div class="gauge-lab">Skor Potensi Viral</div>
+          </div>
+          ${bars.map(([l, v]) => `<div class="bar-row"><div class="bar-top"><span>${l}</span><span>${v ?? '-'} / 100</span></div><div class="bar"><i style="width:${Math.min(100, v ?? 0)}%"></i></div></div>`).join('')}
+          ${j.bestTime ? `<div class="notice green" style="margin:12px 0 0"><span>⏰</span><span>Waktu terbaik alternatif: <b>${esc(j.bestTime)}</b></span></div>` : ''}
+          ${j.prediction ? `<div class="result-box"><b>📈 Prediksi:</b> ${esc(j.prediction)}</div>` : ''}
+          ${Array.isArray(j.hashtags) && j.hashtags.length ? `<div class="hashtag-chips" style="margin-top:12px">${j.hashtags.map(h => `<span class="hchip">${esc(h.startsWith('#') ? h : '#' + h)}</span>`).join('')}</div>` : ''}
+          <div style="margin-top:14px"><b style="font-size:13px">🧠 Tips Algoritma:</b><ul class="tips-list" style="margin-top:9px">${(Array.isArray(j.tips) ? j.tips : []).map((t, i) => `<li><span class="n">${i + 1}</span><span>${esc(t)}</span></li>`).join('')}</ul></div>
+        </div>`;
+      log(`✅ Analisis selesai — skor ${sc}/100. ${j.bestTime ? 'Waktu alternatif: ' + j.bestTime + '.' : ''}`, 'ok');
+      toast('Analisis algoritma selesai!', 'ok', '🎯 Skor: ' + sc + '/100');
+    } else {
+      $('#analyzeResult').innerHTML = `<div class="result-box">AI membalas tapi format tidak valid:\n${esc(raw.slice(0, 800))}</div>`;
+      log('⚠️ Analisis: format AI tidak valid.', 'warn');
+    }
+  } catch (err) {
+    $('#analyzeResult').innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
+    log('❌ Analisis gagal: ' + errMsg(err), 'err');
+  } finally { btn.disabled = false; btn.textContent = '🎯 Analisis Algoritma Sekarang'; }
+});
+
+/* ---------- CHAT ---------- */
+async function sendChat() {
+  const inp = $('#chatInput'), txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  const box = $('#chatBox');
+  box.insertAdjacentHTML('beforeend', `<div class="msg user">${esc(txt)}</div>`);
+  const id = 'm' + uid();
+  box.insertAdjacentHTML('beforeend', `<div class="msg bot" id="${id}"><span class="spin"></span></div>`);
+  box.scrollTop = box.scrollHeight;
+  try {
+    const raw = await aiChat(`Kamu "Pembaca Algoritma", ahli algoritma Facebook Reels/Feed berbahasa Indonesia. Jawab singkat, praktis, pakai poin jika perlu, maksimal 130 kata. Pertanyaan kreator: ${txt}`);
+    document.getElementById(id).textContent = raw || '(AI tidak membalas)';
+    box.scrollTop = box.scrollHeight;
+  } catch (err) {
+    document.getElementById(id).textContent = '❌ ' + errMsg(err);
+  }
+}
+$('#btnChat').addEventListener('click', sendChat);
+$('#chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+/* ---------- GENERATOR GAMBAR ---------- */
+$('#btnGenImg').addEventListener('click', async () => {
+  const btn = $('#btnGenImg'), p = $('#imgPrompt').value.trim();
+  const out = $('#imgResult');
+  if (!p) { toast('Tulis deskripsi gambarnya dulu.', 'warn', 'Data kurang'); return; }
+  if (!puterReady()) { toast('Puter AI belum siap.', 'err', 'Offline'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menggambar…';
+  log('🎨 Puter AI membuat gambar…', 'info');
+  try {
+    const img = await window.puter.ai.txt2img(p);
+    img.className = 'img-result';
+    img.alt = 'Gambar hasil AI';
+    out.innerHTML = '';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:10px;margin-top:10px;flex-wrap:wrap';
+    const b1 = document.createElement('button'); b1.className = 'btn btn-ghost btn-sm'; b1.textContent = '⬇️ Unduh';
+    const b2 = document.createElement('button'); b2.className = 'btn btn-ok btn-sm'; b2.textContent = '⬆️ Jadikan Post Foto';
+    row.append(b1, b2); out.append(img, row);
+    log('✅ Gambar AI selesai dibuat.', 'ok');
+    b1.addEventListener('click', () => {
+      const c = document.createElement('canvas');
+      c.width = img.naturalWidth; c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      c.toBlob(bl => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(bl); a.download = 'reelpro-ai-' + Date.now() + '.png'; a.click();
+      });
+    });
+    b2.addEventListener('click', () => {
+      const c = document.createElement('canvas');
+      c.width = img.naturalWidth; c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      c.toBlob(bl => {
+        const f = new File([bl], 'reelpro-ai-' + Date.now() + '.png', { type: 'image/png' });
+        addFiles([f]);
+        goto('compose');
+        toast('Gambar AI ditambahkan ke daftar upload.', 'ok', '🖼️ Siap posting');
+      });
+    });
+  } catch (err) {
+    log('❌ Generator gambar gagal: ' + errMsg(err), 'err');
+    toast(errMsg(err), 'err', 'Gambar AI gagal');
+  } finally { btn.disabled = false; btn.textContent = '🎨 Buat Gambar dengan AI'; }
+});
+</script>
+<script>
+/* ================= PUBLISH VIA SERVER (24/7) =================
+   Semua posting diproses worker server: foto (/photos),
+   video (/videos), Reel 3 fase (video_reels + rupload).
+   Server tanpa CORS — lebih andal daripada upload browser. */
+
+async function publishMedia(m) {
+  if (!m || m.uploadState !== 'ready') { toast('Media belum selesai diunggah ke server.', 'warn', 'Tunggu upload'); return null; }
+  const mode = resolveMode(m);
+  try {
+    // Optimasi Puter AI saat pengguna online (caption & skor)
+    if (!m.caption.trim()) { try { await aiCaptionFor(m); } catch (_) { /* fallback: server AI */ } }
+    if (store.prefs.autoAnalyze && m.score == null) { try { await analyzeFor(m); } catch (_) { /* lanjut */ } }
+    log(`🚀 Memasukkan "${m.name}" (${TYPE_LABEL[mode]}) ke antrean server…`, 'info');
+    const item = await api('/queue', {
+      method: 'POST',
+      body: {
+        serverName: m.serverName, fileName: m.name, mediaType: m.mediaType, mode,
+        caption: m.caption, hashtags: m.hashtags, score: m.score,
+        scheduledAt: new Date().toISOString()
+      }
+    });
+    serverQueue.unshift(item);
+    log(`✅ "${m.name}" masuk antrean server — worker memposting dalam ≤30 detik. PC aman dimatikan.`, 'ok');
+    toast(`"${m.name}" masuk antrean server & akan diposting otomatis.`, 'ok', '🚀 Masuk antrean 24/7');
+    await refreshQueue(); await refreshHistory(); refreshEngineStatus(); updateStats();
+    return item;
+  } catch (err) {
+    log(`❌ Gagal memasukkan antrean: ${errMsg(err)}`, 'err');
+    toast(errMsg(err), 'err', 'Gagal — ' + m.name);
+    return null;
+  }
+}
+
+/* ---------- AKSI MASSAL ---------- */
+$('#btnAiAll').addEventListener('click', async e => {
+  const btn = e.currentTarget;
+  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
+  btn.disabled = true;
+  for (const m of sessionMedia) { await aiCaptionFor(m); }
+  btn.disabled = false;
+  toast('Semua caption selesai dibuat AI.', 'ok', '✨ Selesai');
+});
+$('#btnScoreAll').addEventListener('click', async e => {
+  const btn = e.currentTarget;
+  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
+  btn.disabled = true;
+  for (const m of sessionMedia) { await analyzeFor(m); }
+  btn.disabled = false;
+});
+$('#btnPostAll').addEventListener('click', async e => {
+  const btn = e.currentTarget;
+  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
+  if (!allReady()) { toast('Tunggu semua media selesai diunggah ke server.', 'warn', 'Upload berjalan'); return; }
+  btn.disabled = true;
+  for (const m of [...sessionMedia]) { await publishMedia(m); }
+  btn.disabled = false;
+});
+$('#btnClearMedia').addEventListener('click', () => {
+  sessionMedia.forEach(m => m.previewURL && URL.revokeObjectURL(m.previewURL));
+  sessionMedia = []; renderMedia(); log('🗑️ Daftar media sesi dikosongkan (file di server tetap aman).');
+});
+
+async function checkInstantQueue() {
+  const ready = sessionMedia.filter(m => m.uploadState === 'ready' && !m._queued && m.caption !== null);
+  for (const m of ready) {
+    if (m._queued) continue;
+    m._queued = true;
+    await publishMedia(m);
+  }
+}
+$('#chkInstant').addEventListener('change', e => { store.prefs.instant = e.target.checked; save(); if (e.target.checked) checkInstantQueue(); });
+
+/* ---------- MODAL JADWAL ---------- */
+let scheduleTargets = [];
+function openScheduleModal(ids) {
+  if (!ids.length) { toast('Pilih media dulu.', 'warn'); return; }
+  scheduleTargets = ids;
+  const d = new Date(Date.now() + 3600e3);
+  d.setSeconds(0, 0);
+  $('#scheduleInput').value = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  $('#modalMask').classList.add('show');
+}
+$('#btnScheduleAll').addEventListener('click', () => openScheduleModal(sessionMedia.filter(m => m.uploadState === 'ready').map(m => m.id)));
+$('#btnModalCancel').addEventListener('click', () => $('#modalMask').classList.remove('show'));
+$('#modalMask').addEventListener('click', e => { if (e.target === e.currentTarget) $('#modalMask').classList.remove('show'); });
+$('#btnModalSave').addEventListener('click', async () => {
+  const v = $('#scheduleInput').value;
+  if (!v) { toast('Pilih waktu dulu.', 'warn'); return; }
+  const t = new Date(v);
+  let ok = 0;
+  for (const id of scheduleTargets) {
+    const m = sessionMedia.find(x => x.id === id); if (!m || m.uploadState !== 'ready') continue;
+    try {
+      await api('/queue', {
+        method: 'POST',
+        body: { serverName: m.serverName, fileName: m.name, mediaType: m.mediaType, mode: resolveMode(m), caption: m.caption, hashtags: m.hashtags, score: m.score, scheduledAt: t.toISOString() }
+      });
+      ok++;
+      log(`📅 Dijadwalkan: "${m.name}" → ${t.toLocaleString('id-ID')} (server 24/7)`, 'info');
+    } catch (err) { log(`❌ Jadwal gagal untuk "${m.name}": ${errMsg(err)}`, 'err'); }
+  }
+  $('#modalMask').classList.remove('show');
+  if (ok) {
+    toast(`${ok} media dijadwalkan ${fmtTime(t.getTime())} — server memposting otomatis walau PC mati.`, 'ok', '📅 Terjadwal (24/7)');
+    await refreshQueue(); refreshEngineStatus(); updateStats();
+  }
+});
+
+/* ---------- ANTREAN (SERVER) ---------- */
+const Q_ST = { pending: ['amber', '⏳ Menunggu'], posting: ['purple', '🔄 Diproses server'], done: ['green', '✅ Terkirim'], failed: ['red', '❌ Gagal'] };
+async function refreshQueue() {
+  try { serverQueue = await api('/queue'); } catch (e) { log('❌ Muat antrean: ' + errMsg(e), 'err'); return; }
+  renderQueue(); updateStats();
+}
+function renderQueue() {
+  const wrap = $('#queueList');
+  $('#queueCount').textContent = serverQueue.length + ' item';
+  if (!serverQueue.length) { wrap.innerHTML = '<div class="empty"><span class="big">🗓️</span>Belum ada item antrean. Jadwalkan atau posting dari halaman <b>Buat Post</b>.</div>'; return; }
+  wrap.innerHTML = serverQueue.map(q => {
+    const [cls, lab] = Q_ST[q.status] || ['gray', q.status];
+    let tags = []; try { tags = JSON.parse(q.hashtags || '[]'); } catch (_) {}
+    return `<div class="row-item">
+      <div class="ri-ico">${q.mediaType === 'video' ? '🎬' : '🖼️'}</div>
+      <div class="ri-main">
+        <div class="ri-title">${esc(q.fileName)}</div>
+        <div class="ri-sub">
+          <span class="badge ${cls}">${lab}</span>
+          <span>🕒 ${fmtTime(q.scheduledAt)}</span>
+          <span>${MODE_LABEL[q.mode] || q.mode}</span>
+          ${q.simulated ? '<span class="badge amber">SIMULASI</span>' : ''}
+          ${q.score != null ? `<span>🎯 ${q.score}/100</span>` : ''}
+          ${q.fbPostId ? `<span>🆔 ${esc(q.fbPostId)}</span>` : ''}
+        </div>
+        ${q.error ? `<div class="small" style="color:var(--err);margin-top:5px">${esc(q.error)}</div>` : ''}
+        ${tags.length ? `<div class="hashtag-chips">${tags.slice(0, 6).map(h => `<span class="hchip">${esc(h)}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="ri-actions">
+        ${q.status === 'pending' || q.status === 'failed' ? `<button class="btn btn-ok btn-sm" data-q="now" data-id="${q.id}">Post Sekarang</button>` : ''}
+        ${q.status !== 'done' ? `<button class="btn btn-danger btn-sm" data-q="del" data-id="${q.id}">Hapus</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+$('#queueList').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-q]'); if (!b) return;
+  const id = b.dataset.id;
+  if (b.dataset.q === 'del') {
+    try { await api('/queue/' + id, { method: 'DELETE' }); log('🗑️ Item antrean dihapus.'); await refreshQueue(); refreshEngineStatus(); } catch (err) { toast(errMsg(err), 'err'); }
+  }
+  if (b.dataset.q === 'now') {
+    try { await api('/queue/' + id, { method: 'PATCH', body: { action: 'now' } }); log('⚡ Post sekarang dipicu — worker memproses…', 'info'); await refreshQueue(); } catch (err) { toast(errMsg(err), 'err'); }
+  }
+});
+$('#btnRefreshQueue').addEventListener('click', () => { refreshQueue(); refreshEngineStatus(); });
+
+/* ---------- RIWAYAT (SERVER) ---------- */
+let histFilter = 'all';
+async function refreshHistory() {
+  try { serverHistory = await api('/history'); } catch (e) { log('❌ Muat riwayat: ' + errMsg(e), 'err'); return; }
+  renderHistory(); updateStats();
+}
+function renderHistory() {
+  const wrap = $('#historyList');
+  let items = serverHistory;
+  if (histFilter === 'sim') items = items.filter(h => h.status === 'simulation');
+  else if (histFilter !== 'all') items = items.filter(h => h.mode === histFilter);
+  if (!items.length) { wrap.innerHTML = `<div class="empty"><span class="big">📭</span>Belum ada riwayat${histFilter !== 'all' ? ' untuk filter ini' : ''}. Posting pertamamu akan muncul di sini.</div>`; return; }
+  const ST = { sent: ['green', 'TERKIRIM'], simulation: ['amber', 'SIMULASI'], failed: ['red', 'GAGAL'] };
+  wrap.innerHTML = items.slice(0, 60).map(h => {
+    const [cls, lab] = ST[h.status] || ['gray', h.status];
+    const link = h.status === 'sent' && h.fbPostId && serverSettings.pageId
+      ? `<a href="https://facebook.com/${encodeURIComponent(serverSettings.pageId)}/posts/${encodeURIComponent(h.fbPostId)}" target="_blank" rel="noopener">Lihat di FB ↗</a>` : '';
+    return `<div class="row-item">
+      <div class="ri-ico">${h.mediaType === 'video' ? '🎬' : '🖼️'}</div>
+      <div class="ri-main">
+        <div class="ri-title">${esc(h.fileName)}</div>
+        <div class="ri-sub">
+          <span class="badge ${cls}">${lab}</span>
+          <span>${esc(h.mode)}</span>
+          <span>🕒 ${fmtTime(h.createdAt)}</span>
+          ${h.score != null ? `<span>🎯 ${h.score}/100</span>` : ''}
+          ${h.fbPostId && h.status === 'sent' ? `<span>🆔 ${esc(h.fbPostId)}</span>` : ''}
+          ${link}
+        </div>
+        ${h.error ? `<div class="small" style="color:var(--err);margin-top:5px">${esc(h.error)}</div>` : ''}
+        ${h.caption ? `<div class="small muted" style="margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px">💬 ${esc(h.caption)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+$('#histFilter').addEventListener('click', e => {
+  const c = e.target.closest('.fchip'); if (!c) return;
+  $$('#histFilter .fchip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active'); histFilter = c.dataset.f; renderHistory();
+});
+$('#btnRefreshHist').addEventListener('click', refreshHistory);
+$('#btnExport').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), history: serverHistory }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'reelpro-riwayat-' + Date.now() + '.json'; a.click();
+  toast('Riwayat diekspor sebagai JSON.', 'ok', '⬇️ Export');
+});
+$('#btnClearHistory').addEventListener('click', async () => {
+  if (!serverHistory.length) return;
+  if (confirm('Hapus semua riwayat posting di server?')) {
+    try { await api('/history', { method: 'DELETE' }); serverHistory = []; renderHistory(); updateStats(); toast('Riwayat dihapus.', 'ok'); } catch (err) { toast(errMsg(err), 'err'); }
+  }
+});
+
+/* ---------- PENGATURAN (SERVER) ---------- */
+let saveTimer = null;
+function showSave() {
+  const el = $('#saveState');
+  el.style.display = 'inline-flex'; el.textContent = 'Menyimpan…';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { el.style.display = 'none'; }, 1500);
+}
+async function loadServerSettings() {
+  try {
+    serverSettings = await api('/settings');
+    $('#inpPageId').value = serverSettings.pageId || '';
+    $('#inpToken').value = serverSettings.accessToken || '';
+    $('#selApi').value = serverSettings.apiVersion || 'v19.0';
+    $('#chkSim').checked = !!serverSettings.simulate;
+    $('#chkAutoHashtag').checked = !!serverSettings.autoHashtag;
+    refreshStatus();
+  } catch (e) {
+    log('❌ Muat pengaturan server: ' + errMsg(e), 'err');
+    toast('Backend tidak terjangkau. Buka aplikasi lewat server/preview, bukan file lokal.', 'err', 'Koneksi API gagal');
+  }
+}
+async function saveServerSettings() {
+  showSave();
+  try {
+    serverSettings = await api('/settings', {
+      method: 'PUT',
+      body: {
+        pageId: $('#inpPageId').value.trim(),
+        accessToken: $('#inpToken').value.trim(),
+        apiVersion: $('#selApi').value,
+        simulate: $('#chkSim').checked,
+        autoHashtag: $('#chkAutoHashtag').checked
+      }
+    });
+    refreshStatus(); refreshEngineStatus();
+  } catch (e) { log('❌ Simpan pengaturan: ' + errMsg(e), 'err'); }
+}
+function queueSave() { showSave(); clearTimeout(saveTimer); saveTimer = setTimeout(saveServerSettings, 800); }
+['inpPageId', 'inpToken'].forEach(id => $('#' + id).addEventListener('input', () => { serverSettings[id === 'inpPageId' ? 'pageId' : 'accessToken'] = $('#' + id).value.trim(); queueSave(); }));
+$('#selApi').addEventListener('change', () => { serverSettings.apiVersion = $('#selApi').value; queueSave(); });
+$('#chkSim').addEventListener('change', e => { serverSettings.simulate = e.target.checked; queueSave(); });
+$('#chkAutoHashtag').addEventListener('change', e => { serverSettings.autoHashtag = e.target.checked; queueSave(); });
+$('#btnShowToken').addEventListener('click', () => {
+  const i = $('#inpToken');
+  i.type = i.type === 'password' ? 'text' : 'password';
+  i.focus();
+});
+$('#btnTestConn').addEventListener('click', async () => {
+  const out = $('#fbTestResult'), btn = $('#btnTestConn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menghubungi Facebook…';
+  try {
+    const j = await api('/settings/test', { method: 'POST' });
+    const pageLine = j.page ? `<b>Halaman/Pro:</b> ${esc(j.page.name)}${j.page.fan_count != null ? ` · ${j.page.fan_count} pengikut` : ''}` : `<b>User:</b> ${esc(j.user?.name || '')} — isi Page ID untuk posting.`;
+    out.innerHTML = `<div class="result-box">✅ <b>Koneksi berhasil!</b><br>${pageLine}<br><span class="small muted">Simulasi: ${j.simulate ? 'MASIH AKTIF — matikan "Mode Simulasi" untuk posting sungguhan.' : 'MATI — posting akan benar-benar terkirim oleh server 24/7.'}</span></div>`;
+    log(`🔌 Koneksi FB OK: ${j.user?.name || '-'}`, 'ok');
+    toast('Koneksi Facebook berhasil!', 'ok', '📘 Terhubung');
+    refreshStatus(); refreshEngineStatus();
+  } catch (err) {
+    out.innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
+    log('❌ Koneksi FB gagal: ' + errMsg(err), 'err');
+  } finally { btn.disabled = false; btn.textContent = '🔌 Test Koneksi'; }
+});
+$('#btnPageToken').addEventListener('click', async () => {
+  const out = $('#fbTestResult'), btn = $('#btnPageToken');
+  btn.disabled = true; btn.textContent = '⏳ Menukar…';
+  try {
+    const j = await api('/settings/pagetoken', { method: 'POST' });
+    await loadServerSettings();
+    out.innerHTML = `<div class="result-box">✅ Page Token diperoleh &amp; tersimpan di server untuk <b>${esc(j.pageName || '-')}</b>. Token ini lebih stabil untuk posting.</div>`;
+    log('🔑 Page Token berhasil ditukar & disimpan di server.', 'ok');
+    toast('Page Token tersimpan di server.', 'ok', '🔑 Berhasil');
+  } catch (err) {
+    out.innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
+    log('❌ Tukar token gagal: ' + errMsg(err), 'err');
+  } finally { btn.disabled = false; btn.textContent = '🔑 Ambil Page Token'; }
+});
+$('#btnClearLog').addEventListener('click', () => { $('#console').innerHTML = ''; log('Log dibersihkan.'); });
+$('#btnResetAll').addEventListener('click', async () => {
+  if (!confirm('Yakin reset SEMUA data di server (token, antrean, riwayat)?')) return;
+  try {
+    await api('/history', { method: 'DELETE' });
+    for (const q of serverQueue) { try { await api('/queue/' + q.id, { method: 'DELETE' }); } catch (_) {} }
+    await api('/settings', { method: 'PUT', body: { pageId: '', accessToken: '', simulate: true, autoHashtag: true, pageName: '' } });
+    localStorage.removeItem(LS_KEY);
+    store = defaultState();
+    serverQueue = []; serverHistory = [];
+    $('#inpPageId').value = ''; $('#inpToken').value = '';
+    $('#selModel').value = 'gpt-4o-mini';
+    renderQueue(); renderHistory(); refreshStatus(); refreshEngineStatus(); updateStats();
+    toast('Semua data direset.', 'ok', 'Reset selesai');
+    log('♻️ Semua data server & browser direset.', 'warn');
+  } catch (err) { toast(errMsg(err), 'err', 'Reset gagal'); }
+});
+
+/* ---------- STATS & RECENT ---------- */
+let engineData = null;
+async function refreshEngineStatus() {
+  try { engineData = await api('/engine'); refreshEngine(engineData); updateStats(); }
+  catch (e) { refreshEngine(null); }
+}
+setInterval(refreshEngineStatus, 10000);
+setInterval(refreshQueue, 12000);
+
+function updateStats() {
+  const done = engineData?.counts?.done ?? 0;
+  const queued = engineData ? (engineData.counts.pending + engineData.counts.posting) : 0;
+  const scores = sessionMedia.map(m => m.score).filter(v => v != null);
+  $('#stPosted').textContent = done;
+  $('#stQueued').textContent = queued;
+  $('#stScore').textContent = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : '—';
+  $('#stAi').textContent = store.prefs.aiCaptions || 0;
+  const recent = serverHistory.slice(0, 5);
+  const ST = { sent: ['green', 'TERKIRIM'], simulation: ['amber', 'SIMULASI'], failed: ['red', 'GAGAL'] };
+  $('#homeRecent').innerHTML = recent.length ? recent.map(h => {
+    const [cls, lab] = ST[h.status] || ['gray', h.status];
+    return `<div class="row-item">
+      <div class="ri-ico">${h.mediaType === 'video' ? '🎬' : '🖼️'}</div>
+      <div class="ri-main">
+        <div class="ri-title">${esc(h.fileName)}</div>
+        <div class="ri-sub">
+          <span class="badge ${cls}">${lab}</span>
+          <span>${esc(h.mode)}</span>
+          <span>🕒 ${fmtTime(h.createdAt)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty"><span class="big">📭</span>Belum ada aktivitas. Mulai dengan upload media pertamamu!</div>';
+}
+
+/* ---------- PUTER WATCHER & INIT ---------- */
+function checkPuter() {
+  if (puterReady()) {
+    refreshStatus();
+    log('🟣 Puter AI terhubung — fitur AI aktif.', 'ok');
+    loadInsight(false);
+  } else {
+    $('#puterStatus').textContent = '⏳ Menunggu js.puter.com… Jika lama, cek koneksi internet. Fitur AI browser tidak tersedia tanpa Puter (caption server tetap jalan).';
+  }
+}
+let inited = false;
+async function init() {
+  if (inited) return;
+  inited = true;
+  $('#selModel').value = store.prefs.model || 'gpt-4o-mini';
+  $('#chkInstant').checked = !!store.prefs.instant;
+  $('#chkAutoAnalyze').checked = !!store.prefs.autoAnalyze;
+  $('#selModel').addEventListener('change', e => { store.prefs.model = e.target.value; save(); refreshStatus(); });
+  $('#chkAutoAnalyze').addEventListener('change', e => { store.prefs.autoAnalyze = e.target.checked; save(); });
+  renderMedia();
+  refreshStatus();
+  await loadServerSettings();
+  refreshQueue(); refreshHistory(); refreshEngineStatus();
+  checkPuter();
+  setTimeout(checkPuter, 2500); setTimeout(checkPuter, 7000);
+  log('👋 Selamat datang di ReelPro AI! Engine posting 24/7 berjalan di server — PC boleh dimatikan.', 'ok');
+  if (!fbConfigured()) log('ℹ️ Facebook belum terhubung — Mode Simulasi aktif. Buka Pengaturan untuk menghubungkan.', 'warn');
+}
+if (document.readyState !== 'loading') init();
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
