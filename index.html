@@ -256,19 +256,29 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     </div>
 
     <div class="card voice-card">
-      <h3><span class="step mic">🎙️</span> Suara Natural Indonesia</h3>
-      <p class="desc">Mesin suara neural khas Indonesia — hangat, jelas, dan berirama seperti penyiar asli. <b>Bukan robot.</b></p>
+      <h3><span class="step mic">🎙️</span> Suara Iklan Indonesia</h3>
+      <p class="desc">Mesin suara neural dengan instruksi gaya announcer iklan TV. Rantai otomatis <b>100% suara Indonesia</b> — tidak pernah jatuh ke suara Inggris/robot. <b>Bukan robot.</b></p>
       <label class="lb" for="selVoice">Mesin suara</label>
       <select id="selVoice">
-        <option value="damayanti-neural" selected>Damayanti · Neural — paling natural ⭐</option>
-        <option value="damayanti-standard">Damayanti · Standard</option>
-        <option value="browser">Suara browser (cadangan)</option>
+        <option value="auto-iklan" selected>Otomatis · Suara Iklan Indonesia — rekomendasi</option>
+        <option value="gemini">Gemini TTS — paling natural &amp; ekspresif</option>
+        <option value="openai">OpenAI TTS — hangat &amp; stabil</option>
+        <option value="damayanti-neural">Damayanti · Neural (Polly id-ID)</option>
+        <option value="damayanti-standard">Damayanti · Standard (Polly id-ID)</option>
+        <option value="browser">Suara browser Indonesia (cadangan)</option>
+      </select>
+      <label class="lb" for="selKar">Karakter bicara</label>
+      <select id="selKar">
+        <option value="iklan" selected>Announcer iklan TV — hangat &amp; berenergi</option>
+        <option value="guru">Guru ramah — kalem &amp; jelas</option>
+        <option value="cerita">Storyteller — dramatis mengalir</option>
+        <option value="santai">Presenter muda — santai &amp; fun</option>
       </select>
       <label class="lb" for="rngSpeed">Kecepatan bicara — <b id="speedLabel">1.00× · Normal</b></label>
       <input type="range" id="rngSpeed" min="0.75" max="1.25" step="0.05" value="1">
       <label class="switch"><input type="checkbox" id="chkNatural" checked><span class="track"></span> Optimasi jeda &amp; tanda baca agar terdengar manusiawi</label>
       <button id="btnTestVoice" class="btn btn-block" type="button">🔊 Coba Suara Ini</button>
-      <p class="hint">💡 Rahasia suara natural: naskah gaya percakapan + suara neural Damayanti + jeda tanda baca yang pas. Semua sudah dioptimalkan otomatis.</p>
+      <p class="hint">Rahasia suara iklan: naskah percakapan + instruksi karakter announcer ke mesin TTS + jeda tanda baca otomatis. Jika mesin utama gagal, otomatis pindah ke mesin Indonesia lain — bila semua gagal, aplikasi memberi tahu, bukan diam-diam memakai suara Inggris.</p>
     </div>
   </section>
 
@@ -357,7 +367,13 @@ const STYLES={
   formal:"Formal akademik namun tetap mengalir, jelas, dan enak diucapkan; hindari struktur kalimat buku yang berat."
 };
 const IMG_STYLE='modern educational illustration, vibrant colors, clean flat vector style with soft gradients, friendly and engaging, wide 16:9 composition, high detail, no text, no letters, no watermark';
-const VOICE_LABELS={'damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
+const VOICE_LABELS={'auto-iklan':'Otomatis · Suara Iklan Indonesia','gemini':'Gemini TTS','openai':'OpenAI TTS','damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
+const VOICE_KAR={
+  iklan:'Berbicaralah seperti announcer iklan TV Indonesia profesional: hangat, bersemangat, meyakinkan, dan ramah. Gunakan intonasi yang hidup, penekanan pada kata-kata penting, dan jeda alami antar kalimat. Lafalkan setiap kata seperti penutur asli bahasa Indonesia — jangan terdengar seperti robot atau orang asing.',
+  guru:'Berbicaralah seperti guru Indonesia yang sabar dan ramah saat menjelaskan pelajaran kepada murid: tenang, jelas, hangat, tempo santai, dengan intonasi naik-turun natural seperti penutur asli bahasa Indonesia.',
+  cerita:'Berbicaralah seperti pendongeng Indonesia yang dramatis dan hangat: penuh ekspresi, irama mengalir, ada jeda menegangkan di momen penting, seperti narator film dokumenter berbahasa Indonesia yang profesional.',
+  santai:'Berbicaralah seperti kreator konten edukasi muda Indonesia: santai, ceria, penuh semangat, seperti mengobrol hangat dengan teman di video YouTube. Natural khas penutur asli bahasa Indonesia.'
+};
 const TOPIC_CHIPS=[
   ['Fotosintesis 🌱','Fotosintesis untuk anak SMP — jelaskan dengan analogi dapur dan contoh sehari-hari'],
   ['Tata Surya 🪐','Tata surya: perjalanan planet mengelilingi matahari beserta fakta unik tiap planet'],
@@ -375,12 +391,13 @@ KAIDAH NARASI (WAJIB dipatuhi):
 4. DILARANG memakai frasa buku yang kaku seperti: "Pada kesempatan kali ini", "Dengan demikian", "Sebagai kesimpulan", "Hal tersebut dikarenakan", "Adapun".
 5. DILARANG menyebut diri sendiri sebagai AI, asisten, atau model.
 6. Hindari simbol aneh saat diucapkan: tulis "%" sebagai "persen", "&" sebagai "dan", "+" sebagai "plus".
-7. Jika ada istilah asing yang wajib, ucapkan secara natural seperti orang Indonesia berbicara.
+7. Gunakan 100% Bahasa Indonesia: DILARANG memakai kata/kalimat bahasa Inggris. Jika ada nama aplikasi/merek asing yang wajib disebut, ucapkan singkat lalu lanjut bahasa Indonesia.
+8. Tulis semua angka dengan huruf agar wajar saat dibaca: "8" menjadi "delapan", "50%" menjadi "lima puluh persen".
 
 `;
 
 /* ================= State ================= */
-const state={scenes:[],voice:'damayanti-neural',speed:1,naturalize:true,user:null,busy:false,recording:false};
+const state={scenes:[],voice:'auto-iklan',kar:'iklan',speed:1,naturalize:true,user:null,busy:false,recording:false};
 let pipelineCancel=false,exportCancel=false,mediaRec=null,exportChunks=[],exportNodes=[],actx=null,_dbT=null,_rtT=null;
 
 /* ================= Kanvas ================= */
@@ -642,39 +659,57 @@ function speechSpeak(text){
   try{speechSynthesis.cancel();}catch(_){ }
   const u=new SpeechSynthesisUtterance(String(text));
   u.lang='id-ID';u.rate=clamp(state.speed,0.5,2);u.pitch=1;
-  const vs=speechSynthesis.getVoices()||[];
-  const v=vs.find(x=>(x.lang||'').toLowerCase().indexOf('id')===0);
-  if(v)u.voice=v;
+  const vs=(speechSynthesis.getVoices()||[]).filter(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
+  if(vs.length){const pref=vs.find(v=>/natural/i.test(v.name))||vs.find(v=>/google/i.test(v.name))||vs[0];u.voice=pref;}
+  else{toast('Perangkat tidak punya suara browser Indonesia — pakai mesin AI (Otomatis/Gemini/OpenAI/Damayanti)','warn');return;}
   speechSynthesis.speak(u);
+}
+function browserVoiceLabel(){
+  if(!window.speechSynthesis)return 'id-ID';
+  const vs=(speechSynthesis.getVoices()||[]).filter(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
+  const pref=vs.find(v=>/natural/i.test(v.name))||vs.find(v=>/google/i.test(v.name))||vs[0];
+  return pref?pref.name:'id-ID';
+}
+/* Rantai mesin suara 100% INDONESIA — pilihan user dulu, lalu alternatif lain.
+   TIDAK ADA fallback suara Inggris: lebih baik gagal jelas daripada suara robot. */
+function ttsChain(){
+  const instr=VOICE_KAR[state.kar]||VOICE_KAR.iklan;
+  const gem=v=>({label:'Gemini TTS · '+v,opts:{provider:'gemini',voice:v,instructions:instr}});
+  const oai=v=>({label:'OpenAI TTS · '+v,opts:{provider:'openai',model:'gpt-4o-mini-tts',voice:v,instructions:instr}});
+  const pol=(extra,label)=>({label,opts:Object.assign({voice:'Damayanti',language:'id-ID'},extra)});
+  const G=[gem('Kore'),gem('Puck'),gem('Leda')];
+  const O=[oai('shimmer'),oai('nova'),oai('coral')];
+  const P=[pol({engine:'neural'},'Damayanti · Neural (id-ID)'),pol({},'Damayanti · Standard (id-ID)'),{label:'Polly · id-ID otomatis',opts:{language:'id-ID'}}];
+  let c;
+  if(state.voice==='gemini')c=G.concat(O,P);
+  else if(state.voice==='openai')c=O.concat(G,P);
+  else if(state.voice==='damayanti-neural')c=P.concat(G,O);
+  else if(state.voice==='damayanti-standard')c=[P[1],P[2]].concat(G,O);
+  else c=G.concat(O,P);
+  const seen=new Set();
+  return c.filter(a=>seen.has(a.label)?false:(seen.add(a.label),true));
 }
 async function makeTTS(text){
   const processed=state.naturalize?naturalizeForSpeech(text):String(text||'');
-  if(state.voice==='browser')return {type:'browser',text:processed,dur:estSec(processed)};
-  const opts=[];
-  if(state.voice==='damayanti-neural'){
-    opts.push({voice:'Damayanti',engine:'neural',language:'id-ID'});
-    opts.push({voice:'Damayanti',language:'id-ID'});
-  }else{
-    opts.push({voice:'Damayanti',language:'id-ID'});
-    opts.push({voice:'Damayanti',engine:'neural',language:'id-ID'});
+  if(state.voice==='browser'){
+    const hasId=window.speechSynthesis&&(speechSynthesis.getVoices()||[]).some(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
+    if(!hasId)throw new Error('Perangkat tidak punya suara browser Indonesia. Pilih mesin AI (Otomatis/Gemini/OpenAI/Damayanti).');
+    return {type:'browser',text:processed,dur:estSec(processed),label:browserVoiceLabel()};
   }
-  opts.push({language:'id-ID'});
-  opts.push({});
   let lastErr=null;
-  for(const o of opts){
+  for(const at of ttsChain()){
     try{
-      const el=await puter.ai.txt2speech(processed,o);
+      const el=await puter.ai.txt2speech(processed,at.opts);
       const src=el&&el.src;
       if(!src)throw new Error('Audio kosong');
       let url=src,blob=null;
       try{const r=await fetch(src);if(r.ok){blob=await r.blob();url=URL.createObjectURL(blob);}}catch(_){ }
       const a=new Audio(url);a.preload='auto';
       const dur=await audioDuration(a);
-      return {type:'puter',el:a,blob:blob,url:url,dur:dur||estSec(processed)};
-    }catch(e){lastErr=e;}
+      return {type:'puter',el:a,blob:blob,url:url,dur:dur||estSec(processed),label:at.label};
+    }catch(e){lastErr=e;console.warn('[TTS] gagal:',at.label,e);}
   }
-  console.warn('TTS Puter gagal, memakai suara browser:',lastErr);
-  return {type:'browser',text:processed,dur:estSec(processed)};
+  throw new Error('Semua mesin suara Indonesia gagal'+(lastErr?': '+(lastErr.message||lastErr):'')+'. Cek koneksi internet / login Puter, lalu coba lagi.');
 }
 
 /* ================= AI: chat, naskah, gambar ================= */
@@ -942,7 +977,7 @@ async function generateProject(){
       overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Membuat ilustrasi…',true);
       try{await genImageFor(sc);}catch(e){toast('Gambar scene '+(i+1)+' gagal: '+(e.message||e),'err');}
       if(pipelineCancel)break;
-      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara natural (Damayanti)…',true);
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia…',true);
       try{await genVoiceFor(sc);}catch(e){toast('Suara scene '+(i+1)+' gagal: '+(e.message||e),'err');}
     }
     overlayHide();
@@ -974,7 +1009,7 @@ async function generateAll(kind){
   for(let k=0;k<jobs.length;k++){
     if(pipelineCancel)break;
     const sc=jobs[k].sc,i=jobs[k].i;
-    overlayShow((kind==='img'?'Membuat ilustrasi':'Merekam suara natural')+' · scene '+(i+1)+'/'+state.scenes.length,(k+1)+' dari '+jobs.length+' sedang diproses…',true);
+    overlayShow((kind==='img'?'Membuat ilustrasi':'Merekam suara iklan Indonesia')+' · scene '+(i+1)+'/'+state.scenes.length,(k+1)+' dari '+jobs.length+' sedang diproses…',true);
     try{if(kind==='img')await genImageFor(sc);else await genVoiceFor(sc);okc++;}
     catch(err){toast('Scene '+(i+1)+': '+(err.message||err),'err');}
   }
@@ -986,21 +1021,21 @@ async function generateAll(kind){
 async function testVoice(){
   if(typeof puter==='undefined')return toast('SDK Puter belum termuat','err');
   if(state.voice!=='browser'&&!requireAuth())return;
-  const btn=$('#btnTestVoice');const old='🔊 Coba Suara Ini';
-  btn.disabled=true;btn.textContent='⏳ Menyiapkan suara…';
+  const btn=$('#btnTestVoice');const old=btn.textContent;
+  btn.disabled=true;btn.textContent='Menyiapkan suara…';
   const done=()=>{btn.disabled=false;btn.textContent=old;};
   try{
-    const text='Halo teman-teman! Nah, ini dia contoh suaraku. Gimana, terdengar natural kan? Santai, jelas, dan sama sekali bukan robot. Oke, sekarang kamu siap bikin video edukasi yang keren!';
+    const text='Halo teman-teman! Nah, ini dia contoh suaraku. Gimana, terdengar natural kan seperti announcer iklan? Tahukah kamu? Tubuh kita butuh sekitar 8 gelas air setiap hari. Seru, kan? Oke, sekarang kamu siap bikin video edukasi yang keren!';
     const pb=await makeTTS(text);
     if(pb.type==='puter'){
       pb.el.addEventListener('ended',done,{once:true});
       pb.el.playbackRate=state.speed;
       pb.el.play().catch(()=>{});
-      toast('Suara: '+(VOICE_LABELS[state.voice]||state.voice),'success');
+      toast('Suara aktif: '+pb.label,'success');
     }else{
       speechSpeak(pb.text);
       const iv=setInterval(()=>{if(!speechSynthesis.speaking){clearInterval(iv);done();}},300);
-      toast('Menggunakan suara browser (id-ID)','info');
+      toast('Suara browser: '+pb.label,'info');
     }
   }catch(e){done();toast('Gagal: '+(e.message||e),'err');}
 }
@@ -1136,7 +1171,7 @@ function saveLocal(){
   try{
     localStorage.setItem('eduvid_v1',JSON.stringify({
       topic:$('#inpTopic').value,level:$('#selLevel').value,dur:$('#selDuration').value,style:$('#selStyle').value,
-      voice:state.voice,speed:state.speed,naturalize:state.naturalize,
+      voice:state.voice,kar:state.kar,speed:state.speed,naturalize:state.naturalize,
       scenes:state.scenes.map(s=>({judul:s.judul,narasi:s.narasi,visual:s.visual}))
     }));
   }catch(_){ }
@@ -1150,10 +1185,13 @@ function loadLocal(){
     if(d.level)$('#selLevel').value=d.level;
     if(d.dur)$('#selDuration').value=d.dur;
     if(d.style)$('#selStyle').value=d.style;
-    state.voice=d.voice||'damayanti-neural';
+    state.voice=d.voice||'auto-iklan';
+    if(!document.querySelector('#selVoice option[value="'+state.voice+'"]'))state.voice='auto-iklan';
+    state.kar=VOICE_KAR[d.kar]?d.kar:'iklan';
     state.speed=+d.speed||1;
     state.naturalize=d.naturalize!==false;
     $('#selVoice').value=state.voice;
+    $('#selKar').value=state.kar;
     $('#rngSpeed').value=String(state.speed);
     $('#chkNatural').checked=state.naturalize;
     if(Array.isArray(d.scenes)&&d.scenes.length){
@@ -1267,6 +1305,7 @@ function wireEvents(){
   $('#btnGenAllVoices').onclick=()=>generateAll('voice');
   $('#btnTestVoice').onclick=testVoice;
   $('#selVoice').onchange=e=>{state.voice=e.target.value;saveLocal();toast('Mesin suara: '+(VOICE_LABELS[state.voice]||state.voice),'info');};
+  $('#selKar').onchange=e=>{state.kar=e.target.value;saveLocal();toast('Karakter bicara: '+e.target.selectedOptions[0].text,'info');};
   $('#rngSpeed').oninput=e=>{state.speed=+e.target.value;updateSpeedLabel();updateToolbar();renderTimeline();saveLocalDebounced();};
   $('#chkNatural').onchange=e=>{state.naturalize=e.target.checked;saveLocal();};
   $('#btnPlay').onclick=()=>player.toggle();
