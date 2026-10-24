@@ -2,1598 +2,1305 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReelPro AI — Auto Upload Reel, Foto & Video ke Facebook Pro</title>
-<meta name="description" content="Aplikasi auto upload Reel, Foto, dan Video ke Facebook Pro dengan integrasi Puter AI untuk membaca & mengoptimalkan algoritma.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduVid AI Studio — Pembuat Video Konten Edukasi (Puter AI · Suara Natural Indonesia)</title>
+<meta name="description" content="Studio pembuatan video edukasi berbasis Puter AI: naskah otomatis, ilustrasi AI, dan suara natural Bahasa Indonesia (Damayanti Neural).">
+<meta name="theme-color" content="#070b15">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://js.puter.com/v2/"></script>
+<!--
+  EduVid AI Studio — Aplikasi Pembuatan Video Konten Edukasi
+  Powered by Puter AI (js.puter.com/v2) — gratis tanpa API key
+  Suara natural Bahasa Indonesia: Damayanti (neural, id-ID)
+  Cara pakai: buka file ini di browser (Chrome/Edge disarankan)
+  → Masuk dengan Puter → Buat Naskah → Pratinjau → Rekam & Unduh Video.
+-->
 <style>
-:root{
-  --bg:#07080f; --bg2:#0b0d18; --surface:#12141f; --surface2:#191c2b; --surface3:#202436;
-  --border:#252940; --border2:#323752;
-  --text:#f3f4fa; --muted:#8f94ab; --muted2:#6a6f88;
-  --acc:#ec4899; --acc2:#a855f7; --amber:#f59e0b; --ok:#34d399; --err:#f87171; --info:#38bdf8;
-  --grad:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);
-  --grad2:linear-gradient(135deg,#f59e0b 0%,#ec4899 100%);
-  --radius:16px; --radius-sm:10px;
-  --shadow:0 10px 30px rgba(0,0,0,.45);
-  --sidebar-w:242px;
-}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{
-  font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  background:radial-gradient(1200px 600px at 80% -10%,rgba(168,85,247,.14),transparent 60%),
-             radial-gradient(1000px 500px at -10% 110%,rgba(236,72,153,.12),transparent 60%),
-             var(--bg);
-  color:var(--text);min-height:100vh;overflow-x:hidden;
+[hidden]{display:none!important}
+:root{
+  --bg:#070b15;--panel:#0f1729;--panel2:#0c1322;--line:#1f2b47;--line2:#26314e;
+  --text:#e6edf7;--muted:#8b98ad;--acc:#6d5ef2;--acc2:#22d3ee;
+  --grad:linear-gradient(135deg,#6d5ef2,#22d3ee);
+  --ok:#34d399;--warn:#fbbf24;--err:#fb7185;
 }
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;font-size:14.5px;line-height:1.55}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+ radial-gradient(700px 420px at 88% -8%,rgba(109,94,242,.16),transparent 60%),
+ radial-gradient(760px 520px at -12% 28%,rgba(34,211,238,.10),transparent 60%),
+ radial-gradient(620px 420px at 55% 112%,rgba(109,94,242,.10),transparent 60%)}
+::selection{background:rgba(109,94,242,.35)}
 ::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#1c2942;border-radius:8px;border:2px solid #0a0f1c}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#2c3149;border-radius:8px;border:2px solid var(--bg)}
-::-webkit-scrollbar-thumb:hover{background:#3d4368}
-button{font-family:inherit;cursor:pointer}
-input,select,textarea{font-family:inherit}
-a{color:var(--acc)}
 
-/* ===== LAYOUT ===== */
-.app{display:flex;min-height:100vh}
-.sidebar{
-  width:var(--sidebar-w);background:rgba(11,13,24,.92);backdrop-filter:blur(14px);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;
-  position:fixed;top:0;bottom:0;left:0;z-index:50;transition:transform .28s ease;
-}
-.brand{display:flex;align-items:center;gap:12px;padding:20px 18px 16px}
-.brand-logo{
-  width:42px;height:42px;border-radius:13px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
-  box-shadow:0 6px 18px rgba(236,72,153,.35);
-}
-.brand-name{font-weight:800;font-size:17px;letter-spacing:.2px}
-.brand-name span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.brand-sub{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.6px;text-transform:uppercase}
-.nav{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
-.nav-label{font-size:10px;color:var(--muted2);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:12px 10px 4px}
-.nav-item{
-  display:flex;align-items:center;gap:11px;padding:10.5px 12px;border-radius:12px;
-  color:var(--muted);font-size:13.5px;font-weight:600;border:1px solid transparent;
-  background:none;width:100%;text-align:left;transition:all .18s ease;
-}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:linear-gradient(135deg,rgba(236,72,153,.16),rgba(168,85,247,.14));color:#fff;border-color:rgba(236,72,153,.35)}
-.nav-item .ico{font-size:16px;width:22px;text-align:center}
-.sidebar-foot{padding:14px;border-top:1px solid var(--border)}
-.credit-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:11px;color:var(--muted);line-height:1.55}
-.credit-card b{color:var(--text)}
-.status-row{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:11px;font-weight:600}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.dot.on{background:var(--ok);box-shadow:0 0 8px rgba(52,211,153,.8)}
-.dot.off{background:var(--err)}
-.dot.warn{background:var(--amber);box-shadow:0 0 8px rgba(245,158,11,.8)}
+/* ---------- Topbar ---------- */
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 22px;background:rgba(7,11,21,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:13px;background:var(--grad);display:grid;place-items:center;font-size:22px;box-shadow:0 8px 24px rgba(109,94,242,.35)}
+.brand h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.brand h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{font-size:11.5px;color:var(--muted);margin-top:1px}
+.authbox{display:flex;align-items:center;gap:10px}
+.auth-chip{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.auth-chip b{color:var(--text)}
+.dot{width:8px;height:8px;border-radius:50%;background:#334155}
+.dot.on{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 
-.main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
-.topbar{
-  position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;
-  padding:14px 24px;background:rgba(7,8,15,.85);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
-}
-.hamburger{display:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:11px;font-size:17px}
-.page-title{font-size:18px;font-weight:800}
-.page-title small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
-.top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.chip{
-  display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:99px;
-  background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);
-}
-.chip b{color:var(--text)}
-.clock{font-variant-numeric:tabular-nums}
+.banner{max-width:1560px;margin:14px auto 0;padding:11px 16px;border:1px solid #2b3a5e;background:linear-gradient(90deg,rgba(109,94,242,.12),rgba(34,211,238,.08));border-radius:12px;font-size:13px;color:#c7d2e8;width:calc(100% - 44px)}
+.banner b{color:#fff}
 
-.content{padding:24px;max-width:1220px;width:100%;margin:0 auto;flex:1}
-.page{display:none;animation:fadeUp .35s ease}
-.page.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* ---------- Layout ---------- */
+.main{max-width:1560px;margin:16px auto 0;padding:0 22px 46px;display:grid;grid-template-columns:340px minmax(0,1fr) 400px;gap:16px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
 
-/* ===== CARDS & COMMON ===== */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.card+.card{margin-top:18px}
-.card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.card-head h3{font-size:15.5px;font-weight:700}
-.card-head .sub{font-size:12px;color:var(--muted);margin-top:2px;font-weight:500}
-.card-head .spacer{flex:1}
-.grid{display:grid;gap:18px}
-.grid.g2{grid-template-columns:1fr 1fr}
-.grid.g3{grid-template-columns:repeat(3,1fr)}
-.grid.g4{grid-template-columns:repeat(4,1fr)}
-.mb{margin-bottom:16px}
-.muted{color:var(--muted)}
-.small{font-size:12px}
-.label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 7px 2px;letter-spacing:.3px}
-.input,.select,.textarea{
-  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;
-  color:var(--text);padding:11px 14px;font-size:13.5px;outline:none;transition:border .18s,box-shadow .18s;
-}
-.input:focus,.select:focus,.textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(236,72,153,.15)}
-.input::placeholder,.textarea::placeholder{color:var(--muted2)}
-.textarea{resize:vertical;min-height:88px;line-height:1.6}
-.select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238f94ab' d='M6 8 0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
-.select option{background:var(--surface2)}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:700;border:1px solid transparent;
-  transition:all .18s ease;white-space:nowrap;min-height:42px;
-}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn-primary{background:var(--grad);color:#fff;box-shadow:0 6px 20px rgba(236,72,153,.32)}
-.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 9px 26px rgba(236,72,153,.42)}
-.btn-ghost{background:var(--surface2);color:var(--text);border-color:var(--border)}
-.btn-ghost:hover:not(:disabled){border-color:var(--border2);background:var(--surface3)}
-.btn-amber{background:linear-gradient(135deg,#f59e0b,#f97316);color:#1a1205;box-shadow:0 6px 18px rgba(245,158,11,.3)}
-.btn-ok{background:linear-gradient(135deg,#10b981,#34d399);color:#04231a}
-.btn-danger{background:rgba(248,113,113,.12);color:var(--err);border-color:rgba(248,113,113,.35)}
-.btn-danger:hover:not(:disabled){background:rgba(248,113,113,.2)}
-.btn-sm{padding:8px 13px;min-height:34px;font-size:12px;border-radius:10px}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
-.badge.pink{background:rgba(236,72,153,.15);color:#f9a8d4;border:1px solid rgba(236,72,153,.3)}
-.badge.purple{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)}
-.badge.amber{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
-.badge.green{background:rgba(52,211,153,.13);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
-.badge.red{background:rgba(248,113,113,.13);color:#fca5a5;border:1px solid rgba(248,113,113,.3)}
-.badge.gray{background:var(--surface3);color:var(--muted);border:1px solid var(--border)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.card h3{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.step{width:22px;height:22px;border-radius:7px;background:rgba(109,94,242,.18);color:#b3a6ff;display:grid;place-items:center;font-size:11.5px;font-weight:800;flex-shrink:0}
+.step.mic{background:rgba(34,211,238,.15);color:#7ee3f4}
+.lb{display:block;font-size:12px;font-weight:700;color:#aab7cf;margin:12px 0 6px}
+.lb b{color:var(--acc2)}
+.desc{font-size:12.5px;color:var(--muted);margin:-6px 0 2px}
+.hint{font-size:11.5px;color:#6d7b93;margin-top:10px;line-height:1.5}
 
-/* toggle */
-.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;inset:0;background:var(--surface3);border:1px solid var(--border);border-radius:99px;transition:.25s;cursor:pointer}
-.slider:before{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#8f94ab;top:50%;left:3px;transform:translateY(-50%);transition:.25s}
-.switch input:checked+.slider{background:linear-gradient(135deg,#ec4899,#a855f7);border-color:transparent}
-.switch input:checked+.slider:before{left:23px;background:#fff}
-.toggle-row{display:flex;align-items:center;gap:13px;padding:13px 0}
-.toggle-row .tt{font-size:13.5px;font-weight:700}
-.toggle-row .td{font-size:11.5px;color:var(--muted);margin-top:2px}
+textarea,input[type=text],select{width:100%;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-family:inherit;font-size:13.5px;padding:10px 12px;outline:none;transition:border .15s,box-shadow .15s}
+textarea:focus,input:focus,select:focus{border-color:rgba(109,94,242,.7);box-shadow:0 0 0 3px rgba(109,94,242,.15)}
+textarea{resize:vertical;min-height:64px}
+select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238b98ad' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.chip{font-size:11.5px;color:#b9c6dd;background:#141d33;border:1px solid var(--line2);border-radius:999px;padding:5px 11px;cursor:pointer;transition:.15s;font-family:inherit}
+.chip:hover{border-color:var(--acc);color:#fff;transform:translateY(-1px)}
 
-/* stat */
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden}
-.stat-card:after{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:var(--grad);opacity:.09;filter:blur(6px)}
-.stat-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px;background:rgba(236,72,153,.13);border:1px solid rgba(236,72,153,.25)}
-.stat-val{font-size:26px;font-weight:800;letter-spacing:-.5px}
-.stat-lab{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#141d33;border:1px solid var(--line2);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;border-radius:11px;padding:10px 16px;cursor:pointer;transition:.16s;white-space:nowrap}
+.btn:hover{border-color:#3d4c74;transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-p{background:var(--grad);border:none;color:#fff;box-shadow:0 8px 22px rgba(109,94,242,.35)}
+.btn-p:hover{filter:brightness(1.08);border:none}
+.btn-block{width:100%;margin-top:14px}
+.btn-s{padding:7px 11px;font-size:12px;border-radius:9px}
+.btn.ghost{background:transparent}
+.linkish{background:none;border:none;color:#7f96c4;font-family:inherit;font-size:11.5px;cursor:pointer;text-decoration:underline dotted;padding:0}
+.linkish:hover{color:var(--acc2)}
 
-/* dropzone */
-.dropzone{
-  border:2px dashed var(--border2);border-radius:var(--radius);padding:42px 24px;text-align:center;
-  background:var(--surface);cursor:pointer;transition:all .2s ease;
-}
-.dropzone:hover,.dropzone.drag{border-color:var(--acc);background:linear-gradient(160deg,rgba(236,72,153,.08),rgba(168,85,247,.06))}
-.dz-ico{width:66px;height:66px;margin:0 auto 16px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 10px 26px rgba(236,72,153,.35)}
-.dz-title{font-size:16px;font-weight:800}
-.dz-sub{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
-.dz-formats{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+/* ---------- Kartu suara ---------- */
+.voice-card{background:linear-gradient(180deg,rgba(109,94,242,.10),rgba(15,23,41,.55)),var(--panel);border-color:#3d3f78}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:#1c2942;outline:none;margin:8px 0 4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--grad);cursor:pointer;box-shadow:0 2px 10px rgba(109,94,242,.6)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:#6d5ef2;cursor:pointer}
+.switch{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#b9c6dd;margin:12px 0 2px;cursor:pointer;user-select:none}
+.switch input{display:none}
+.switch .track{width:38px;height:21px;border-radius:99px;background:#1c2942;border:1px solid var(--line2);position:relative;transition:.18s;flex-shrink:0}
+.switch .track::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#64748b;transition:.18s}
+.switch input:checked+.track{background:rgba(109,94,242,.4);border-color:#6d5ef2}
+.switch input:checked+.track::after{left:19px;background:var(--acc2)}
 
-/* media item */
-.media-item{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px;animation:fadeUp .3s ease}
-.media-item.sel{border-color:var(--acc)}
-.mi-top{display:flex;gap:14px;align-items:flex-start}
-.mi-thumb{width:86px;height:86px;border-radius:12px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--border)}
-.mi-thumb.video-thumb{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--muted)}
-.mi-info{flex:1;min-width:0}
-.mi-name{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mi-meta{font-size:11.5px;color:var(--muted);margin-top:3px}
-.mi-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.mi-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
-.mi-caption{margin-top:12px}
-.score-pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12.5px;padding:5px 12px;border-radius:99px}
-.score-pill.s-high{background:rgba(52,211,153,.14);color:#6ee7b7}
-.score-pill.s-mid{background:rgba(245,158,11,.14);color:#fcd34d}
-.score-pill.s-low{background:rgba(248,113,113,.14);color:#fca5a5}
-.hashtag-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.hchip{font-size:11.5px;font-weight:600;color:#d8b4fe;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);padding:4px 10px;border-radius:99px}
+/* ---------- Toolbar & scene ---------- */
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}
+.tb-stats{display:flex;align-items:baseline;gap:10px}
+.tb-stats b{font-size:14px}
+.tb-stats span{font-size:12px;color:var(--muted)}
+.tb-actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* gauge */
-.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
-.gauge{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
-.gauge:before{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--surface2)}
-.gauge-val{position:relative;font-size:36px;font-weight:800;z-index:1}
-.gauge-val small{font-size:14px;color:var(--muted);font-weight:700}
-.gauge-lab{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.bar-row{margin-bottom:13px}
-.bar-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px}
-.bar-top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
-.bar{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden}
-.bar>i{display:block;height:100%;border-radius:99px;background:var(--grad);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.scenes{display:flex;flex-direction:column;gap:12px}
+.scene-card{background:var(--panel);border:1px solid var(--line);border-left:3px solid transparent;border-radius:14px;padding:14px;animation:fadeUp .3s ease}
+.scene-card.active{border-color:#4d4394;border-left-color:var(--acc);box-shadow:0 10px 34px rgba(109,94,242,.15)}
+.sc-head{display:flex;align-items:center;gap:9px}
+.sc-num{width:26px;height:26px;border-radius:8px;background:var(--grad);display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex-shrink:0}
+.sc-title{flex:1;background:transparent;border:1px solid transparent;font-weight:800;font-size:14px;padding:6px 8px;min-width:0}
+.sc-title:hover{border-color:var(--line2)}
+.sc-title:focus{background:var(--panel2)}
+.sc-dur{font-size:11px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);padding:4px 8px;border-radius:99px;white-space:nowrap}
+.sc-tools{display:flex;gap:5px}
+.ib{width:27px;height:27px;border-radius:8px;background:#141d33;border:1px solid var(--line2);color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:13px;font-family:inherit;transition:.14s}
+.ib:hover{color:#fff;border-color:#3d4c74}
+.ib.danger:hover{color:#fda4af;border-color:rgba(127,29,29,.5)}
+.sc-nar{margin-top:10px;font-size:13.5px;line-height:1.6;min-height:70px;overflow:hidden}
+.sc-meta{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.sc-meta-info{font-size:11px;color:#64748b}
+.pills{display:flex;gap:6px;margin-left:auto}
+.pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--ok);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}
+.pill.busy{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
+.pill.warn{color:var(--warn);border-color:rgba(251,191,36,.3)}
+.sc-visual-row{margin-top:9px}
+.sc-media{display:flex;gap:12px;margin-top:12px;align-items:stretch}
+.sc-thumb{width:180px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.sc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.sc-thumb .ph{font-size:26px;opacity:.45}
+.sc-actions{display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0}
+.sc-actions .btn{justify-content:flex-start}
 
-/* log console */
-.console{background:#0a0c15;border:1px solid var(--border);border-radius:14px;padding:14px;font-family:'Fira Code',ui-monospace,'Cascadia Code',Consolas,monospace;font-size:12px;line-height:1.75;max-height:230px;overflow-y:auto}
-.console .ln{display:flex;gap:10px}
-.console .t{color:var(--muted2);flex-shrink:0}
-.console .m.ok{color:#6ee7b7}.console .m.err{color:#fca5a5}.console .m.info{color:#7dd3fc}.console .m.warn{color:#fcd34d}.console .m{color:#c3c8db;word-break:break-word}
+.empty{border-style:dashed;text-align:center;padding:44px 20px;color:var(--muted)}
+.empty-emoji{font-size:44px;margin-bottom:10px}
+.empty h4{color:var(--text);margin-bottom:6px}
 
-/* chat */
-.chat-box{display:flex;flex-direction:column;gap:11px;max-height:380px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
-.msg{max-width:85%;padding:11px 15px;border-radius:15px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
-.msg.user{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:5px}
-.msg.bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:5px}
-.chat-input-row{display:flex;gap:10px}
-.chat-input-row .input{flex:1}
+/* ---------- Pratinjau ---------- */
+.stage{position:relative;margin-bottom:12px}
+.stage canvas{width:100%;aspect-ratio:16/9;display:block;border-radius:12px;background:#000;border:1px solid var(--line)}
+.rec{position:absolute;top:12px;right:12px;display:none;align-items:center;gap:7px;background:rgba(127,29,29,.35);border:1px solid rgba(239,68,68,.5);color:#fecaca;font-size:11px;font-weight:800;letter-spacing:.08em;padding:5px 11px;border-radius:99px;backdrop-filter:blur(4px)}
+.rec.on{display:flex}
+.rec i{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
 
-/* list rows */
-.row-item{display:flex;align-items:center;gap:13px;padding:13px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;margin-top:10px;flex-wrap:wrap}
-.row-item .ri-ico{width:44px;height:44px;border-radius:12px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
-.ri-main{flex:1;min-width:200px}
-.ri-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
-.ri-sub{font-size:11.5px;color:var(--muted);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
-.ri-actions{display:flex;gap:8px;flex-wrap:wrap}
-.empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8}
-.empty .big{font-size:34px;display:block;margin-bottom:8px}
+.pbar{display:flex;align-items:center;gap:9px;margin:4px 0 12px}
+.pbtn{width:38px;height:38px;border-radius:11px;background:#141d33;border:1px solid var(--line2);color:var(--text);font-size:14px;cursor:pointer;display:grid;place-items:center;transition:.14s;font-family:inherit}
+.pbtn:hover{border-color:#3d4c74}
+.pbtn.main{width:46px;height:46px;background:var(--grad);border:none;font-size:17px;box-shadow:0 6px 18px rgba(109,94,242,.4)}
+.pbtn:disabled{opacity:.4;cursor:not-allowed}
+.ptime{margin-left:auto;text-align:right}
+.ptime b{display:block;font-size:12.5px}
+.ptime span{font-size:11.5px;color:var(--muted)}
 
-/* accordion */
-details.acc{background:var(--surface2);border:1px solid var(--border);border-radius:13px;margin-top:10px;overflow:hidden}
-details.acc summary{padding:14px 16px;font-size:13.5px;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
-details.acc summary::-webkit-details-marker{display:none}
-details.acc summary:after{content:"+";margin-left:auto;font-size:17px;color:var(--muted)}
-details.acc[open] summary:after{content:"–"}
-details.acc .acc-body{padding:0 16px 15px;font-size:12.5px;color:var(--muted);line-height:1.8}
-details.acc .acc-body b{color:var(--text)}
-details.acc .acc-body ol,.acc-body ul{padding-left:20px;margin:8px 0}
-kbd{background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:1px 7px;font-size:11px;font-family:inherit}
+#timeline{display:flex;gap:5px;height:34px}
+.seg{position:relative;border-radius:8px;background:#141d33;border:1px solid var(--line);overflow:hidden;cursor:pointer;min-width:24px;transition:border-color .15s}
+.seg:hover{border-color:#3d4c74}
+.seg.active{border-color:var(--acc)}
+.seg .fill{position:absolute;inset:0;width:0%;background:linear-gradient(90deg,rgba(109,94,242,.85),rgba(34,211,238,.85))}
+.seg span{position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:#cbd5e1}
 
-/* tips list */
-.tips-list{list-style:none;display:flex;flex-direction:column;gap:9px}
-.tips-list li{display:flex;gap:10px;font-size:13px;line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px}
-.tips-list li .n{width:22px;height:22px;border-radius:8px;background:var(--grad);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.dl-link{display:block;margin-top:10px;font-size:12.5px;color:#7ee3f4;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3);padding:9px 12px;border-radius:10px;text-decoration:none}
+.dl-link:hover{background:rgba(34,211,238,.14)}
 
-/* modal */
-.modal-mask{position:fixed;inset:0;background:rgba(4,5,10,.72);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-mask.show{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:440px;box-shadow:0 24px 70px rgba(0,0,0,.6);animation:fadeUp .25s ease}
-.modal h3{font-size:16px;font-weight:800;margin-bottom:5px}
-.modal .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.tips ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.tips li{font-size:12.5px;color:#aab7cf;padding-left:18px;position:relative}
+.tips li::before{content:'›';position:absolute;left:4px;color:var(--acc2);font-weight:800}
+.foot{text-align:center;font-size:11.5px;color:#5d6b84;padding:4px 0 10px}
+.foot b{color:#8b98ad}
 
-/* toast */
-#toasts{position:fixed;top:18px;right:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:360px}
-.toast{background:var(--surface);border:1px solid var(--border2);border-left:4px solid var(--acc);border-radius:13px;padding:13px 16px;font-size:13px;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:slideIn .3s ease;line-height:1.5}
-.toast.ok{border-left-color:var(--ok)}.toast.err{border-left-color:var(--err)}.toast.warn{border-left-color:var(--amber)}
-.toast b{display:block;font-size:12.5px;margin-bottom:2px}
-@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+/* ---------- Overlay & toast ---------- */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(4,7,15,.84);backdrop-filter:blur(10px);display:grid;place-items:center}
+.ov-box{text-align:center;max-width:440px;padding:30px}
+.spin{width:56px;height:56px;margin:0 auto 20px;border-radius:50%;background:conic-gradient(from 0deg,#6d5ef2,#22d3ee,#6d5ef2);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));animation:rot .9s linear infinite}
+.ov-box h4{font-size:16px;margin-bottom:6px}
+.ov-box p{font-size:12.5px;color:var(--muted);margin-bottom:18px;min-height:18px}
 
-/* misc */
-.result-box{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:15px;font-size:13px;line-height:1.7;margin-top:14px;white-space:pre-wrap;word-break:break-word}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.notice{display:flex;gap:11px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:13px;padding:13px 15px;font-size:12.5px;line-height:1.65;color:#fcd34d;margin-bottom:16px}
-.notice.info{background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.25);color:#7dd3fc}
-.notice.green{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:#6ee7b7}
-.img-result{max-width:100%;border-radius:13px;border:1px solid var(--border);margin-top:14px;display:block}
-.filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.fchip{padding:8px 15px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-.fchip.active{background:var(--grad);color:#fff;border-color:transparent}
-.overlay{display:none;position:fixed;inset:0;background:rgba(4,5,10,.6);z-index:45}
-.overlay.show{display:block}
+#toasts{position:fixed;top:74px;right:18px;z-index:400;display:flex;flex-direction:column;gap:8px;max-width:360px}
+.toast{background:rgba(15,23,41,.96);border:1px solid var(--line2);border-left:3px solid var(--acc2);padding:11px 15px;border-radius:11px;font-size:12.5px;box-shadow:0 12px 34px rgba(0,0,0,.45);animation:slideIn .25s ease;transition:.4s}
+.toast.success{border-left-color:var(--ok)}
+.toast.err{border-left-color:var(--err)}
+.toast.warn{border-left-color:var(--warn)}
 
-/* responsive */
-@media (max-width:1020px){
-  .grid.g4{grid-template-columns:1fr 1fr}
-  .grid.g3{grid-template-columns:1fr}
-  .grid.g2{grid-template-columns:1fr}
-}
-@media (max-width:820px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:none;box-shadow:0 0 60px rgba(0,0,0,.6)}
-  .main{margin-left:0}
-  .hamburger{display:flex;align-items:center;justify-content:center}
-  .content{padding:16px}
-  .topbar{padding:12px 16px}
-  .clock,.hide-m{display:none}
-}
-@media (max-width:560px){
-  .grid.g4{grid-template-columns:1fr}
-  .dz-title{font-size:14.5px}
-  .stat-val{font-size:22px}
-  #toasts{left:12px;right:12px;max-width:none}
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:.25}}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* ---------- Responsif ---------- */
+@media(max-width:1360px){.main{grid-template-columns:320px minmax(0,1fr) 360px}}
+@media(max-width:1180px){.main{grid-template-columns:330px minmax(0,1fr)}.col.right{grid-column:1/-1}}
+@media(max-width:760px){.main{grid-template-columns:1fr;padding:0 14px 40px}.col.right{grid-column:auto}.banner{width:calc(100% - 28px)}.row2{grid-template-columns:1fr}.sc-media{flex-direction:column}.sc-thumb{width:100%}.topbar{padding:10px 14px}}
 </style>
 </head>
 <body>
-<div class="app">
-
-  <!-- ============ SIDEBAR ============ -->
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-logo">🎬</div>
-      <div>
-        <div class="brand-name">Reel<span>Pro AI</span></div>
-        <div class="brand-sub">FB Pro Auto Uploader</div>
-      </div>
-    </div>
-    <nav class="nav" aria-label="Navigasi utama">
-      <div class="nav-label">Menu</div>
-      <button class="nav-item active" data-nav="home"><span class="ico">🏠</span> Beranda</button>
-      <button class="nav-item" data-nav="compose"><span class="ico">⬆️</span> Buat Post</button>
-      <button class="nav-item" data-nav="ai"><span class="ico">🤖</span> AI Studio</button>
-      <button class="nav-item" data-nav="queue"><span class="ico">📅</span> Antrean Otomatis</button>
-      <button class="nav-item" data-nav="history"><span class="ico">📜</span> Riwayat</button>
-      <div class="nav-label">Sistem</div>
-      <button class="nav-item" data-nav="settings"><span class="ico">⚙️</span> Pengaturan</button>
-    </nav>
-    <div class="sidebar-foot">
-      <div class="credit-card">
-        <b>Puter AI</b> — pembaca algoritma &amp; generator caption.
-        <div class="status-row"><span class="dot warn" id="dotPuter"></span><span id="txtPuter">Memeriksa Puter AI…</span></div>
-        <div class="status-row"><span class="dot warn" id="dotFb"></span><span id="txtFb">Facebook: memeriksa…</span></div>
-        <div class="status-row"><span class="dot warn" id="dotEng"></span><span id="txtEng">Engine server: memeriksa…</span></div>
-      </div>
-    </div>
-  </aside>
-  <div class="overlay" id="overlay"></div>
-
-  <!-- ============ MAIN ============ -->
-  <div class="main">
-    <header class="topbar">
-      <button class="hamburger" id="hamburger" aria-label="Buka menu">☰</button>
-      <div class="page-title" id="pageTitle">Beranda<small id="pageSub">Ringkasan performa &amp; algoritma kamu</small></div>
-      <div class="top-right">
-        <span class="chip hide-m">🟣 Puter AI: <b id="chipPuter">cek…</b></span>
-        <span class="chip">⚙️ Engine: <b id="chipEng">…</b></span>
-        <span class="chip clock" id="clock">--:--:--</span>
-      </div>
-    </header>
-
-    <main class="content">
-
-      <!-- ======== HALAMAN: BERANDA ======== -->
-      <section class="page active" id="page-home" aria-label="Beranda">
-        <div class="notice green">
-          <span>☁️</span>
-          <span><b>Engine posting 24/7 aktif di server</b> — posting terjadwal tetap berjalan walau PC, laptop, atau browser kamu dimatikan. Media &amp; antrean tersimpan aman di server.</span>
-        </div>
-        <div class="grid g4 mb">
-          <div class="stat-card">
-            <div class="stat-ico">🚀</div>
-            <div class="stat-val" id="stPosted">0</div>
-            <div class="stat-lab">Total Terpost ke FB</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-ico">📅</div>
-            <div class="stat-val" id="stQueued">0</div>
-            <div class="stat-lab">Antrean di Server</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-ico">🧠</div>
-            <div class="stat-val" id="stScore">—</div>
-            <div class="stat-lab">Rata-rata Skor Algoritma</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-ico">✨</div>
-            <div class="stat-val" id="stAi">0</div>
-            <div class="stat-lab">Caption AI Dibuat</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h3>🧠 Insight Algoritma Hari Ini</h3>
-            <span class="badge purple">Puter AI</span>
-            <div class="spacer"></div>
-            <button class="btn btn-ghost btn-sm" id="btnInsight">🔄 Muat Ulang Insight</button>
-          </div>
-          <div id="insightBody" class="small muted" style="line-height:1.8">Klik "Muat Ulang Insight" — AI akan membaca kondisi algoritma Facebook hari ini dan memberi rekomendasi posting terbaik untukmu.</div>
-        </div>
-
-        <div class="grid g3">
-          <div class="card" style="cursor:pointer" data-goto="compose">
-            <div class="stat-ico">⬆️</div>
-            <h3 style="font-size:14.5px">Upload Reel / Foto / Video</h3>
-            <p class="small muted" style="margin-top:7px;line-height:1.65">Unggah media (tersimpan di server), AI membuat caption &amp; hashtag, lalu diposting otomatis.</p>
-          </div>
-          <div class="card" style="cursor:pointer" data-goto="ai">
-            <div class="stat-ico">🤖</div>
-            <h3 style="font-size:14.5px">Pembaca Algoritma</h3>
-            <p class="small muted" style="margin-top:7px;line-height:1.65">Analisis skor potensi viral, waktu posting terbaik, dan tips algoritma dari AI.</p>
-          </div>
-          <div class="card" style="cursor:pointer" data-goto="settings">
-            <div class="stat-ico">🔗</div>
-            <h3 style="font-size:14.5px">Hubungkan Facebook Pro</h3>
-            <p class="small muted" style="margin-top:7px;line-height:1.65">Sambungkan Halaman / profil profesional dengan Access Token untuk auto-posting.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><h3>🕒 Aktivitas Terakhir (Server)</h3></div>
-          <div id="homeRecent"><div class="empty"><span class="big">📭</span>Belum ada aktivitas. Mulai dengan upload media pertamamu!</div></div>
-        </div>
-      </section>
-
-      <!-- ======== HALAMAN: BUAT POST ======== -->
-      <section class="page" id="page-compose" aria-label="Buat Post">
-        <div class="notice" id="simNotice">
-          <span>⚠️</span>
-          <span><b>Mode Simulasi aktif</b> — posting disimulasikan (tanpa benar-benar terkirim) sampai kamu menghubungkan token Facebook di <a href="#" data-goto="settings" style="color:inherit">Pengaturan</a>.</span>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h3>📤 1. Upload Media</h3>
-            <span class="badge pink">Reel · Foto · Video</span>
-            <span class="badge green">☁️ Tersimpan di Server</span>
-            <div class="spacer"></div>
-            <label class="toggle-row" style="padding:0" title="Setelah upload + AI, langsung masuk antrean posting">
-              <div>
-                <div class="tt">Auto-Pilot Instan</div>
-                <div class="td">Optimasi AI + langsung posting setelah upload</div>
-              </div>
-              <span class="switch"><input type="checkbox" id="chkInstant"><span class="slider"></span></span>
-            </label>
-          </div>
-          <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Klik atau seret file untuk upload">
-            <div class="dz-ico">🎬</div>
-            <div class="dz-title">Seret &amp; letakkan file di sini, atau klik untuk pilih</div>
-            <div class="dz-sub">Media diunggah ke server sehingga antrean tetap berjalan <b>24/7 walau PC mati</b>. Video otomatis jadi <b>Reel</b>, foto jadi <b>post feed</b>.</div>
-            <div class="dz-formats">
-              <span class="badge green">MP4 / MOV</span>
-              <span class="badge pink">JPG / PNG / WEBP</span>
-              <span class="badge amber">Maks video ±1 GB</span>
-            </div>
-          </div>
-          <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" hidden>
-          <div id="mediaList"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h3>🛠️ 2. Aksi Cepat</h3>
-            <span class="badge purple">Puter AI</span>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" id="btnAiAll">✨ Buat Caption AI untuk Semua</button>
-            <button class="btn btn-amber" id="btnScoreAll">🎯 Analisis Skor Semua</button>
-            <button class="btn btn-ok" id="btnPostAll">🚀 Post Semua Sekarang</button>
-            <button class="btn btn-ghost" id="btnScheduleAll">📅 Jadwalkan Semua…</button>
-            <button class="btn btn-danger" id="btnClearMedia">🗑️ Kosongkan Daftar</button>
-          </div>
-          <p class="small muted" style="margin-top:12px;line-height:1.7">💡 Alur: upload (ke server) → AI buat caption + hashtag → analisis algoritma → masuk antrean server → diposting ke Facebook Pro tepat waktu — bahkan saat kamu offline.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><h3>🖥️ Log Proses</h3><div class="spacer"></div><button class="btn btn-ghost btn-sm" id="btnClearLog">Bersihkan</button></div>
-          <div class="console" id="console"><div class="ln"><span class="t">--:--:--</span><span class="m info">ReelPro AI siap. Menunggu perintah…</span></div></div>
-        </div>
-      </section>
-
-      <!-- ======== HALAMAN: AI STUDIO ======== -->
-      <section class="page" id="page-ai" aria-label="AI Studio">
-        <div class="card">
-          <div class="card-head">
-            <h3>🧠 Pembaca Algoritma Facebook</h3>
-            <span class="badge purple">Puter AI</span>
-            <div class="spacer"></div>
-            <select class="select" id="selModel" style="width:auto;min-width:190px">
-              <option value="gpt-4o-mini">Model: GPT-4o mini</option>
-              <option value="gpt-4o">Model: GPT-4o</option>
-              <option value="gpt-5-nano">Model: GPT-5 Nano</option>
-              <option value="claude-sonnet-4">Model: Claude Sonnet</option>
-              <option value="deepseek-chat">Model: DeepSeek Chat</option>
-            </select>
-          </div>
-          <div class="grid g2">
-            <div>
-              <label class="label" for="aiTopic">Deskripsi konten kamu</label>
-              <textarea class="textarea" id="aiTopic" placeholder="Contoh: video masak resep rendang 30 detik dengan bumbu instan, target ibu muda…"></textarea>
-              <div class="grid g2" style="margin-top:12px">
-                <div>
-                  <label class="label" for="aiType">Jenis Konten</label>
-                  <select class="select" id="aiType">
-                    <option value="Reel video">Reel Video</option>
-                    <option value="Foto tunggal">Foto Tunggal</option>
-                    <option value="Carousel foto">Carousel Foto</option>
-                    <option value="Video panjang">Video Panjang</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="label" for="aiAudience">Target Audiens</label>
-                  <input class="input" id="aiAudience" placeholder="Contoh: ibu muda 25-35 th">
-                </div>
-              </div>
-              <div style="margin-top:12px">
-                <label class="label" for="aiTime">Rencana Waktu Posting</label>
-                <input class="input" id="aiTime" type="time" value="19:00">
-              </div>
-              <button class="btn btn-primary" id="btnAnalyze" style="width:100%;margin-top:16px">🎯 Analisis Algoritma Sekarang</button>
-            </div>
-            <div id="analyzeResult">
-              <div class="empty" style="background:var(--surface2);border:1px dashed var(--border2);border-radius:14px">
-                <span class="big">📊</span>Hasil analisis akan muncul di sini:<br>skor viral, breakdown penilaian, tips algoritma,<br>hashtag rekomendasi &amp; waktu terbaik.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid g2">
-          <div class="card">
-            <div class="card-head"><h3>💬 Tanya Ahli Algoritma</h3><span class="badge green">Chat AI</span></div>
-            <div class="chat-box" id="chatBox">
-              <div class="msg bot">Halo! 👋 Aku asisten AI yang paham algoritma Facebook. Tanya apa saja — misal: <b>"kapan jam terbaik posting reel?"</b> atau <b>"kenapa reach akunku turun?"</b></div>
-            </div>
-            <div class="chat-input-row">
-              <input class="input" id="chatInput" placeholder="Tulis pertanyaanmu…" aria-label="Pertanyaan chat">
-              <button class="btn btn-primary" id="btnChat">Kirim</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h3>🖼️ Generator Gambar AI</h3><span class="badge amber">Bonus</span></div>
-            <label class="label" for="imgPrompt">Deskripsi gambar</label>
-            <textarea class="textarea" id="imgPrompt" style="min-height:70px" placeholder="Contoh: thumbnail makanan rendang menggoda dengan steam, gaya fotografi komersial"></textarea>
-            <button class="btn btn-amber" id="btnGenImg" style="width:100%;margin-top:12px">🎨 Buat Gambar dengan AI</button>
-            <div id="imgResult"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======== HALAMAN: ANTREAN ======== -->
-      <section class="page" id="page-queue" aria-label="Antrean Otomatis">
-        <div class="card">
-          <div class="card-head">
-            <h3>☁️ Engine Server 24/7</h3>
-            <span class="badge gray" id="engBadge">CEK…</span>
-          </div>
-          <div class="grid g2">
-            <div>
-              <div class="result-box" style="margin-top:0" id="engStatus">Memeriksa engine server…</div>
-              <p class="small muted" style="margin-top:10px;line-height:1.7">Worker di server memeriksa antrean setiap 30 detik: caption AI (jika kosong) → posting ke Facebook Pro. <b>PC / tab boleh dimatikan.</b></p>
-            </div>
-            <div>
-              <div class="grid g2" style="gap:10px">
-                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engPending">0</div><div class="stat-lab">Menunggu</div></div>
-                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engDone">0</div><div class="stat-lab">Terkirim</div></div>
-                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engFailed">0</div><div class="stat-lab">Gagal</div></div>
-                <div class="stat-card" style="padding:14px"><div class="stat-val" style="font-size:22px" id="engTicks">0</div><div class="stat-lab">Siklus engine</div></div>
-              </div>
-              <p class="small muted" style="margin-top:8px">Tick terakhir: <span id="engLast">—</span></p>
-            </div>
-          </div>
-          <div class="notice info" style="margin:16px 0 0">
-            <span>💡</span>
-            <span>Posting terjadwal berjalan di server (database + worker). Selama aplikasi ini aktif di hosting/server, antrean tetap diproses <b>walau semua perangkat kamu mati</b>.</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h3>📅 Daftar Antrean (Server)</h3>
-            <span class="badge gray" id="queueCount">0 item</span>
-            <div class="spacer"></div>
-            <button class="btn btn-ghost btn-sm" id="btnRefreshQueue">🔄 Segarkan</button>
-          </div>
-          <div id="queueList"><div class="empty"><span class="big">🗓️</span>Memuat antrean…</div></div>
-        </div>
-      </section>
-
-      <!-- ======== HALAMAN: RIWAYAT ======== -->
-      <section class="page" id="page-history" aria-label="Riwayat">
-        <div class="card">
-          <div class="card-head">
-            <h3>📜 Riwayat Posting (Server)</h3>
-            <div class="spacer"></div>
-            <button class="btn btn-ghost btn-sm" id="btnRefreshHist">🔄 Segarkan</button>
-            <button class="btn btn-ghost btn-sm" id="btnExport">⬇️ Export JSON</button>
-            <button class="btn btn-danger btn-sm" id="btnClearHistory">🗑️ Hapus Riwayat</button>
-          </div>
-          <div class="filter-chips" id="histFilter">
-            <button class="fchip active" data-f="all">Semua</button>
-            <button class="fchip" data-f="Reel">Reel</button>
-            <button class="fchip" data-f="Foto">Foto</button>
-            <button class="fchip" data-f="Video">Video</button>
-            <button class="fchip" data-f="sim">Simulasi</button>
-          </div>
-          <div id="historyList"><div class="empty">Memuat…</div></div>
-        </div>
-      </section>
-
-      <!-- ======== HALAMAN: PENGATURAN ======== -->
-      <section class="page" id="page-settings" aria-label="Pengaturan">
-        <div class="card">
-          <div class="card-head">
-            <h3>📘 Koneksi Facebook Pro</h3>
-            <span class="badge gray" id="fbConnBadge">MEMERIKSA…</span>
-            <span class="badge purple" id="saveState" style="display:none">Menyimpan…</span>
-          </div>
-          <div class="grid g2">
-            <div>
-              <label class="label" for="inpPageId">ID Halaman / Profil Pro</label>
-              <input class="input" id="inpPageId" placeholder="Contoh: 123456789012345">
-              <p class="small muted" style="margin-top:6px;line-height:1.6">ID Halaman FB (dapat dari → Tentang Halaman, atau via Graph API Explorer). Profil mode profesional juga didukung.</p>
-            </div>
-            <div>
-              <label class="label" for="inpToken">Access Token</label>
-              <div style="display:flex;gap:8px">
-                <input class="input" id="inpToken" type="password" placeholder="EAAG… token halaman" style="flex:1">
-                <button class="btn btn-ghost" id="btnShowToken" aria-label="Tampilkan token">👁️</button>
-              </div>
-              <p class="small muted" style="margin-top:6px;line-height:1.6">Token tersimpan di <b>database server</b> agar worker 24/7 bisa memposting walau browser mati. Tidak dibagikan ke pihak lain.</p>
-            </div>
-          </div>
-          <div class="grid g2" style="margin-top:14px">
-            <div>
-              <label class="label" for="selApi">Versi Graph API</label>
-              <select class="select" id="selApi">
-                <option value="v19.0">v19.0</option>
-                <option value="v20.0">v20.0</option>
-                <option value="v21.0">v21.0</option>
-                <option value="v22.0">v22.0</option>
-                <option value="v23.0">v23.0</option>
-              </select>
-            </div>
-            <div>
-              <label class="label">Aksi</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn btn-primary btn-sm" id="btnTestConn" style="min-height:42px">🔌 Test Koneksi</button>
-                <button class="btn btn-ghost btn-sm" id="btnPageToken" style="min-height:42px">🔑 Ambil Page Token</button>
-              </div>
-            </div>
-          </div>
-          <div id="fbTestResult"></div>
-          <details class="acc">
-            <summary>📖 Panduan: cara mendapatkan Access Token Facebook</summary>
-            <div class="acc-body">
-              <ol>
-                <li>Buka <b>developers.facebook.com</b> → login → menu <b>My Apps</b> → <b>Create App</b> (tipe <b>Business</b>).</li>
-                <li>Masuk ke <b>Graph API Explorer</b> (Tools → Graph API Explorer).</li>
-                <li>Pilih aplikasimu, lalu di bagian <b>Permissions</b> tambahkan: <kbd>pages_show_list</kbd>, <kbd>pages_manage_posts</kbd>, <kbd>pages_read_engagement</kbd>.</li>
-                <li>Klik <b>Generate Access Token</b> → izinkan semua.</li>
-                <li>Tempel token sementara di kolom atas → klik <b>Ambil Page Token</b> → token halaman (berlaku lama) otomatis tersimpan di server.</li>
-                <li>Salin <b>ID Halaman</b> dari hasil test koneksi, isi di kolom Page ID.</li>
-              </ol>
-              <b>Catatan:</b> Posting ke profil pribadi tidak didukung API Facebook — gunakan Halaman atau profil <b>mode profesional (FB Pro)</b>.
-            </div>
-          </details>
-          <details class="acc">
-            <summary>☁️ Cara kerja posting otomatis 24/7</summary>
-            <div class="acc-body">
-              Saat kamu menjadwalkan/posting, media sudah tersimpan di server dan item antrean masuk ke database. Worker server berjalan tiap 30 detik: mengambil item jatuh tempo → membuat caption AI (jika kosong) → mengunggah ke Facebook Graph API (foto: <kbd>/photos</kbd>, video: <kbd>/videos</kbd>, Reel: 3 fase <kbd>video_reels</kbd> + <kbd>rupload</kbd> — dari server jadi tanpa kendala CORS) → mencatat hasil ke riwayat. Karena diproses di server, <b>PC, laptop, dan browser kamu boleh dimatikan</b>.
-            </div>
-          </details>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><h3>🤖 Puter AI &amp; Perilaku Aplikasi</h3></div>
-          <div class="toggle-row">
-            <div style="flex:1">
-              <div class="tt">Mode Simulasi <span class="badge gray">SERVER</span></div>
-              <div class="td">Posting disimulasikan tanpa mengirim ke Facebook (untuk testing alur). Otomatis aktif saat token belum diisi.</div>
-            </div>
-            <span class="switch"><input type="checkbox" id="chkSim"><span class="slider"></span></span>
-          </div>
-          <div class="toggle-row">
-            <div style="flex:1">
-              <div class="tt">Otomatis analisis algoritma sebelum posting <span class="badge gray">PUTER AI</span></div>
-              <div class="td">Setiap media dianalisis skor algoritmanya oleh Puter AI sebelum masuk antrean (berlaku saat kamu online di aplikasi).</div>
-            </div>
-            <span class="switch"><input type="checkbox" id="chkAutoAnalyze" checked><span class="slider"></span></span>
-          </div>
-          <div class="toggle-row">
-            <div style="flex:1">
-              <div class="tt">Selalu tambahkan hashtag AI <span class="badge gray">SERVER</span></div>
-              <div class="td">Server menambahkan hashtag optimal jika caption belum memiliki hashtag. Caption kosong otomatis dibuat AI server.</div>
-            </div>
-            <span class="switch"><input type="checkbox" id="chkAutoHashtag" checked><span class="slider"></span></span>
-          </div>
-          <div class="result-box" id="puterStatus">Memeriksa koneksi ke Puter AI…</div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><h3>🗑️ Zona Berbahaya</h3></div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-danger" id="btnResetAll">Reset Semua Data (token, antrean, riwayat)</button>
-          </div>
-          <p class="small muted" style="margin-top:10px">Menghapus konfigurasi, seluruh antrean, dan riwayat di server + preferensi browser ini.</p>
-        </div>
-      </section>
-
-    </main>
-
-    <footer style="padding:20px 24px;border-top:1px solid var(--border);margin-top:auto">
-      <p class="small muted" style="text-align:center">ReelPro AI — dibuat dengan ❤️ bertenaga <b>Puter AI</b> (js.puter.com) + AI Server &amp; Facebook Graph API. Gunakan sesuai kebijakan konten Facebook.</p>
-    </footer>
-  </div>
-</div>
-
-<!-- Modal jadwal -->
-<div class="modal-mask" id="modalMask">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h3 id="modalTitle">📅 Jadwalkan Posting</h3>
-    <p class="sub">Worker server akan memposting otomatis saat waktunya tiba — walau PC kamu mati.</p>
-    <label class="label" for="scheduleInput">Waktu posting</label>
-    <input class="input" id="scheduleInput" type="datetime-local">
-    <div class="modal-actions">
-      <button class="btn btn-ghost" id="btnModalCancel">Batal</button>
-      <button class="btn btn-primary" id="btnModalSave">Simpan Jadwal</button>
+<div class="wrap">
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">🎬</div>
+    <div>
+      <h1>EduVid <span>AI Studio</span></h1>
+      <p>Studio Video Edukasi · Suara Natural Indonesia 🇮🇩</p>
     </div>
   </div>
+  <div class="authbox">
+    <span id="authChip" class="auth-chip" hidden><span class="dot on"></span><b id="userName"></b></span>
+    <button id="btnSignIn" class="btn btn-p" type="button">Masuk dengan Puter</button>
+    <button id="btnSignOut" class="btn" type="button" hidden>Keluar</button>
+  </div>
+</header>
+
+<div id="authBanner" class="banner">⚡ Aplikasi ini memakai <b>Puter AI</b> — gratis, tanpa API key. Klik <b>Masuk dengan Puter</b> untuk mulai membuat video. <span id="sdkWarn"></span></div>
+
+<main class="main">
+
+  <!-- ===== KOLOM 1: SETUP ===== -->
+  <section class="col">
+    <div class="card">
+      <h3><span class="step">1</span> Ide &amp; Gaya Video</h3>
+      <label class="lb" for="inpTopic">Topik video</label>
+      <textarea id="inpTopic" rows="3" placeholder="cth: Fotosintesis untuk anak SMP — buat seru, gampang dicerna, ada contoh sehari-hari"></textarea>
+      <div class="chips" id="topicChips"></div>
+      <div class="row2">
+        <div>
+          <label class="lb" for="selLevel">Jenjang penonton</label>
+          <select id="selLevel">
+            <option>Umum (semua umur)</option>
+            <option>Anak SD (7–12 th)</option>
+            <option selected>SMP (13–15 th)</option>
+            <option>SMA (16–18 th)</option>
+            <option>Mahasiswa / Dewasa</option>
+          </select>
+        </div>
+        <div>
+          <label class="lb" for="selDuration">Durasi target</label>
+          <select id="selDuration">
+            <option value="30">± 30 detik</option>
+            <option value="60" selected>± 1 menit</option>
+            <option value="120">± 2 menit</option>
+            <option value="180">± 3 menit</option>
+            <option value="300">± 5 menit</option>
+          </select>
+        </div>
+      </div>
+      <label class="lb" for="selStyle">Gaya bicara</label>
+      <select id="selStyle">
+        <option value="santai" selected>Santai natural — ala kreator YouTube Indonesia</option>
+        <option value="semi">Semiformal — hangat seperti podcast edukasi</option>
+        <option value="cerita">Storytelling — dibuka dengan cerita menarik</option>
+        <option value="formal">Formal akademik — tetap enak didengar</option>
+      </select>
+      <button id="btnGenScript" class="btn btn-p btn-block" type="button">✨ Buat Naskah dengan AI</button>
+    </div>
+
+    <div class="card voice-card">
+      <h3><span class="step mic">🎙️</span> Suara Natural Indonesia</h3>
+      <p class="desc">Mesin suara neural khas Indonesia — hangat, jelas, dan berirama seperti penyiar asli. <b>Bukan robot.</b></p>
+      <label class="lb" for="selVoice">Mesin suara</label>
+      <select id="selVoice">
+        <option value="damayanti-neural" selected>Damayanti · Neural — paling natural ⭐</option>
+        <option value="damayanti-standard">Damayanti · Standard</option>
+        <option value="browser">Suara browser (cadangan)</option>
+      </select>
+      <label class="lb" for="rngSpeed">Kecepatan bicara — <b id="speedLabel">1.00× · Normal</b></label>
+      <input type="range" id="rngSpeed" min="0.75" max="1.25" step="0.05" value="1">
+      <label class="switch"><input type="checkbox" id="chkNatural" checked><span class="track"></span> Optimasi jeda &amp; tanda baca agar terdengar manusiawi</label>
+      <button id="btnTestVoice" class="btn btn-block" type="button">🔊 Coba Suara Ini</button>
+      <p class="hint">💡 Rahasia suara natural: naskah gaya percakapan + suara neural Damayanti + jeda tanda baca yang pas. Semua sudah dioptimalkan otomatis.</p>
+    </div>
+  </section>
+
+  <!-- ===== KOLOM 2: NASKAH & SCENE ===== -->
+  <section class="col">
+    <div class="toolbar card">
+      <div class="tb-stats"><b id="sceneCount">0 scene</b><span id="totalDur">≈ 0:00</span></div>
+      <div class="tb-actions">
+        <button id="btnGenAllImgs" class="btn btn-s" type="button">🎨 Gambar Semua</button>
+        <button id="btnGenAllVoices" class="btn btn-s" type="button">🎙️ Suarakan Semua</button>
+        <button id="btnAddScene" class="btn btn-s" type="button">＋ Scene</button>
+      </div>
+    </div>
+    <div id="emptyState" class="empty card">
+      <div class="empty-emoji">🎬</div>
+      <h4>Belum ada naskah</h4>
+      <p>Isi topik di panel kiri, pilih gaya bicara, lalu klik <b>“Buat Naskah dengan AI”</b>.<br>Setiap scene otomatis mendapat ilustrasi &amp; suara natural Bahasa Indonesia.</p>
+    </div>
+    <div id="scenesList" class="scenes"></div>
+  </section>
+
+  <!-- ===== KOLOM 3: PRATINJAU & EKSPOR ===== -->
+  <section class="col right">
+    <div class="card">
+      <h3><span class="step">3</span> Pratinjau &amp; Ekspor</h3>
+      <div class="stage">
+        <canvas id="cv" width="1280" height="720"></canvas>
+        <div id="recBadge" class="rec"><i></i> REC</div>
+      </div>
+      <div class="pbar">
+        <button id="btnPrev" class="pbtn" type="button" title="Scene sebelumnya">⏮</button>
+        <button id="btnPlay" class="pbtn main" type="button" title="Putar / Jeda">▶️</button>
+        <button id="btnNext" class="pbtn" type="button" title="Scene berikutnya">⏭</button>
+        <button id="btnStop" class="pbtn" type="button" title="Berhenti">⏹</button>
+        <div class="ptime"><b id="sceneLabel">Scene –</b><span id="timeLabel">0:00 / 0:00</span></div>
+      </div>
+      <div id="timeline"></div>
+      <p class="hint">Klik segmen untuk lompat &amp; putar dari scene tersebut.</p>
+      <button id="btnExport" class="btn btn-p btn-block" type="button">🎥 Rekam &amp; Unduh Video (WebM)</button>
+      <div id="dlArea"></div>
+      <p class="hint">Perekaman berjalan real-time di browser (gambar + suara + subtitle menyatu). Butuh MP4? Konversi WebM → MP4 lewat convertio.co atau HandBrake.</p>
+    </div>
+    <div class="card tips">
+      <h3>💡 Tips Hasil Paling Natural</h3>
+      <ul>
+        <li>Edit teks narasi langsung di tiap scene — lalu klik 🎙️ untuk membuat ulang suaranya.</li>
+        <li>Ganti <i>prompt visual</i> untuk mengubah gaya ilustrasi scene.</li>
+        <li>Kombinasi paling alami: <b>Damayanti Neural</b> + kecepatan <b>1.0×</b> + gaya bicara <b>santai</b>.</li>
+        <li>Proyek tersimpan otomatis di browser ini (teks saja — gambar &amp; suara dibuat ulang saat perlu).</li>
+      </ul>
+    </div>
+    <p class="foot">EduVid AI Studio · Ditenagai <b>Puter AI</b> · Suara: Damayanti (id-ID) 🇮🇩</p>
+  </section>
+
+</main>
 </div>
 
-<div id="toasts" aria-live="polite"></div>
+<div id="overlay" class="ov" hidden>
+  <div class="ov-box">
+    <div class="spin"></div>
+    <h4 id="ovTitle">Memproses…</h4>
+    <p id="ovSub">Mohon tunggu sebentar</p>
+    <button id="ovCancel" class="btn btn-s" type="button">Batalkan</button>
+  </div>
+</div>
+<div id="toasts"></div>
+<script src="https://js.puter.com/v2/"></script>
 <script>
-/* =====================================================
-   ReelPro AI — Auto Upload Reel/Foto/Video ke FB Pro
-   AI Browser: Puter (js.puter.com/v2) — tanpa API key
-   AI Server: z-ai-web-dev-sdk (untuk caption saat offline)
-   Engine posting 24/7: worker server + database
-   ===================================================== */
 'use strict';
+/* ================= Helper umum ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtTime=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+const slug=s=>String(s||'video').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'video';
+let _uid=0;const uid=()=>(++_uid)+(Date.now()%100000);
 
-/* ---------- STATE LOKAL (preferensi UI saja) ---------- */
-const LS_KEY = 'reelpro_ui_v2';
-const defaultState = () => ({
-  prefs: { model: 'gpt-4o-mini', instant: false, autoAnalyze: true, aiCaptions: 0 },
-  insight: null, insightDate: null
-});
-let store = defaultState();
-try {
-  const raw = localStorage.getItem(LS_KEY);
-  if (raw) { store = Object.assign(defaultState(), JSON.parse(raw)); store.prefs = Object.assign(defaultState().prefs, store.prefs); }
-} catch (e) { console.warn('Gagal memuat state:', e); }
-const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(store)); } catch (e) { console.warn('Gagal simpan:', e); } };
-
-/* media sesi ini — file langsung diunggah ke server */
-let sessionMedia = []; // {id,name,size,isVideo,previewURL,serverName,mediaType,uploadState,uploadError,mode,caption,hashtags,score,tips,analysis}
-let serverSettings = { pageId: '', accessToken: '', apiVersion: 'v19.0', simulate: true, autoHashtag: true, pageName: '' };
-let serverQueue = [];   // hasil /api/queue
-let serverHistory = []; // hasil /api/history
-let uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-
-/* ---------- HELPERS ---------- */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : (b / 1024).toFixed(0) + ' KB';
-const fmtTime = ts => new Date(ts).toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const errMsg = e => (e && e.message) ? e.message : (typeof e === 'string' ? e : (e ? JSON.stringify(e).slice(0, 200) : 'kesalahan tidak diketahui'));
-function nowStr() { return new Date().toLocaleTimeString('id-ID', { hour12: false }); }
-
-async function api(path, opts = {}) {
-  const r = await fetch('/api' + path, {
-    headers: opts.body ? { 'Content-Type': 'application/json' } : {},
-    ...opts,
-    body: opts.body ? JSON.stringify(opts.body) : undefined
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || j.message || 'HTTP ' + r.status);
-  return j;
-}
-
-function toast(msg, type = '', title = '') {
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = (title ? `<b>${esc(title)}</b>` : '') + esc(msg);
-  $('#toasts').appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }, 4600);
-}
-function log(msg, cls = '') {
-  const c = $('#console');
-  const ln = document.createElement('div');
-  ln.className = 'ln';
-  ln.innerHTML = `<span class="t">${nowStr()}</span><span class="m ${cls}">${esc(msg)}</span>`;
-  c.appendChild(ln);
-  while (c.children.length > 120) c.firstChild.remove();
-  c.scrollTop = c.scrollHeight;
-}
-
-/* ---------- NAVIGASI ---------- */
-const PAGE_META = {
-  home: ['Beranda', 'Ringkasan performa & algoritma kamu'],
-  compose: ['Buat Post', 'Upload reel, foto & video → optimasi AI → posting 24/7'],
-  ai: ['AI Studio', 'Pembaca algoritma, chat ahli & generator gambar'],
-  queue: ['Antrean Otomatis', 'Antrean di server — berjalan walau PC mati'],
-  history: ['Riwayat', 'Semua posting yang sudah diproses server'],
-  settings: ['Pengaturan', 'Koneksi Facebook Pro & preferensi AI']
+/* ================= Konfigurasi ================= */
+const SCENE_MAP={'30':3,'60':5,'120':7,'180':10,'300':13};
+const STYLES={
+  santai:"Santai natural ala kreator YouTube Indonesia yang populer: boleh pakai sapaan santai secukupnya, banyak interaksi seperti 'kan?', 'coba deh perhatiin', 'nih justru yang bikin seru'.",
+  semi:"Semiformal hangat seperti podcast edukasi: sapa penonton dengan 'kamu', nada ramah dan mengajak, bahasa tetap rapi tapi tidak kaku.",
+  cerita:"Storytelling: scene pertama dibuka dengan hook cerita atau pertanyaan yang bikin penasaran, lalu alurnya mengantar penonton memahami materi pelan-pelan.",
+  formal:"Formal akademik namun tetap mengalir, jelas, dan enak diucapkan; hindari struktur kalimat buku yang berat."
 };
-function goto(page) {
-  $$('.page').forEach(p => p.classList.remove('active'));
-  $('#page-' + page).classList.add('active');
-  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === page));
-  $('#pageTitle').innerHTML = esc(PAGE_META[page][0]) + `<small>${esc(PAGE_META[page][1])}</small>`;
-  $('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+const IMG_STYLE='modern educational illustration, vibrant colors, clean flat vector style with soft gradients, friendly and engaging, wide 16:9 composition, high detail, no text, no letters, no watermark';
+const VOICE_LABELS={'damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
+const TOPIC_CHIPS=[
+  ['Fotosintesis 🌱','Fotosintesis untuk anak SMP — jelaskan dengan analogi dapur dan contoh sehari-hari'],
+  ['Tata Surya 🪐','Tata surya: perjalanan planet mengelilingi matahari beserta fakta unik tiap planet'],
+  ['Pythagoras 📐','Teorema Pythagoras untuk SMP dengan contoh soal kehidupan sehari-hari'],
+  ['Perubahan Iklim 🌍','Perubahan iklim: penyebab, dampak, dan aksi nyata yang bisa dilakukan pelajar'],
+  ['Proklamasi 1945 🇮🇩','Latar belakang dan tokoh-tokoh Proklamasi Kemerdekaan Indonesia 17 Agustus 1945'],
+  ['Literasi Digital 📱','Literasi digital: cara mengenali hoaks dan berita palsu di internet']
+];
+const PERSONA=`Kamu adalah penulis naskah video edukasi paling populer di Indonesia. Tugasmu menulis narasi yang 100% terdengar seperti orang Indonesia asli yang sedang bicara santai di depan kamera — hangat, mengalir, dan punya irama — BUKAN seperti robot, bukan seperti terjemahan, dan bukan bahasa buku pelajaran.
+
+KAIDAH NARASI (WAJIB dipatuhi):
+1. Gunakan Bahasa Indonesia percakapan sehari-hari yang alami: "Nah,", "Jadi", "Oke", "Eh tapi", "Ternyata", "Uniknya", "Coba bayangkan deh", "Simpelnya gini".
+2. Kalimat pendek dan mudah diucapkan (maksimal sekitar 15 kata per kalimat).
+3. Sapa penonton langsung dan ajak mereka berpikir: "...kan?", "Penasaran gimana caranya?".
+4. DILARANG memakai frasa buku yang kaku seperti: "Pada kesempatan kali ini", "Dengan demikian", "Sebagai kesimpulan", "Hal tersebut dikarenakan", "Adapun".
+5. DILARANG menyebut diri sendiri sebagai AI, asisten, atau model.
+6. Hindari simbol aneh saat diucapkan: tulis "%" sebagai "persen", "&" sebagai "dan", "+" sebagai "plus".
+7. Jika ada istilah asing yang wajib, ucapkan secara natural seperti orang Indonesia berbicara.
+
+`;
+
+/* ================= State ================= */
+const state={scenes:[],voice:'damayanti-neural',speed:1,naturalize:true,user:null,busy:false,recording:false};
+let pipelineCancel=false,exportCancel=false,mediaRec=null,exportChunks=[],exportNodes=[],actx=null,_dbT=null,_rtT=null;
+
+/* ================= Kanvas ================= */
+const cv=$('#cv'),ctx=cv.getContext('2d');
+const W=cv.width,H=cv.height;
+
+function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function drawCover(img,z,px,py){
+  const ir=img.naturalWidth/img.naturalHeight,cr=W/H;
+  let w,h;
+  if(ir>cr){h=H*z;w=h*ir;}else{w=W*z;h=w/ir;}
+  ctx.drawImage(img,(W-w)/2+px,(H-h)/2+py,w,h);
 }
-$$('[data-nav]').forEach(b => b.addEventListener('click', () => goto(b.dataset.nav)));
-document.addEventListener('click', e => { const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); goto(g.dataset.goto); } });
-$('#hamburger').addEventListener('click', () => { $('#sidebar').classList.add('open'); $('#overlay').classList.add('show'); });
-$('#overlay').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show'); });
-
-/* jam */
-setInterval(() => { $('#clock').textContent = new Date().toLocaleTimeString('id-ID', { hour12: false }); }, 1000);
-$('#clock').textContent = new Date().toLocaleTimeString('id-ID', { hour12: false });
-
-/* ---------- STATUS BADGE ---------- */
-function puterReady() { return typeof window.puter !== 'undefined' && window.puter && window.puter.ai && typeof window.puter.ai.chat === 'function'; }
-function fbConfigured() { return !!(serverSettings.pageId && serverSettings.accessToken); }
-function effectiveSimulate() { return serverSettings.simulate || !fbConfigured(); }
-
-function refreshStatus() {
-  const pOk = puterReady();
-  $('#dotPuter').className = 'dot ' + (pOk ? 'on' : 'off');
-  $('#txtPuter').textContent = 'Puter AI: ' + (pOk ? 'terhubung ✓' : 'memuat / gagal');
-  $('#chipPuter').textContent = pOk ? 'aktif' : '…';
-  $('#dotFb').className = 'dot ' + (fbConfigured() ? 'on' : 'off');
-  $('#txtFb').textContent = 'Facebook: ' + (fbConfigured() ? ('Halaman ' + (serverSettings.pageName || serverSettings.pageId)) : 'belum terhubung');
-  $('#fbConnBadge').textContent = fbConfigured() ? 'TERHUBUNG' : 'BELUM TERHUBUNG';
-  $('#fbConnBadge').className = 'badge ' + (fbConfigured() ? 'green' : 'gray');
-  $('#simNotice').style.display = effectiveSimulate() ? 'flex' : 'none';
-  if (puterReady()) $('#puterStatus').textContent = '✅ Puter AI aktif — model: ' + store.prefs.model + '. Pemakaian pertama bisa memunculkan popup login Puter (gratis, tanpa API key).';
-}
-function refreshEngine(data) {
-  const ok = data && data.worker && data.worker.running;
-  $('#dotEng').className = 'dot ' + (ok ? 'on' : 'off');
-  $('#txtEng').textContent = 'Engine 24/7: ' + (ok ? 'berjalan di server' : 'tidak aktif');
-  $('#chipEng').textContent = ok ? '24/7 ✓' : 'mati';
-  if (!data) return;
-  const w = data.worker;
-  $('#engBadge').textContent = ok ? 'BERJALAN' : 'MATI';
-  $('#engBadge').className = 'badge ' + (ok ? 'green' : 'red');
-  $('#engStatus').innerHTML = ok
-    ? `🟢 Worker aktif — memeriksa antrean setiap <b>${(w.intervalMs || 30000) / 1000} detik</b>. Posting terjadwal tetap jalan walau PC/tab kamu ditutup.`
-    : `🔴 Worker tidak berjalan. Muat ulang halaman / restart server.`;
-  $('#engPending').textContent = data.counts.pending;
-  $('#engDone').textContent = data.counts.done;
-  $('#engFailed').textContent = data.counts.failed;
-  $('#engTicks').textContent = w.ticks ?? 0;
-  $('#engLast').textContent = w.lastTick ? fmtTime(w.lastTick) : '—';
-}
-
-/* ---------- UPLOAD MEDIA KE SERVER ---------- */
-const dz = $('#dropzone'), fi = $('#fileInput');
-dz.addEventListener('click', () => fi.click());
-dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } });
-['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
-['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
-dz.addEventListener('drop', e => addFiles(e.dataTransfer.files));
-fi.addEventListener('change', () => { addFiles(fi.files); fi.value = ''; });
-
-function addFiles(fileList) {
-  const files = Array.from(fileList || []);
-  if (!files.length) return;
-  let added = 0;
-  for (const f of files) {
-    const isImg = /^image\/(jpeg|png|webp)$/.test(f.type);
-    const isVid = /^video\/(mp4|quicktime|webm)$/.test(f.type);
-    if (!isImg && !isVid) { toast(`"${f.name}" dilewati — format tidak didukung.`, 'warn', 'Dilewati'); continue; }
-    if (f.size > 1024 * 1024 * 1024) { toast(`"${f.name}" melebihi 1 GB.`, 'err', 'Terlalu besar'); continue; }
-    const item = {
-      id: uid(), file: f, name: f.name, size: f.size, isVideo: isVid,
-      previewURL: isImg ? URL.createObjectURL(f) : null,
-      serverName: null, mediaType: isVid ? 'video' : 'photo',
-      uploadState: 'uploading', uploadError: '',
-      mode: 'auto', caption: '', hashtags: [], score: null, tips: null, analysis: null
-    };
-    sessionMedia.unshift(item); added++;
-    uploadToServer(item);
-    log(`📥 Media ditambahkan: ${f.name} (${fmtSize(f.size)}) — diunggah ke server…`, 'info');
+function wrapText(c,text,maxW){
+  const words=String(text).split(/\s+/);const lines=[];let cur='';
+  for(const w of words){
+    const t=cur?cur+' '+w:w;
+    if(c.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;
   }
-  if (added) { renderMedia(); updateStats(); }
+  if(cur)lines.push(cur);
+  return lines;
 }
-
-async function uploadToServer(item) {
-  try {
-    const fd = new FormData();
-    fd.append('file', item.file, item.name);
-    const r = await fetch('/api/upload', { method: 'POST', body: fd });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || 'Upload gagal (HTTP ' + r.status + ')');
-    item.serverName = j.serverName;
-    item.mediaType = j.mediaType;
-    item.uploadState = 'ready';
-    log(`☁️ "${item.name}" tersimpan di server (${fmtSize(j.size)}) — antrean 24/7 siap.`, 'ok');
-    toast(`"${item.name}" tersimpan di server.`, 'ok', '☁️ Upload server');
-  } catch (err) {
-    item.uploadState = 'error';
-    item.uploadError = errMsg(err);
-    log(`❌ Upload server gagal untuk "${item.name}": ${item.uploadError}`, 'err');
-    toast(item.uploadError + ' — pastikan aplikasi dibuka via server/preview, bukan file lokal.', 'err', 'Upload gagal');
+function chunkNarration(text){
+  const t=String(text||'').replace(/\s+/g,' ').trim();
+  const parts=t.match(/[^.!?…]+[.!?…]+["']?\s*|[^.!?…]+$/g)||[t];
+  const chunks=[];let cur='';
+  for(const p of parts){
+    const q=p.trim();if(!q)continue;
+    if((cur?cur+' '+q:q).length<=92)cur=cur?cur+' '+q:q;
+    else{if(cur)chunks.push(cur);cur=q;}
   }
-  renderMedia();
-  if (store.prefs.instant) checkInstantQueue();
+  if(cur)chunks.push(cur);
+  return chunks.length?chunks:[t||' '];
+}
+function drawIdle(){
+  const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0d1329');g.addColorStop(1,'#0a0f20');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const gl=ctx.createRadialGradient(W/2,H*0.42,60,W/2,H*0.42,520);
+  gl.addColorStop(0,'rgba(109,94,242,.20)');gl.addColorStop(1,'rgba(109,94,242,0)');
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='800 58px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#eef2ff';
+  ctx.fillText('🎬 EduVid AI Studio',W/2,H*0.42);
+  ctx.font='500 26px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#93a1ba';
+  ctx.fillText('Isi topik di panel kiri → klik “Buat Naskah dengan AI”',W/2,H*0.42+56);
+  ctx.font='600 20px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#5d6b84';
+  ctx.fillText('Naskah · Ilustrasi AI · Suara Natural Indonesia (Damayanti)',W/2,H*0.42+100);
+}
+function drawSubtitle(sc,dur,t){
+  if(!sc.narasi)return;
+  if(!sc.chunks)sc.chunks=chunkNarration(sc.narasi);
+  const chunks=sc.chunks;
+  const total=chunks.reduce((a,c)=>a+c.length,0)||1;
+  const speakMs=Math.max(1000,dur-700);
+  const pos=clamp(t/speakMs,0,0.999)*total;
+  let acc=0,txt=chunks[chunks.length-1];
+  for(let i=0;i<chunks.length;i++){acc+=chunks[i].length;if(pos<=acc){txt=chunks[i];break;}}
+  ctx.font='600 33px "Plus Jakarta Sans",sans-serif';
+  const lines=wrapText(ctx,txt,W-180).slice(0,3);
+  if(!lines.length)return;
+  const lh=45,bh=lines.length*lh+26;
+  let bw=0;lines.forEach(l=>bw=Math.max(bw,ctx.measureText(l).width));bw+=60;
+  const y=H-84-bh;
+  ctx.fillStyle='rgba(4,9,20,.66)';rr(W/2-bw/2,y,bw,bh,16);ctx.fill();
+  ctx.fillStyle='#f4f7ff';ctx.textAlign='center';ctx.textBaseline='middle';
+  lines.forEach((l,i)=>ctx.fillText(l,W/2,y+13+lh/2+i*lh));
+}
+function drawProgress(){
+  const n=state.scenes.length;if(!n)return;
+  const pad=24,gap=6,totalW=W-pad*2,totalMs=player.totalDur()||1;
+  let x=pad;
+  for(let i=0;i<n;i++){
+    const d=player.sceneDur(i);const w=Math.max(8,totalW*(d/totalMs)-gap);
+    ctx.fillStyle='rgba(255,255,255,.14)';rr(x,H-16,w,7,4);ctx.fill();
+    const f=i<player.idx?100:i>player.idx?0:clamp(player.t/d*100,0,100);
+    if(f>0){ctx.fillStyle='rgba(109,94,242,.95)';rr(x,H-16,w*Math.min(1,f/100),7,4);ctx.fill();}
+    x+=w+gap;
+  }
+}
+function drawFrame(){
+  const sc=state.scenes[player.idx];
+  if(!sc){drawIdle();return;}
+  const dur=player.sceneDur(player.idx),t=player.t;
+  if(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth){
+    const p=clamp(t/dur,0,1),dir=player.idx%4;
+    let z=1.05,px=0,py=0;
+    if(dir===0)z=1+0.10*p;
+    else if(dir===1)z=1.10-0.10*p;
+    else if(dir===2){z=1.08;px=lerp(-26,26,p);}
+    else{z=1.08;px=lerp(26,-26,p);}
+    drawCover(sc.imgEl,z,px,py);
+  }else{
+    const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#131a36');g.addColorStop(1,'#0c1124');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(109,94,242,.16)';
+    ctx.font='800 230px "Plus Jakarta Sans",sans-serif';
+    ctx.fillText(String(player.idx+1),W/2,H/2);
+    ctx.font='600 30px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='rgba(230,237,247,.35)';
+    ctx.fillText($('#inpTopic').value.trim()||'Ilustrasi sedang dibuat…',W/2,H-140);
+  }
+  const gg=ctx.createLinearGradient(0,H*0.5,0,H);gg.addColorStop(0,'rgba(4,8,18,0)');gg.addColorStop(1,'rgba(4,8,18,.82)');
+  ctx.fillStyle=gg;ctx.fillRect(0,H*0.5,W,H*0.5);
+  const chipA=clamp(1-Math.max(0,t-1700)/800,0,1);
+  if(chipA>0&&sc.judul){
+    ctx.globalAlpha=chipA;
+    ctx.font='800 26px "Plus Jakarta Sans",sans-serif';
+    const tw=ctx.measureText(sc.judul).width;
+    ctx.fillStyle='rgba(10,14,26,.72)';rr(28,28,tw+44,52,14);ctx.fill();
+    ctx.fillStyle='#22d3ee';rr(28,28,6,52,3);ctx.fill();
+    ctx.fillStyle='#f2f6ff';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(sc.judul,52,55);
+    ctx.globalAlpha=1;
+  }
+  drawSubtitle(sc,dur,t);
+  drawProgress();
+  ctx.font='700 19px "Plus Jakarta Sans",sans-serif';ctx.textAlign='right';ctx.textBaseline='alphabetic';
+  ctx.fillStyle='rgba(230,237,247,.4)';
+  ctx.fillText('🎬 EduVid AI Studio',W-26,44);
+  const fade=1-Math.min(clamp(t/350,0,1),clamp((dur-t)/350,0,1));
+  if(fade>0.01){ctx.fillStyle='rgba(3,6,12,'+fade.toFixed(3)+')';ctx.fillRect(0,0,W,H);}
 }
 
-function allReady() { return sessionMedia.length && sessionMedia.every(m => m.uploadState === 'ready'); }
-
-function resolveMode(m) {
-  if (m.mode === 'auto') return m.isVideo ? 'reel' : 'photo';
-  return m.mode;
+/* ================= Pemain (player) ================= */
+const player={
+  idx:0,t:0,playing:false,raf:null,lastTs:null,stopAfter:null,onFinish:null,
+  sceneDur(i){const sc=state.scenes[i];const base=(sc&&sc.playback&&sc.playback.dur)||estSec(sc?sc.narasi:'');return Math.max(2500,(base/state.speed)*1000+400);},
+  totalDur(){let s=0;for(let i=0;i<state.scenes.length;i++)s+=this.sceneDur(i);return s;},
+  elapsedTotal(){let s=0;for(let i=0;i<this.idx;i++)s+=this.sceneDur(i);return s+Math.min(this.t,this.sceneDur(this.idx));},
+  toggle(){if(this.playing)this.pause();else this.play();},
+  play(){
+    if(!state.scenes.length){toast('Belum ada scene untuk diputar','warn');return;}
+    if(!this.playing&&this.t>=this.sceneDur(this.idx)&&this.idx>=state.scenes.length-1)this.seek(0);
+    this.playing=true;this.lastTs=null;this.resumeAudio();updatePlayUI();
+    if(!this.raf)this.raf=requestAnimationFrame(ts=>this.tick(ts));
+  },
+  pause(){this.playing=false;this.pauseAudio();updatePlayUI();drawFrame();},
+  stop(){this.pauseAudio();this.playing=false;this.stopAfter=null;this.idx=0;this.t=0;this.lastTs=null;highlightSceneCard();updatePlayUI();drawFrame();updateTimeUI();},
+  playOne(i){if(!state.scenes.length)return;this.seek(i);this.stopAfter=i;this.play();},
+  step(d){const max=Math.max(0,state.scenes.length-1);const i=clamp(this.idx+d,0,max);
+    if(this.playing){this.toScene(i);this.resumeAudio();}else{this.seek(i);drawFrame();updateTimeUI();}},
+  seek(i){this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;highlightSceneCard();updateTimeUI();},
+  toScene(i){this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;
+    const sc=state.scenes[this.idx];if(sc&&sc.playback&&sc.playback.el){try{sc.playback.el.currentTime=0;}catch(_){}}
+    highlightSceneCard();},
+  pauseAudio(){
+    const sc=state.scenes[this.idx];if(!sc)return;
+    if(state.recording){const a=exportNodes[this.idx];if(a){try{a.pause();}catch(_){}}return;}
+    const pb=sc.playback;
+    if(pb&&pb.type==='puter'){try{pb.el.pause();}catch(_){}}
+    if(window.speechSynthesis){try{speechSynthesis.pause();}catch(_){}}
+  },
+  resumeAudio(){
+    const sc=state.scenes[this.idx];if(!sc)return;
+    if(state.recording){const a=exportNodes[this.idx];if(a){a.playbackRate=state.speed;a.play().catch(()=>{});}return;}
+    const pb=sc.playback;
+    if(pb&&pb.type==='puter'){
+      const el=pb.el;el.playbackRate=state.speed;
+      if(this.t>0){el.play().catch(()=>{});}else{try{el.currentTime=0;}catch(_){}el.play().catch(()=>{});}
+    }else if(pb&&pb.type==='browser'){
+      if(this.t>0){try{speechSynthesis.resume();}catch(_){}}else{speechSpeak(pb.text);}
+    }
+  },
+  tick(ts){
+    if(!this.playing){this.raf=null;this.lastTs=null;return;}
+    const dt=this.lastTs?Math.min(120,ts-this.lastTs):0;this.lastTs=ts;this.t+=dt;
+    const sc=state.scenes[this.idx];
+    if(!sc){this.pause();return;}
+    const dur=this.sceneDur(this.idx);
+    if(this.t>=dur){
+      const ended=(this.stopAfter!=null&&this.idx>=this.stopAfter)||this.idx>=state.scenes.length-1;
+      if(ended){
+        this.stopAfter=null;this.playing=false;this.t=dur;this.lastTs=null;this.raf=null;
+        drawFrame();updatePlayUI();updateTimeUI();
+        if(state.recording){const f=this.onFinish;this.onFinish=null;if(f)f();}
+        return;
+      }
+      this.toScene(this.idx+1);
+    }
+    if(state.recording)overlaySub(Math.round(clamp(this.elapsedTotal()/Math.max(1,this.totalDur()),0,1)*100)+'% terrekam · jangan pindah tab…');
+    drawFrame();updateTimeUI();
+    this.raf=requestAnimationFrame(t2=>this.tick(t2));
+  }
+};
+function updatePlayUI(){$('#btnPlay').textContent=player.playing?'⏸':'▶️';}
+function updateTimeUI(){
+  const n=state.scenes.length;
+  $('#sceneLabel').textContent=n?('Scene '+(player.idx+1)+'/'+n):'Scene –';
+  $('#timeLabel').textContent=fmtTime(player.elapsedTotal()/1000)+' / '+fmtTime(player.totalDur()/1000);
+  updateTimelineFill();
 }
-const MODE_LABEL = { auto: 'Otomatis', reel: 'Reel', video: 'Video Feed', photo: 'Foto Feed' };
-const TYPE_LABEL = { photo: 'Foto', video: 'Video', reel: 'Reel' };
-
-function scorePill(score) {
-  if (score == null) return '';
-  const cls = score >= 75 ? 's-high' : score >= 50 ? 's-mid' : 's-low';
-  const emoji = score >= 75 ? '🔥' : score >= 50 ? '⚡' : '🧪';
-  return `<span class="score-pill ${cls}">${emoji} Skor Algoritma: ${score}/100</span>`;
+function highlightSceneCard(){
+  $$('.scene-card.active').forEach(el=>el.classList.remove('active'));
+  const sc=state.scenes[player.idx];if(!sc)return;
+  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
+  if(card){card.classList.add('active');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+function renderTimeline(){
+  const tl=$('#timeline');tl.innerHTML='';
+  state.scenes.forEach((sc,i)=>{
+    const d=player.sceneDur(i);
+    const seg=document.createElement('div');
+    seg.className='seg';seg.style.flexGrow=String(d);seg.dataset.i=i;
+    const f=document.createElement('div');f.className='fill';
+    const s=document.createElement('span');s.textContent=i+1;
+    seg.appendChild(f);seg.appendChild(s);tl.appendChild(seg);
+  });
+  updateTimelineFill();
+}
+function updateTimelineFill(){
+  const segs=$('#timeline').children;
+  for(let i=0;i<segs.length;i++){
+    const fill=segs[i].querySelector('.fill');
+    const d=player.sceneDur(i);
+    const pct=i<player.idx?100:i>player.idx?0:clamp(player.t/d*100,0,100);
+    fill.style.width=pct+'%';
+    segs[i].classList.toggle('active',i===player.idx);
+  }
 }
 
-function uploadBadge(m) {
-  if (m.uploadState === 'ready') return `<span class="badge green">☁️ Di server</span>`;
-  if (m.uploadState === 'uploading') return `<span class="badge amber">⏳ Mengunggah…</span>`;
-  return `<span class="badge red">❌ ${esc(m.uploadError || 'Gagal upload')}</span>`;
+/* ================= TTS: suara natural Indonesia ================= */
+function estSec(t){return Math.max(2.5,String(t||'').length/14.5);}
+function naturalizeForSpeech(t){
+  let s=' '+String(t||'')+' ';
+  s=s.replace(/\s+/g,' ');
+  const MAP=[
+    [/\bdll\.?\b/gi,'dan sebagainya'],[/\bdsb\.?\b/gi,'dan sebagainya'],
+    [/\bdgn\b/gi,'dengan'],[/\butk\b/gi,'untuk'],[/\byg\b/gi,'yang'],
+    [/\btsb\.?\b/gi,'tersebut'],[/\bvs\.?\b/gi,'versus'],
+    [/\s+%\b/g,' persen'],[/&/g,' dan '],[/\+/g,' plus '],[/=/g,' sama dengan '],
+    [/€/g,' euro'],[/\$/g,' dolar '],[/Rp\.?\s*(?=\d)/gi,'Rp ']
+  ];
+  for(const m of MAP)s=s.replace(m[0],m[1]);
+  s=s.replace(/\b(Nah|Jadi|Oke|Ok|Eh|Tapi|Ternyata|Uniknya|Menariknya|Bayangkan|Simpelnya|Intinya|Pokoknya|Sekarang|Lalu|Kemudian|Selain itu|Gini|Nih|Tu|Tuh)\b(?![:,.!?])/g,'$1,');
+  s=s.replace(/…|\.\.\./g,',');
+  s=s.replace(/\s+([,.!?;:])/g,'$1').replace(/([,.!?;:])(?=[^\s\d])/g,'$1 ');
+  s=s.replace(/,{2,}/g,',').replace(/\s{2,}/g,' ').trim();
+  if(!/[.!?]$/.test(s))s+='.';
+  if(s.length>2900){
+    let cut=s.slice(0,2900);
+    const i=Math.max(cut.lastIndexOf('. '),cut.lastIndexOf('! '),cut.lastIndexOf('? '));
+    if(i>1200)cut=cut.slice(0,i+1);
+    s=cut;
+  }
+  return s;
 }
-
-function renderMedia() {
-  const wrap = $('#mediaList');
-  if (!sessionMedia.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = sessionMedia.map(m => `
-    <div class="media-item" data-id="${m.id}">
-      <div class="mi-top">
-        ${m.previewURL
-          ? `<img class="mi-thumb" src="${m.previewURL}" alt="Pratinjau ${esc(m.name)}">`
-          : `<div class="mi-thumb video-thumb">🎬</div>`}
-        <div class="mi-info">
-          <div class="mi-name">${esc(m.name)}</div>
-          <div class="mi-meta">${m.isVideo ? '🎥 Video' : '🖼️ Foto'} · ${fmtSize(m.size)} · mode: <b>${MODE_LABEL[m.mode]}</b>${m.analysis ? ' · ✅ dianalisis AI' : ''}</div>
-          <div class="mi-row">${uploadBadge(m)}${scorePill(m.score)}</div>
-          ${m.hashtags.length ? `<div class="hashtag-chips">${m.hashtags.map(h => `<span class="hchip">${esc(h)}</span>`).join('')}</div>` : ''}
-          <div class="mi-row">
-            <select class="select" data-act="mode" style="width:auto;padding:8px 34px 8px 12px;font-size:12px" aria-label="Mode posting">
-              <option value="auto" ${m.mode === 'auto' ? 'selected' : ''}>Mode: Otomatis</option>
-              ${m.isVideo ? `<option value="reel" ${m.mode === 'reel' ? 'selected' : ''}>Posting sebagai Reel</option>
-              <option value="video" ${m.mode === 'video' ? 'selected' : ''}>Posting sebagai Video Feed</option>` : ''}
-              ${!m.isVideo ? `<option value="photo" ${m.mode === 'photo' ? 'selected' : ''}>Posting sebagai Foto Feed</option>` : ''}
-            </select>
-          </div>
-        </div>
-        <div class="mi-actions">
-          <button class="btn btn-primary btn-sm" data-act="ai">✨ Caption AI</button>
-          <button class="btn btn-amber btn-sm" data-act="analyze">🎯 Analisis</button>
-          <button class="btn btn-ok btn-sm" data-act="post" ${m.uploadState !== 'ready' ? 'disabled' : ''}>🚀 Post</button>
-          <button class="btn btn-ghost btn-sm" data-act="queue" ${m.uploadState !== 'ready' ? 'disabled' : ''}>📅 Jadwal</button>
-          <button class="btn btn-danger btn-sm" data-act="del">✕</button>
-        </div>
-      </div>
-      <div class="mi-caption">
-        <textarea class="textarea" data-act="caption" style="min-height:70px;font-size:12.5px" placeholder="Tulis caption manual, atau biarkan AI yang membuat…">${esc(m.caption)}</textarea>
-      </div>
-      ${m.tips ? `<div class="result-box" style="margin-top:10px"><b>🎯 Catatan AI:</b>\n${esc(m.tips)}</div>` : ''}
-    </div>`).join('');
-}
-
-$('#mediaList').addEventListener('input', e => {
-  const t = e.target; const itemEl = t.closest('.media-item'); if (!itemEl) return;
-  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
-  if (t.dataset.act === 'caption') m.caption = t.value;
-});
-$('#mediaList').addEventListener('change', e => {
-  const t = e.target; const itemEl = t.closest('.media-item'); if (!itemEl) return;
-  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
-  if (t.dataset.act === 'mode') { m.mode = t.value; renderMedia(); }
-});
-$('#mediaList').addEventListener('click', async e => {
-  const btn = e.target.closest('button[data-act]'); if (!btn || btn.disabled) return;
-  const itemEl = btn.closest('.media-item');
-  const m = sessionMedia.find(x => x.id === itemEl.dataset.id);
-  const act = btn.dataset.act;
-  if (act === 'del') { if (m.previewURL) URL.revokeObjectURL(m.previewURL); sessionMedia = sessionMedia.filter(x => x.id !== m.id); renderMedia(); log(`🗑️ ${m.name} dihapus dari daftar (file tetap aman bila sudah di server).`); }
-  if (act === 'ai') await aiCaptionFor(m, btn);
-  if (act === 'analyze') await analyzeFor(m, btn);
-  if (act === 'post') await publishMedia(m);
-  if (act === 'queue') openScheduleModal([m.id]);
-});
-</script>
-<script>
-/* ================= PUTER AI LAYER ================= */
-function extractAI(resp) {
-  if (resp == null) return '';
-  if (typeof resp === 'string') return resp;
-  if (typeof resp.text === 'string' && resp.text) return resp.text;
-  const c = resp?.message?.content ?? resp?.content;
-  if (typeof c === 'string') return c;
-  if (Array.isArray(c)) return c.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
-  try { return JSON.stringify(resp); } catch (_) { return String(resp); }
-}
-function withTimeout(promise, ms, label) {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error((label || 'AI') + ' timeout setelah ' + (ms / 1000) + ' detik — kemungkinan perlu login Puter (popup terblokir?) atau koneksi lambat.')), ms);
-    promise.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+function audioDuration(a){
+  return new Promise(res=>{
+    let done=false;
+    const fin=v=>{if(!done){done=true;res(v);}};
+    const tm=setTimeout(()=>fin(0),8000);
+    a.addEventListener('loadedmetadata',()=>{clearTimeout(tm);fin(isFinite(a.duration)&&a.duration>0?a.duration:0);});
+    a.addEventListener('error',()=>{clearTimeout(tm);fin(0);});
+    try{a.load();}catch(_){ }
   });
 }
-async function aiChat(prompt, { model, timeoutMs } = {}) {
-  if (!puterReady()) throw new Error('Puter AI belum siap. Pastikan koneksi internet & izinkan popup Puter, lalu coba lagi.');
-  const resp = await withTimeout(
-    window.puter.ai.chat(prompt, { model: model || store.prefs.model || 'gpt-4o-mini' }),
-    timeoutMs || 45000,
-    'Puter AI'
-  );
-  return extractAI(resp).trim();
+function speechSpeak(text){
+  if(!window.speechSynthesis)return;
+  try{speechSynthesis.cancel();}catch(_){ }
+  const u=new SpeechSynthesisUtterance(String(text));
+  u.lang='id-ID';u.rate=clamp(state.speed,0.5,2);u.pitch=1;
+  const vs=speechSynthesis.getVoices()||[];
+  const v=vs.find(x=>(x.lang||'').toLowerCase().indexOf('id')===0);
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
 }
-function parseAIJson(text) {
-  if (!text) return null;
-  let t = text.replace(/```json/gi, '```').split('```').filter(Boolean);
-  t = t.length ? t.reduce((a, b) => (b.includes('{') ? b : a), t[0]) : text;
-  const s = t.indexOf('{'); const e = t.lastIndexOf('}');
-  if (s === -1 || e === -1 || e <= s) return null;
-  try { return JSON.parse(t.slice(s, e + 1)); } catch (_) { return null; }
+async function makeTTS(text){
+  const processed=state.naturalize?naturalizeForSpeech(text):String(text||'');
+  if(state.voice==='browser')return {type:'browser',text:processed,dur:estSec(processed)};
+  const opts=[];
+  if(state.voice==='damayanti-neural'){
+    opts.push({voice:'Damayanti',engine:'neural',language:'id-ID'});
+    opts.push({voice:'Damayanti',language:'id-ID'});
+  }else{
+    opts.push({voice:'Damayanti',language:'id-ID'});
+    opts.push({voice:'Damayanti',engine:'neural',language:'id-ID'});
+  }
+  opts.push({language:'id-ID'});
+  opts.push({});
+  let lastErr=null;
+  for(const o of opts){
+    try{
+      const el=await puter.ai.txt2speech(processed,o);
+      const src=el&&el.src;
+      if(!src)throw new Error('Audio kosong');
+      let url=src,blob=null;
+      try{const r=await fetch(src);if(r.ok){blob=await r.blob();url=URL.createObjectURL(blob);}}catch(_){ }
+      const a=new Audio(url);a.preload='auto';
+      const dur=await audioDuration(a);
+      return {type:'puter',el:a,blob:blob,url:url,dur:dur||estSec(processed)};
+    }catch(e){lastErr=e;}
+  }
+  console.warn('TTS Puter gagal, memakai suara browser:',lastErr);
+  return {type:'browser',text:processed,dur:estSec(processed)};
 }
-const HASHTAG_FALLBACK = ['#reels', '#viral', '#fyp', '#facebookreels', '#kontenkreator', '#viralindonesia', '#fypシ', '#explore'];
 
-/* ---------- CAPTION AI ---------- */
-async function aiCaptionFor(m, btn) {
-  const orig = btn ? btn.innerHTML : '';
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
-  log(`✨ Puter AI sedang membuat caption untuk "${m.name}"…`, 'info');
-  try {
-    const jenis = m.isVideo ? 'video/reel pendek' : 'foto';
-    const prompt = `Kamu adalah content strategist Facebook berbahasa Indonesia yang sangat paham algoritma Facebook Reels & feed tahun ini.
-Buatkan caption Facebook untuk sebuah ${jenis} dengan nama file: "${m.name}".
-${m.caption && m.caption !== '' ? `Ide awal dari pengguna: "${m.caption}"` : 'Pengguna belum memberi ide — buat caption kreatif berdasarkan nama file tersebut.'}
-
-Aturan:
-- Hook 1-2 kata pertama harus bikin berhenti scroll.
-- Bahasa Indonesia santai, ada 2-4 emoji relevan.
-- Panjang caption 2-4 kalimat, diakhiri CTA (misal ajakan komen/simpan/bagi).
-- Hashtag 8-12 buah, campuran besar & niche, relevan Indonesia.
-
-Balas HANYA JSON valid tanpa penjelasan, format:
-{"caption":"...","hashtags":["#...","..."]}`;
-    const raw = await aiChat(prompt, { timeoutMs: 30000 });
-    const j = parseAIJson(raw);
-    if (j && j.caption) {
-      m.caption = String(j.caption);
-      m.hashtags = Array.isArray(j.hashtags) ? j.hashtags.slice(0, 12).map(h => h.startsWith('#') ? h : '#' + h) : HASHTAG_FALLBACK;
-      store.stats.aiCaptions++; save();
-      log(`✅ Caption AI selesai untuk "${m.name}" (+${m.hashtags.length} hashtag).`, 'ok');
-      toast('Caption berhasil dibuat AI.', 'ok', '✨ Caption AI');
-    } else {
-      m.caption = raw.slice(0, 900);
-      m.hashtags = HASHTAG_FALLBACK;
-      log('⚠️ AI tidak mengembalikan JSON valid — caption mentah dipakai.', 'warn');
+/* ================= AI: chat, naskah, gambar ================= */
+function extractText(r){
+  if(r==null)return '';
+  if(typeof r==='string')return r;
+  if(typeof r.text==='string'&&r.text.trim())return r.text;
+  const c=r.message&&r.message.content;
+  if(typeof c==='string')return c;
+  if(Array.isArray(c))return c.map(p=>typeof p==='string'?p:(p&&p.text)||'').join('');
+  if(typeof r.content==='string')return r.content;
+  if(Array.isArray(r.content))return r.content.map(p=>(p&&p.text)||'').join('');
+  try{return JSON.stringify(r);}catch(_){return String(r);}
+}
+async function chatOnce(prompt){
+  const tries=[null,'gpt-5-nano','gpt-4o-mini','gpt-4.1-nano'];
+  let err=null;
+  for(const m of tries){
+    try{
+      const r=m?await puter.ai.chat(prompt,{model:m}):await puter.ai.chat(prompt);
+      const t=extractText(r).trim();
+      if(t)return t;
+    }catch(e){err=e;}
+  }
+  throw err||new Error('Layanan chat tidak merespons');
+}
+function buildPrompt(topic,level,dur,style,n){
+  return PERSONA+'Buatkan naskah video edukasi.\n'+
+    'Topik: '+topic+'\n'+
+    'Penonton: '+level+'\n'+
+    'Durasi total target: sekitar '+dur+' detik, dibagi menjadi TEPAT '+n+' scene.\n\n'+
+    'GAYA BICARA: '+STYLES[style]+'\n\n'+
+    'Panjang tiap narasi scene: 2-4 kalimat (sekitar 15-30 detik dibaca dengan tempo wajar).\n\n'+
+    'Balas HANYA array JSON valid — TANPA penjelasan dan TANPA markdown — dengan bentuk persis:\n'+
+    '[{"judul":"judul scene singkat","narasi":"teks yang dibacakan penyiar","visual":"english image prompt for the scene illustration"}]\n'+
+    'Mulai jawabanmu langsung dengan karakter [';
+}
+function normalizeSceneRaw(o){
+  o=o||{};
+  return {judul:String(o.judul||'Scene').slice(0,70),narasi:String(o.narasi||'').trim(),visual:String(o.visual||'').trim()};
+}
+function normalizeScene(o){
+  const s=normalizeSceneRaw(o);
+  let nar=s.narasi
+    .replace(/\*\*/g,'')
+    .replace(/^(baiklah|baik|tentu|siap|berikut( naskah| ini)?)[,.!]?\s*/i,'')
+    .replace(/\b(sebagai|as)\s+(sebuah\s+)?(AI|artificial intelligence|kecerdasan buatan|model bahasa|language model)\b[^.!?]*[.!?]?/gi,'')
+    .replace(/^scene\s*\d+\s*[:.\-]\s*/i,'')
+    .trim();
+  return {id:uid(),judul:s.judul||'Scene',narasi:nar,visual:s.visual,imgSrc:null,imgEl:null,playback:null,audioDur:0,chunks:null,stale:false};
+}
+function tryParseScenes(raw){
+  if(!raw)return null;
+  let s=String(raw).replace(/```(?:json)?/gi,'');
+  const a=s.indexOf('['),b=s.lastIndexOf(']');
+  if(a===-1||b<=a)return null;
+  let arr=null;
+  try{arr=JSON.parse(s.slice(a,b+1));}catch(e){return null;}
+  if(!Array.isArray(arr)&&arr&&Array.isArray(arr.scenes))arr=arr.scenes;
+  if(!Array.isArray(arr))return null;
+  const list=arr.map((o,i)=>{
+    o=o||{};
+    let nar=String(o.narasi!=null?o.narasi:(o.narration!=null?o.narration:(o.text!=null?o.text:''))).trim();
+    nar=nar.replace(/^scene\s*\d+\s*[:.\-]\s*/i,'').trim();
+    const jud=String(o.judul||o.title||o.scene||('Scene '+(i+1))).replace(/^scene\s*\d+\s*[:.\-]\s*/i,'').trim()||('Scene '+(i+1));
+    const vis=String(o.visual||o.image||o.image_prompt||o.gambar||'').trim();
+    return {judul:jud.slice(0,70),narasi:nar,visual:vis};
+  }).filter(o=>o.narasi&&o.narasi.length>3);
+  return list.length?list:null;
+}
+function fallbackParseScenes(raw){
+  if(!raw)return null;
+  const lines=String(raw).split(/\n+/).map(l=>l.trim()).filter(Boolean);
+  const out=[];let cur=null;
+  for(const l of lines){
+    const m=l.match(/^(?:scene|bagian|sc)\s*\d+\s*[:.\-–)]\s*(.*)$/i)||l.match(/^(\d+)[.)]\s*(.*)$/);
+    if(m){
+      if(cur&&cur.narasi)out.push(cur);
+      const head=(m[2]||m[1]||'').replace(/^judul\s*[:\-]\s*/i,'').trim();
+      cur={judul:(head||('Scene '+(out.length+1))).slice(0,70),narasi:'',visual:''};
+      continue;
     }
-    renderMedia();
-  } catch (err) {
-    log('❌ Gagal membuat caption: ' + errMsg(err), 'err');
-    toast(errMsg(err), 'err', 'Caption AI gagal');
-  } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+    if(!cur)continue;
+    const jm=l.match(/^judul\s*[:\-]\s*(.+)$/i);
+    const nm=l.match(/^(?:narasi|naskah|teks|voice)\s*[:\-]\s*(.+)$/i);
+    const vm=l.match(/^(?:visual|gambar|image|img)\s*[:\-]\s*(.+)$/i);
+    if(jm)cur.judul=jm[1].slice(0,70);
+    else if(nm)cur.narasi+=(cur.narasi?' ':'')+nm[1];
+    else if(vm)cur.visual=vm[1];
+    else if(/^(?:judul|scene)\b/i.test(l))continue;
+    else cur.narasi+=(cur.narasi?' ':'')+l;
+  }
+  if(cur&&cur.narasi)out.push(cur);
+  const list=out.map(normalizeScene).filter(s=>s.narasi&&s.narasi.length>10);
+  return list.length>=2?list:null;
 }
-
-/* ---------- ANALISIS ALGORITMA PER MEDIA ---------- */
-async function analyzeFor(m, btn) {
-  const orig = btn ? btn.innerHTML : '';
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
-  log(`🎯 Menganalisis algoritma untuk "${m.name}"…`, 'info');
-  try {
-    const jenis = m.isVideo ? 'video/reel' : 'foto feed';
-    const prompt = `Kamu adalah pembaca algoritma Facebook. Analisis potensi performa algoritma Facebook untuk konten berikut.
-Jenis konten: ${jenis}
-Nama file: "${m.name}"
-Caption: "${(m.caption || '(belum ada caption)').slice(0, 600)}"
-
-Nilai aspek-aspek ini 0-100: hook (detik pertama menahan scroll), caption, hashtag_discovery, engagement_potential, timing.
-Skor total = rata-rata tertimbang. Beri 3-5 tips singkat & spesifik untuk menaikkan skor.
-Balas HANYA JSON valid:
-{"score":78,"hook":80,"caption":75,"hashtag":70,"engagement":85,"timing":72,"tips":["...","..."]}`;
-    const raw = await aiChat(prompt, { timeoutMs: 30000 });
-    const j = parseAIJson(raw);
-    if (j && typeof j.score === 'number') {
-      m.score = Math.max(0, Math.min(100, Math.round(j.score)));
-      m.tips = Array.isArray(j.tips) ? j.tips.join('\n• ') : null;
-      m.analysis = j;
-      log(`✅ Analisis "${m.name}": skor algoritma ${m.score}/100 ${m.score >= 75 ? '— potensi viral tinggi!' : m.score >= 50 ? '— cukup baik, bisa dioptimalkan.' : '— perlu perbaikan.'}`, m.score >= 50 ? 'ok' : 'warn');
-      if (m.tips) log('• ' + m.tips.replace(/\n/g, '\n• '), 'info');
-    } else {
-      log('⚠️ Hasil analisis tidak valid: ' + raw.slice(0, 140), 'warn');
-      toast('Analisis AI tidak mengembalikan data valid.', 'warn', 'Analisis');
+async function genScript(topic){
+  const level=$('#selLevel').value,dv=$('#selDuration').value,style=$('#selStyle').value;
+  const n=SCENE_MAP[dv]||5;
+  const prompt=buildPrompt(topic,level,dv,style,n);
+  let raw=null,parsed=null;
+  for(let att=0;att<2;att++){
+    if(att)overlayShow('Merapikan format naskah…','AI diminta mengirim ulang dalam format JSON',true);
+    raw=await chatOnce(att?(prompt+'\n\nPENTING: balas HANYA array JSON. Tanpa teks lain.'):prompt);
+    parsed=tryParseScenes(raw);
+    if(parsed&&parsed.length>=2)break;
+  }
+  if(!parsed||!parsed.length)parsed=fallbackParseScenes(raw);
+  if(!parsed||!parsed.length)throw new Error('AI tidak mengembalikan naskah yang bisa dibaca — coba lagi ya');
+  return parsed;
+}
+async function makeImage(prompt){
+  const full=(String(prompt||'').trim()||'educational illustration')+', '+IMG_STYLE;
+  const res=await puter.ai.txt2img(full);
+  const src=typeof res==='string'?res:(res&&res.src);
+  if(!src)throw new Error('Gambar tidak diterima dari AI');
+  return src;
+}
+function ensureImgEl(sc){
+  if(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth)return Promise.resolve(sc.imgEl);
+  if(!sc.imgSrc)return Promise.resolve(null);
+  const load=u=>new Promise((res,rej)=>{
+    const im=new Image();im.crossOrigin='anonymous';
+    im.onload=()=>res(im);im.onerror=rej;im.src=u;
+  });
+  return (async()=>{
+    let src=sc.imgSrc;
+    if(!src.startsWith('data:')){
+      try{const r=await fetch(src);const b=await r.blob();src=URL.createObjectURL(b);sc.imgSrc=src;}catch(_){ }
     }
-    renderMedia(); updateStats();
-  } catch (err) {
-    log('❌ Analisis gagal: ' + errMsg(err), 'err');
-    toast(errMsg(err), 'err', 'Analisis gagal');
-  } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+    try{sc.imgEl=await load(src);}catch(_){sc.imgEl=null;}
+    return sc.imgEl;
+  })();
 }
 
-/* ---------- INSIGHT HARIAN ---------- */
-async function loadInsight(force) {
-  const today = new Date().toDateString();
-  if (!force && store.insight && store.insightDate === today) {
-    $('#insightBody').innerHTML = store.insight;
+/* ================= UI Scene ================= */
+function scDurSec(sc){const base=(sc.playback&&sc.playback.dur)||estSec(sc.narasi);return Math.max(2.5,base/state.speed);}
+function sceneCardHTML(sc,i){
+  const hasV=sc.playback&&sc.playback.type==='puter';
+  const hasImg=!!sc.imgSrc;
+  const pillV=hasV?(sc.stale?'🎙️ ⟳':'🎙️ ✓'):(sc.playback&&sc.playback.type==='browser'?'🎙️ ✓ (browser)':'🎙️ —');
+  const clsV=hasV&&!sc.stale?'pill st-voice ok':hasV?'pill st-voice warn':'pill st-voice';
+  return ''+
+  '<div class="sc-head">'+
+    '<span class="sc-num">'+(i+1)+'</span>'+
+    '<input class="sc-title" value="'+esc(sc.judul)+'" placeholder="Judul scene">'+
+    '<span class="sc-dur">≈ '+Math.round(scDurSec(sc))+' dtk</span>'+
+    '<div class="sc-tools">'+
+      '<button class="ib" type="button" data-act="up" title="Naikkan">↑</button>'+
+      '<button class="ib" type="button" data-act="down" title="Turunkan">↓</button>'+
+      '<button class="ib danger" type="button" data-act="del" title="Hapus">🗑</button>'+
+    '</div>'+
+  '</div>'+
+  '<textarea class="sc-nar" rows="3" placeholder="Teks yang dibacakan penyiar…">'+esc(sc.narasi)+'</textarea>'+
+  '<div class="sc-meta">'+
+    '<span class="sc-meta-info">'+sc.narasi.length+' karakter · ≈ '+Math.round(estSec(sc.narasi))+' dtk</span>'+
+    '<span class="pills">'+
+      '<span class="pill st-img'+(hasImg?' ok':'')+'">'+(hasImg?'🖼️ ✓':'🖼️ —')+'</span>'+
+      '<span class="'+clsV+'">'+pillV+'</span>'+
+    '</span>'+
+    '<button class="linkish" type="button" data-act="vis">Prompt visual</button>'+
+  '</div>'+
+  '<div class="sc-visual-row"'+(sc.visual?'':' hidden')+'>'+
+    '<input class="sc-visual" value="'+esc(sc.visual)+'" placeholder="Prompt gambar (bahasa Inggris) — cth: plant photosynthesis diagram, sunlight">'+
+  '</div>'+
+  '<div class="sc-media">'+
+    '<div class="sc-thumb">'+(hasImg?'<img src="'+esc(sc.imgSrc)+'" alt="">':'<div class="ph">🖼️</div>')+'</div>'+
+    '<div class="sc-actions">'+
+      '<button class="btn btn-s" type="button" data-act="img">🎨 '+(hasImg?'Ganti Gambar':'Buat Gambar')+'</button>'+
+      '<button class="btn btn-s" type="button" data-act="voice">🎙️ '+(hasV?'Ganti Suara':'Buat Suara')+'</button>'+
+      '<button class="btn btn-s ghost" type="button" data-act="test">▶️ Tes Scene</button>'+
+    '</div>'+
+  '</div>';
+}
+function renderScenes(){
+  const list=$('#scenesList');list.innerHTML='';
+  $('#emptyState').hidden=state.scenes.length>0;
+  state.scenes.forEach((sc,i)=>{
+    const div=document.createElement('div');
+    div.className='scene-card'+(i===player.idx?' active':'');
+    div.dataset.id=sc.id;
+    div.innerHTML=sceneCardHTML(sc,i);
+    list.appendChild(div);
+  });
+  $$('.scene-card .sc-nar').forEach(autoGrow);
+}
+function autoGrow(el){el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
+function updateSceneMedia(sc){
+  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');if(!card)return;
+  const th=card.querySelector('.sc-thumb');
+  th.innerHTML='';
+  if(sc.imgSrc){const im=document.createElement('img');im.src=sc.imgSrc;im.alt='';th.appendChild(im);}
+  else{const p=document.createElement('div');p.className='ph';p.textContent='🖼️';th.appendChild(p);}
+  const si=card.querySelector('.st-img');
+  if(si){si.className='pill st-img'+(sc.imgSrc?' ok':'');si.textContent=sc.imgSrc?'🖼️ ✓':'🖼️ —';}
+  const hasV=sc.playback&&sc.playback.type==='puter';
+  const sv=card.querySelector('.st-voice');
+  if(sv){
+    sv.className=hasV&&!sc.stale?'pill st-voice ok':hasV?'pill st-voice warn':'pill st-voice';
+    sv.textContent=hasV?(sc.stale?'🎙️ ⟳':'🎙️ ✓'):(sc.playback&&sc.playback.type==='browser'?'🎙️ ✓ (browser)':'🎙️ —');
+  }
+  const du=card.querySelector('.sc-dur');
+  if(du)du.textContent='≈ '+Math.round(scDurSec(sc))+' dtk';
+  const bi=card.querySelector('[data-act="img"]');
+  if(bi){bi.disabled=false;bi.textContent=sc.imgSrc?'🎨 Ganti Gambar':'🎨 Buat Gambar';}
+  const bv=card.querySelector('[data-act="voice"]');
+  if(bv){bv.disabled=false;bv.textContent=hasV?'🎙️ Ganti Suara':'🎙️ Buat Suara';}
+}
+async function genImageFor(sc){
+  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
+  const si=card&&card.querySelector('.st-img');
+  if(si){si.className='pill st-img busy';si.textContent='🖼️ ⏳';}
+  const prompt=sc.visual||($('#inpTopic').value+' — '+sc.judul);
+  sc.imgSrc=await makeImage(prompt);
+  sc.imgEl=null;
+  await ensureImgEl(sc);
+  updateSceneMedia(sc);
+  drawFrame();
+}
+async function genVoiceFor(sc){
+  if(sc.playback&&sc.playback.el){try{sc.playback.el.pause();}catch(_){ }}
+  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
+  const sv=card&&card.querySelector('.st-voice');
+  if(sv){sv.className='pill st-voice busy';sv.textContent='🎙️ ⏳';}
+  sc.stale=false;
+  sc.playback=await makeTTS(sc.narasi);
+  updateSceneMedia(sc);
+  renderTimeline();updateToolbar();
+}
+
+/* ================= Toolbar & pipeline ================= */
+function updateToolbar(){
+  $('#sceneCount').textContent=state.scenes.length+' scene';
+  $('#totalDur').textContent='≈ '+fmtTime(player.totalDur()/1000);
+}
+function addScene(){
+  const sc=normalizeScene({judul:'Scene '+(state.scenes.length+1),narasi:'',visual:''});
+  state.scenes.push(sc);
+  renderScenes();renderTimeline();updateToolbar();saveLocal();
+  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
+  if(card){card.querySelector('.sc-nar').focus();card.scrollIntoView({block:'center',behavior:'smooth'});}
+}
+function setBusyUI(b){
+  ['#btnGenScript','#btnGenAllImgs','#btnGenAllVoices','#btnAddScene'].forEach(s=>{
+    const el=$(s);if(el)el.disabled=b;
+  });
+}
+async function generateProject(){
+  if(state.busy)return;
+  const topic=$('#inpTopic').value.trim();
+  if(!topic){toast('Tulis dulu topik videonya ya 😊','warn');$('#inpTopic').focus();return;}
+  if(!requireAuth())return;
+  if(state.scenes.length&&!confirm('Ganti naskah yang sekarang dengan yang baru?'))return;
+  state.busy=true;setBusyUI(true);pipelineCancel=false;
+  try{
+    overlayShow('Menulis naskah…','AI menyusun kalimat percakapan natural khas orang Indonesia',true);
+    const list=await genScript(topic);
+    if(pipelineCancel)throw new Error('cancel');
+    state.scenes=list.map(normalizeScene);
+    player.idx=0;player.t=0;player.playing=false;player.stopAfter=null;player.onFinish=null;player.lastTs=null;
+    renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();updatePlayUI();
+    for(let i=0;i<state.scenes.length;i++){
+      if(pipelineCancel)break;
+      const sc=state.scenes[i];
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Membuat ilustrasi…',true);
+      try{await genImageFor(sc);}catch(e){toast('Gambar scene '+(i+1)+' gagal: '+(e.message||e),'err');}
+      if(pipelineCancel)break;
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara natural (Damayanti)…',true);
+      try{await genVoiceFor(sc);}catch(e){toast('Suara scene '+(i+1)+' gagal: '+(e.message||e),'err');}
+    }
+    overlayHide();
+    saveLocal();renderTimeline();updateToolbar();
+    toast('Naskah siap! Klik ▶️ untuk pratinjau videonya 🎬','success');
+  }catch(e){
+    overlayHide();
+    if(e.message!=='cancel')toast('Gagal: '+(e.message||e),'err');
+  }finally{
+    state.busy=false;setBusyUI(false);
+  }
+}
+async function generateAll(kind){
+  if(state.busy)return;
+  if(!state.scenes.length){toast('Belum ada scene','warn');return;}
+  if(!requireAuth())return;
+  state.busy=true;setBusyUI(true);pipelineCancel=false;
+  const jobs=[];
+  state.scenes.forEach((sc,i)=>{
+    const need=kind==='img'?!sc.imgSrc:!(sc.playback&&sc.playback.type==='puter');
+    if(need)jobs.push({sc:sc,i:i});
+  });
+  if(!jobs.length){
+    state.busy=false;setBusyUI(false);
+    toast(kind==='img'?'Semua scene sudah punya gambar 🖼️':'Semua scene sudah bersuara 🔊','info');
     return;
   }
-  $('#insightBody').innerHTML = '<span class="spin"></span> Puter AI sedang membaca algoritma hari ini…';
-  try {
-    const raw = await aiChat(`Kamu ahli algoritma Facebook Indonesia. Buat insight SINGKAT (maks 90 kata) tentang strategi posting hari ini untuk kreator: jam terbaik, jenis konten yang sedang difavoritkan algoritma, dan 1 trik engagement. Format HTML sederhana: <b>…</b>, <ul><li>…</li></ul>. Tanpa kalimat pembuka/penutup.`);
-    $('#insightBody').innerHTML = esc(raw).replace(/\n/g, '<br>');
-    store.insight = $('#insightBody').innerHTML; store.insightDate = today; save();
-    log('🧠 Insight algoritma harian diperbarui.', 'ok');
-  } catch (err) {
-    $('#insightBody').innerHTML = 'Gagal memuat insight: ' + esc(errMsg(err));
-    log('❌ Insight gagal: ' + errMsg(err), 'err');
+  let okc=0;
+  for(let k=0;k<jobs.length;k++){
+    if(pipelineCancel)break;
+    const sc=jobs[k].sc,i=jobs[k].i;
+    overlayShow((kind==='img'?'Membuat ilustrasi':'Merekam suara natural')+' · scene '+(i+1)+'/'+state.scenes.length,(k+1)+' dari '+jobs.length+' sedang diproses…',true);
+    try{if(kind==='img')await genImageFor(sc);else await genVoiceFor(sc);okc++;}
+    catch(err){toast('Scene '+(i+1)+': '+(err.message||err),'err');}
   }
+  overlayHide();
+  state.busy=false;setBusyUI(false);
+  saveLocal();renderTimeline();updateToolbar();
+  if(okc)toast(okc+' scene selesai diperbarui ✨','success');
 }
-$('#btnInsight').addEventListener('click', () => loadInsight(true));
-
-/* ---------- AI STUDIO: ANALISIS FORM ---------- */
-$('#btnAnalyze').addEventListener('click', async () => {
-  const btn = $('#btnAnalyze');
-  const topic = $('#aiTopic').value.trim();
-  if (!topic) { toast('Tulis dulu deskripsi kontenmu.', 'warn', 'Data kurang'); return; }
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menganalisis…';
-  const type = $('#aiType').value, aud = $('#aiAudience').value.trim() || 'umum', time = $('#aiTime').value || '19:00';
-  log(`🎯 Analisis algoritma: "${topic.slice(0, 60)}"…`, 'info');
-  try {
-    const prompt = `Kamu pembaca algoritma Facebook. Analisis rencana konten berikut:
-- Deskripsi: ${topic}
-- Jenis: ${type}
-- Audiens target: ${aud}
-- Rencana posting jam: ${time}
-
-Nilai 0-100 aspek: hook, caption, hashtag, engagement, timing.
-Sertakan: skor_total, 4-5 tips singkat, 8 hashtag rekomendasi, jam terbaik alternatif, prediksi jangkauan singkat.
-Balas HANYA JSON valid:
-{"score":80,"hook":75,"caption":80,"hashtag":78,"engagement":82,"timing":85,"tips":["..."],"hashtags":["#..."],"bestTime":"19:30-21:00","prediction":"..."}`;
-    const raw = await aiChat(prompt, { timeoutMs: 30000 });
-    const j = parseAIJson(raw);
-    if (j && typeof j.score === 'number') {
-      const sc = Math.round(j.score);
-      const bars = [['Hook', j.hook], ['Caption', j.caption], ['Hashtag', j.hashtag], ['Engagement', j.engagement], ['Timing', j.timing]];
-      $('#analyzeResult').innerHTML = `
-        <div class="card" style="margin-top:0">
-          <div class="gauge-wrap" style="margin-bottom:16px">
-            <div class="gauge" style="background:conic-gradient(var(--acc) 0% ${sc}%, var(--surface3) ${sc}% 100%)">
-              <div class="gauge-val">${sc}<small>/100</small></div>
-            </div>
-            <div class="gauge-lab">Skor Potensi Viral</div>
-          </div>
-          ${bars.map(([l, v]) => `<div class="bar-row"><div class="bar-top"><span>${l}</span><span>${v ?? '-'} / 100</span></div><div class="bar"><i style="width:${Math.min(100, v ?? 0)}%"></i></div></div>`).join('')}
-          ${j.bestTime ? `<div class="notice green" style="margin:12px 0 0"><span>⏰</span><span>Waktu terbaik alternatif: <b>${esc(j.bestTime)}</b></span></div>` : ''}
-          ${j.prediction ? `<div class="result-box"><b>📈 Prediksi:</b> ${esc(j.prediction)}</div>` : ''}
-          ${Array.isArray(j.hashtags) && j.hashtags.length ? `<div class="hashtag-chips" style="margin-top:12px">${j.hashtags.map(h => `<span class="hchip">${esc(h.startsWith('#') ? h : '#' + h)}</span>`).join('')}</div>` : ''}
-          <div style="margin-top:14px"><b style="font-size:13px">🧠 Tips Algoritma:</b><ul class="tips-list" style="margin-top:9px">${(Array.isArray(j.tips) ? j.tips : []).map((t, i) => `<li><span class="n">${i + 1}</span><span>${esc(t)}</span></li>`).join('')}</ul></div>
-        </div>`;
-      log(`✅ Analisis selesai — skor ${sc}/100. ${j.bestTime ? 'Waktu alternatif: ' + j.bestTime + '.' : ''}`, 'ok');
-      toast('Analisis algoritma selesai!', 'ok', '🎯 Skor: ' + sc + '/100');
-    } else {
-      $('#analyzeResult').innerHTML = `<div class="result-box">AI membalas tapi format tidak valid:\n${esc(raw.slice(0, 800))}</div>`;
-      log('⚠️ Analisis: format AI tidak valid.', 'warn');
+async function testVoice(){
+  if(typeof puter==='undefined')return toast('SDK Puter belum termuat','err');
+  if(state.voice!=='browser'&&!requireAuth())return;
+  const btn=$('#btnTestVoice');const old='🔊 Coba Suara Ini';
+  btn.disabled=true;btn.textContent='⏳ Menyiapkan suara…';
+  const done=()=>{btn.disabled=false;btn.textContent=old;};
+  try{
+    const text='Halo teman-teman! Nah, ini dia contoh suaraku. Gimana, terdengar natural kan? Santai, jelas, dan sama sekali bukan robot. Oke, sekarang kamu siap bikin video edukasi yang keren!';
+    const pb=await makeTTS(text);
+    if(pb.type==='puter'){
+      pb.el.addEventListener('ended',done,{once:true});
+      pb.el.playbackRate=state.speed;
+      pb.el.play().catch(()=>{});
+      toast('Suara: '+(VOICE_LABELS[state.voice]||state.voice),'success');
+    }else{
+      speechSpeak(pb.text);
+      const iv=setInterval(()=>{if(!speechSynthesis.speaking){clearInterval(iv);done();}},300);
+      toast('Menggunakan suara browser (id-ID)','info');
     }
-  } catch (err) {
-    $('#analyzeResult').innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
-    log('❌ Analisis gagal: ' + errMsg(err), 'err');
-  } finally { btn.disabled = false; btn.textContent = '🎯 Analisis Algoritma Sekarang'; }
-});
-
-/* ---------- CHAT ---------- */
-async function sendChat() {
-  const inp = $('#chatInput'), txt = inp.value.trim();
-  if (!txt) return;
-  inp.value = '';
-  const box = $('#chatBox');
-  box.insertAdjacentHTML('beforeend', `<div class="msg user">${esc(txt)}</div>`);
-  const id = 'm' + uid();
-  box.insertAdjacentHTML('beforeend', `<div class="msg bot" id="${id}"><span class="spin"></span></div>`);
-  box.scrollTop = box.scrollHeight;
-  try {
-    const raw = await aiChat(`Kamu "Pembaca Algoritma", ahli algoritma Facebook Reels/Feed berbahasa Indonesia. Jawab singkat, praktis, pakai poin jika perlu, maksimal 130 kata. Pertanyaan kreator: ${txt}`);
-    document.getElementById(id).textContent = raw || '(AI tidak membalas)';
-    box.scrollTop = box.scrollHeight;
-  } catch (err) {
-    document.getElementById(id).textContent = '❌ ' + errMsg(err);
-  }
+  }catch(e){done();toast('Gagal: '+(e.message||e),'err');}
 }
-$('#btnChat').addEventListener('click', sendChat);
-$('#chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
 
-/* ---------- GENERATOR GAMBAR ---------- */
-$('#btnGenImg').addEventListener('click', async () => {
-  const btn = $('#btnGenImg'), p = $('#imgPrompt').value.trim();
-  const out = $('#imgResult');
-  if (!p) { toast('Tulis deskripsi gambarnya dulu.', 'warn', 'Data kurang'); return; }
-  if (!puterReady()) { toast('Puter AI belum siap.', 'err', 'Offline'); return; }
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menggambar…';
-  log('🎨 Puter AI membuat gambar…', 'info');
-  try {
-    const img = await window.puter.ai.txt2img(p);
-    img.className = 'img-result';
-    img.alt = 'Gambar hasil AI';
-    out.innerHTML = '';
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;gap:10px;margin-top:10px;flex-wrap:wrap';
-    const b1 = document.createElement('button'); b1.className = 'btn btn-ghost btn-sm'; b1.textContent = '⬇️ Unduh';
-    const b2 = document.createElement('button'); b2.className = 'btn btn-ok btn-sm'; b2.textContent = '⬆️ Jadikan Post Foto';
-    row.append(b1, b2); out.append(img, row);
-    log('✅ Gambar AI selesai dibuat.', 'ok');
-    b1.addEventListener('click', () => {
-      const c = document.createElement('canvas');
-      c.width = img.naturalWidth; c.height = img.naturalHeight;
-      c.getContext('2d').drawImage(img, 0, 0);
-      c.toBlob(bl => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(bl); a.download = 'reelpro-ai-' + Date.now() + '.png'; a.click();
-      });
-    });
-    b2.addEventListener('click', () => {
-      const c = document.createElement('canvas');
-      c.width = img.naturalWidth; c.height = img.naturalHeight;
-      c.getContext('2d').drawImage(img, 0, 0);
-      c.toBlob(bl => {
-        const f = new File([bl], 'reelpro-ai-' + Date.now() + '.png', { type: 'image/png' });
-        addFiles([f]);
-        goto('compose');
-        toast('Gambar AI ditambahkan ke daftar upload.', 'ok', '🖼️ Siap posting');
-      });
-    });
-  } catch (err) {
-    log('❌ Generator gambar gagal: ' + errMsg(err), 'err');
-    toast(errMsg(err), 'err', 'Gambar AI gagal');
-  } finally { btn.disabled = false; btn.textContent = '🎨 Buat Gambar dengan AI'; }
-});
-</script>
-<script>
-/* ================= PUBLISH VIA SERVER (24/7) =================
-   Semua posting diproses worker server: foto (/photos),
-   video (/videos), Reel 3 fase (video_reels + rupload).
-   Server tanpa CORS — lebih andal daripada upload browser. */
-
-async function publishMedia(m) {
-  if (!m || m.uploadState !== 'ready') { toast('Media belum selesai diunggah ke server.', 'warn', 'Tunggu upload'); return null; }
-  const mode = resolveMode(m);
-  try {
-    // Optimasi Puter AI saat pengguna online (caption & skor)
-    if (!m.caption.trim()) { try { await aiCaptionFor(m); } catch (_) { /* fallback: server AI */ } }
-    if (store.prefs.autoAnalyze && m.score == null) { try { await analyzeFor(m); } catch (_) { /* lanjut */ } }
-    log(`🚀 Memasukkan "${m.name}" (${TYPE_LABEL[mode]}) ke antrean server…`, 'info');
-    const item = await api('/queue', {
-      method: 'POST',
-      body: {
-        serverName: m.serverName, fileName: m.name, mediaType: m.mediaType, mode,
-        caption: m.caption, hashtags: m.hashtags, score: m.score,
-        scheduledAt: new Date().toISOString()
+/* ================= Ekspor video (MediaRecorder) ================= */
+function setRecUI(b){
+  state.recording=b;
+  $('#recBadge').classList.toggle('on',b);
+  ['#btnExport','#btnPlay','#btnPrev','#btnNext','#btnStop'].forEach(s=>{
+    const el=$(s);if(el)el.disabled=b;
+  });
+  if(!b)updatePlayUI();
+}
+function onRecStop(){
+  state.recording=false;setRecUI(false);exportNodes=[];
+  try{if(actx){actx.close();}}catch(_){ }actx=null;
+  overlayHide();
+  if(exportCancel||!exportChunks.length){toast('Perekaman dibatalkan','info');return;}
+  const blob=new Blob(exportChunks,{type:'video/webm'});
+  const url=URL.createObjectURL(blob);
+  const name='EduVid-'+slug($('#inpTopic').value)+'-'+new Date().toISOString().slice(0,10)+'.webm';
+  const a=document.createElement('a');a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  const area=$('#dlArea');area.innerHTML='';
+  const link=document.createElement('a');
+  link.href=url;link.download=name;link.className='dl-link';
+  link.textContent='⬇️ '+name+' · '+(blob.size/1048576).toFixed(1)+' MB';
+  area.appendChild(link);
+  toast('Video selesai & terunduh! 🎉','success');
+}
+async function exportVideo(){
+  if(state.busy||state.recording)return;
+  if(!state.scenes.length){toast('Buat naskah dulu sebelum merekam','warn');return;}
+  const cs=cv.captureStream||cv.mozCaptureStream||cv.webkitCaptureStream;
+  if(!window.MediaRecorder||!cs){toast('Browser ini tidak mendukung perekaman video','err');return;}
+  const silent=state.scenes.filter(sc=>!(sc.playback&&sc.playback.type==='puter'&&sc.playback.blob)).length;
+  if(state.voice==='browser'||silent===state.scenes.length){
+    if(!confirm('Scene belum punya audio Puter — video bisa jadi tanpa suara. Lanjutkan?'))return;
+  }else if(silent){
+    toast(silent+' scene tanpa audio akan sunyi di video','warn');
+  }
+  state.busy=true;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    actx=actx||new AC();
+    if(actx.state==='suspended')await actx.resume();
+    const dest=actx.createMediaStreamDestination();
+    exportNodes=state.scenes.map(sc=>{
+      if(sc.playback&&sc.playback.type==='puter'&&sc.playback.url){
+        const a=new Audio(sc.playback.url);a.preload='auto';
+        try{const src=actx.createMediaElementSource(a);src.connect(dest);src.connect(actx.destination);}catch(_){ }
+        return a;
       }
+      return null;
     });
-    serverQueue.unshift(item);
-    log(`✅ "${m.name}" masuk antrean server — worker memposting dalam ≤30 detik. PC aman dimatikan.`, 'ok');
-    toast(`"${m.name}" masuk antrean server & akan diposting otomatis.`, 'ok', '🚀 Masuk antrean 24/7');
-    await refreshQueue(); await refreshHistory(); refreshEngineStatus(); updateStats();
-    return item;
-  } catch (err) {
-    log(`❌ Gagal memasukkan antrean: ${errMsg(err)}`, 'err');
-    toast(errMsg(err), 'err', 'Gagal — ' + m.name);
-    return null;
+    const stream=cs.call(cv,30);
+    const at=dest.stream.getAudioTracks();
+    if(at.length)stream.addTrack(at[0]);
+    const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m));
+    exportChunks=[];exportCancel=false;
+    mediaRec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:6000000}:undefined);
+    mediaRec.ondataavailable=e=>{if(e.data&&e.data.size)exportChunks.push(e.data);};
+    mediaRec.onstop=onRecStop;
+    setRecUI(true);
+    const total=Math.round(player.totalDur()/1000);
+    overlayShow('Merekam video…','Durasi ± '+fmtTime(total)+' — biarkan tab ini terbuka & aktif',true);
+    mediaRec.start(500);
+    player.seek(0);player.stopAfter=null;
+    player.onFinish=()=>{try{if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();}catch(_){ }};
+    player.play();
+  }catch(e){
+    state.recording=false;setRecUI(false);overlayHide();exportNodes=[];
+    toast('Ekspor gagal: '+(e.message||e),'err');
+  }finally{
+    state.busy=false;
   }
 }
+function cancelAll(){
+  pipelineCancel=true;
+  if(state.recording){
+    exportCancel=true;
+    player.playing=false;
+    player.pauseAudio();
+    try{if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();}catch(_){ }
+  }
+  toast('Dibatalkan','info');
+}
 
-/* ---------- AKSI MASSAL ---------- */
-$('#btnAiAll').addEventListener('click', async e => {
-  const btn = e.currentTarget;
-  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
-  btn.disabled = true;
-  for (const m of sessionMedia) { await aiCaptionFor(m); }
-  btn.disabled = false;
-  toast('Semua caption selesai dibuat AI.', 'ok', '✨ Selesai');
-});
-$('#btnScoreAll').addEventListener('click', async e => {
-  const btn = e.currentTarget;
-  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
-  btn.disabled = true;
-  for (const m of sessionMedia) { await analyzeFor(m); }
-  btn.disabled = false;
-});
-$('#btnPostAll').addEventListener('click', async e => {
-  const btn = e.currentTarget;
-  if (!sessionMedia.length) { toast('Upload media dulu.', 'warn', 'Belum ada media'); return; }
-  if (!allReady()) { toast('Tunggu semua media selesai diunggah ke server.', 'warn', 'Upload berjalan'); return; }
-  btn.disabled = true;
-  for (const m of [...sessionMedia]) { await publishMedia(m); }
-  btn.disabled = false;
-});
-$('#btnClearMedia').addEventListener('click', () => {
-  sessionMedia.forEach(m => m.previewURL && URL.revokeObjectURL(m.previewURL));
-  sessionMedia = []; renderMedia(); log('🗑️ Daftar media sesi dikosongkan (file di server tetap aman).');
-});
+/* ================= Auth Puter ================= */
+function requireAuth(){
+  if(typeof puter==='undefined'){toast('SDK Puter belum termuat — periksa koneksi internet','err');return false;}
+  let signed=true;
+  try{const s=puter.auth.isSignedIn();signed=(typeof s==='boolean')?s:true;}catch(_){signed=true;}
+  if(!signed){toast('Masuk dulu dengan akun Puter (gratis) untuk memakai AI','warn');signIn();return false;}
+  return true;
+}
+async function refreshAuth(){
+  if(typeof puter==='undefined'){
+    $('#sdkWarn').textContent='⚠️ SDK Puter gagal dimuat — periksa koneksi internet lalu muat ulang halaman.';
+    return;
+  }
+  try{
+    const s=puter.auth.isSignedIn();
+    const signed=(typeof s==='boolean')?s:false;
+    state.user=signed?await puter.auth.getUser():null;
+  }catch(_){state.user=null;}
+  updateAuthUI();
+}
+async function signIn(){
+  if(typeof puter==='undefined')return toast('SDK Puter belum termuat','err');
+  try{
+    await puter.auth.signIn();
+    await refreshAuth();
+    toast('Selamat datang, '+((state.user&&state.user.username)||'kreator')+'! 👋','success');
+  }catch(_){/* popup ditutup user */}
+}
+function signOut(){
+  try{puter.auth.signOut();}catch(_){ }
+  state.user=null;updateAuthUI();
+  toast('Sudah keluar dari Puter','info');
+}
+function updateAuthUI(){
+  const signed=!!state.user;
+  $('#authBanner').hidden=signed;
+  $('#btnSignIn').hidden=signed;
+  $('#btnSignOut').hidden=!signed;
+  $('#authChip').hidden=!signed;
+  $('#userName').textContent=state.user?(state.user.username||'kreator'):'';
+}
 
-async function checkInstantQueue() {
-  const ready = sessionMedia.filter(m => m.uploadState === 'ready' && !m._queued && m.caption !== null);
-  for (const m of ready) {
-    if (m._queued) continue;
-    m._queued = true;
-    await publishMedia(m);
+/* ================= Simpan / muat proyek ================= */
+function saveLocal(){
+  try{
+    localStorage.setItem('eduvid_v1',JSON.stringify({
+      topic:$('#inpTopic').value,level:$('#selLevel').value,dur:$('#selDuration').value,style:$('#selStyle').value,
+      voice:state.voice,speed:state.speed,naturalize:state.naturalize,
+      scenes:state.scenes.map(s=>({judul:s.judul,narasi:s.narasi,visual:s.visual}))
+    }));
+  }catch(_){ }
+}
+function saveLocalDebounced(){clearTimeout(_dbT);_dbT=setTimeout(saveLocal,600);}
+function loadLocal(){
+  try{
+    const d=JSON.parse(localStorage.getItem('eduvid_v1')||'null');
+    if(!d)return;
+    $('#inpTopic').value=d.topic||'';
+    if(d.level)$('#selLevel').value=d.level;
+    if(d.dur)$('#selDuration').value=d.dur;
+    if(d.style)$('#selStyle').value=d.style;
+    state.voice=d.voice||'damayanti-neural';
+    state.speed=+d.speed||1;
+    state.naturalize=d.naturalize!==false;
+    $('#selVoice').value=state.voice;
+    $('#rngSpeed').value=String(state.speed);
+    $('#chkNatural').checked=state.naturalize;
+    if(Array.isArray(d.scenes)&&d.scenes.length){
+      state.scenes=d.scenes.map(normalizeScene);
+      renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();
+      setTimeout(()=>toast('Proyek terakhir dipulihkan — buat ulang gambar & suara bila perlu','info'),800);
+    }
+  }catch(_){ }
+}
+
+/* ================= Overlay & toast ================= */
+function overlayShow(title,sub,cancellable){
+  $('#ovTitle').textContent=title;
+  $('#ovSub').textContent=sub||'';
+  $('#ovCancel').hidden=!cancellable;
+  $('#overlay').hidden=false;
+}
+function overlaySub(s){$('#ovSub').textContent=s;}
+function overlayHide(){$('#overlay').hidden=true;}
+function toast(msg,type){
+  type=type||'info';
+  const t=document.createElement('div');
+  t.className='toast '+type;t.textContent=msg;
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(14px)';},3200);
+  setTimeout(()=>t.remove(),3650);
+}
+
+/* ================= Event handler scene ================= */
+function sceneClickHandler(e){
+  const btn=e.target.closest('[data-act]');if(!btn)return;
+  const card=btn.closest('.scene-card');if(!card)return;
+  const sc=state.scenes.find(s=>s.id===+card.dataset.id);if(!sc)return;
+  const act=btn.dataset.act;
+  if(act==='up'||act==='down'){
+    const i=state.scenes.indexOf(sc),j=act==='up'?i-1:i+1;
+    if(j<0||j>=state.scenes.length)return;
+    state.scenes.splice(j,0,state.scenes.splice(i,1)[0]);
+    renderScenes();renderTimeline();saveLocal();
+  }else if(act==='del'){
+    if(state.scenes.length<=1){toast('Minimal harus ada 1 scene','warn');return;}
+    if(!confirm('Hapus scene ini?'))return;
+    const i=state.scenes.indexOf(sc);
+    if(sc.playback&&sc.playback.el){try{sc.playback.el.pause();}catch(_){ }}
+    state.scenes.splice(i,1);
+    if(i<player.idx)player.idx--;
+    else if(i===player.idx){player.t=0;if(player.playing)player.resumeAudio();}
+    renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();saveLocal();
+  }else if(act==='vis'){
+    const row=card.querySelector('.sc-visual-row');row.hidden=!row.hidden;
+  }else if(act==='img'){
+    if(state.busy)return toast('Tunggu proses selesai ya','warn');
+    if(!requireAuth())return;
+    btn.disabled=true;btn.textContent='⏳…';
+    genImageFor(sc).then(()=>saveLocal()).catch(err=>toast('Gambar gagal: '+(err.message||err),'err'));
+  }else if(act==='voice'){
+    if(state.busy)return toast('Tunggu proses selesai ya','warn');
+    if(!requireAuth())return;
+    btn.disabled=true;btn.textContent='⏳…';
+    genVoiceFor(sc).then(()=>saveLocal()).catch(err=>toast('Suara gagal: '+(err.message||err),'err'));
+  }else if(act==='test'){
+    player.playOne(state.scenes.indexOf(sc));
   }
 }
-$('#chkInstant').addEventListener('change', e => { store.prefs.instant = e.target.checked; save(); if (e.target.checked) checkInstantQueue(); });
-
-/* ---------- MODAL JADWAL ---------- */
-let scheduleTargets = [];
-function openScheduleModal(ids) {
-  if (!ids.length) { toast('Pilih media dulu.', 'warn'); return; }
-  scheduleTargets = ids;
-  const d = new Date(Date.now() + 3600e3);
-  d.setSeconds(0, 0);
-  $('#scheduleInput').value = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-  $('#modalMask').classList.add('show');
-}
-$('#btnScheduleAll').addEventListener('click', () => openScheduleModal(sessionMedia.filter(m => m.uploadState === 'ready').map(m => m.id)));
-$('#btnModalCancel').addEventListener('click', () => $('#modalMask').classList.remove('show'));
-$('#modalMask').addEventListener('click', e => { if (e.target === e.currentTarget) $('#modalMask').classList.remove('show'); });
-$('#btnModalSave').addEventListener('click', async () => {
-  const v = $('#scheduleInput').value;
-  if (!v) { toast('Pilih waktu dulu.', 'warn'); return; }
-  const t = new Date(v);
-  let ok = 0;
-  for (const id of scheduleTargets) {
-    const m = sessionMedia.find(x => x.id === id); if (!m || m.uploadState !== 'ready') continue;
-    try {
-      await api('/queue', {
-        method: 'POST',
-        body: { serverName: m.serverName, fileName: m.name, mediaType: m.mediaType, mode: resolveMode(m), caption: m.caption, hashtags: m.hashtags, score: m.score, scheduledAt: t.toISOString() }
-      });
-      ok++;
-      log(`📅 Dijadwalkan: "${m.name}" → ${t.toLocaleString('id-ID')} (server 24/7)`, 'info');
-    } catch (err) { log(`❌ Jadwal gagal untuk "${m.name}": ${errMsg(err)}`, 'err'); }
-  }
-  $('#modalMask').classList.remove('show');
-  if (ok) {
-    toast(`${ok} media dijadwalkan ${fmtTime(t.getTime())} — server memposting otomatis walau PC mati.`, 'ok', '📅 Terjadwal (24/7)');
-    await refreshQueue(); refreshEngineStatus(); updateStats();
-  }
-});
-
-/* ---------- ANTREAN (SERVER) ---------- */
-const Q_ST = { pending: ['amber', '⏳ Menunggu'], posting: ['purple', '🔄 Diproses server'], done: ['green', '✅ Terkirim'], failed: ['red', '❌ Gagal'] };
-async function refreshQueue() {
-  try { serverQueue = await api('/queue'); } catch (e) { log('❌ Muat antrean: ' + errMsg(e), 'err'); return; }
-  renderQueue(); updateStats();
-}
-function renderQueue() {
-  const wrap = $('#queueList');
-  $('#queueCount').textContent = serverQueue.length + ' item';
-  if (!serverQueue.length) { wrap.innerHTML = '<div class="empty"><span class="big">🗓️</span>Belum ada item antrean. Jadwalkan atau posting dari halaman <b>Buat Post</b>.</div>'; return; }
-  wrap.innerHTML = serverQueue.map(q => {
-    const [cls, lab] = Q_ST[q.status] || ['gray', q.status];
-    let tags = []; try { tags = JSON.parse(q.hashtags || '[]'); } catch (_) {}
-    return `<div class="row-item">
-      <div class="ri-ico">${q.mediaType === 'video' ? '🎬' : '🖼️'}</div>
-      <div class="ri-main">
-        <div class="ri-title">${esc(q.fileName)}</div>
-        <div class="ri-sub">
-          <span class="badge ${cls}">${lab}</span>
-          <span>🕒 ${fmtTime(q.scheduledAt)}</span>
-          <span>${MODE_LABEL[q.mode] || q.mode}</span>
-          ${q.simulated ? '<span class="badge amber">SIMULASI</span>' : ''}
-          ${q.score != null ? `<span>🎯 ${q.score}/100</span>` : ''}
-          ${q.fbPostId ? `<span>🆔 ${esc(q.fbPostId)}</span>` : ''}
-        </div>
-        ${q.error ? `<div class="small" style="color:var(--err);margin-top:5px">${esc(q.error)}</div>` : ''}
-        ${tags.length ? `<div class="hashtag-chips">${tags.slice(0, 6).map(h => `<span class="hchip">${esc(h)}</span>`).join('')}</div>` : ''}
-      </div>
-      <div class="ri-actions">
-        ${q.status === 'pending' || q.status === 'failed' ? `<button class="btn btn-ok btn-sm" data-q="now" data-id="${q.id}">Post Sekarang</button>` : ''}
-        ${q.status !== 'done' ? `<button class="btn btn-danger btn-sm" data-q="del" data-id="${q.id}">Hapus</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-$('#queueList').addEventListener('click', async e => {
-  const b = e.target.closest('button[data-q]'); if (!b) return;
-  const id = b.dataset.id;
-  if (b.dataset.q === 'del') {
-    try { await api('/queue/' + id, { method: 'DELETE' }); log('🗑️ Item antrean dihapus.'); await refreshQueue(); refreshEngineStatus(); } catch (err) { toast(errMsg(err), 'err'); }
-  }
-  if (b.dataset.q === 'now') {
-    try { await api('/queue/' + id, { method: 'PATCH', body: { action: 'now' } }); log('⚡ Post sekarang dipicu — worker memproses…', 'info'); await refreshQueue(); } catch (err) { toast(errMsg(err), 'err'); }
-  }
-});
-$('#btnRefreshQueue').addEventListener('click', () => { refreshQueue(); refreshEngineStatus(); });
-
-/* ---------- RIWAYAT (SERVER) ---------- */
-let histFilter = 'all';
-async function refreshHistory() {
-  try { serverHistory = await api('/history'); } catch (e) { log('❌ Muat riwayat: ' + errMsg(e), 'err'); return; }
-  renderHistory(); updateStats();
-}
-function renderHistory() {
-  const wrap = $('#historyList');
-  let items = serverHistory;
-  if (histFilter === 'sim') items = items.filter(h => h.status === 'simulation');
-  else if (histFilter !== 'all') items = items.filter(h => h.mode === histFilter);
-  if (!items.length) { wrap.innerHTML = `<div class="empty"><span class="big">📭</span>Belum ada riwayat${histFilter !== 'all' ? ' untuk filter ini' : ''}. Posting pertamamu akan muncul di sini.</div>`; return; }
-  const ST = { sent: ['green', 'TERKIRIM'], simulation: ['amber', 'SIMULASI'], failed: ['red', 'GAGAL'] };
-  wrap.innerHTML = items.slice(0, 60).map(h => {
-    const [cls, lab] = ST[h.status] || ['gray', h.status];
-    const link = h.status === 'sent' && h.fbPostId && serverSettings.pageId
-      ? `<a href="https://facebook.com/${encodeURIComponent(serverSettings.pageId)}/posts/${encodeURIComponent(h.fbPostId)}" target="_blank" rel="noopener">Lihat di FB ↗</a>` : '';
-    return `<div class="row-item">
-      <div class="ri-ico">${h.mediaType === 'video' ? '🎬' : '🖼️'}</div>
-      <div class="ri-main">
-        <div class="ri-title">${esc(h.fileName)}</div>
-        <div class="ri-sub">
-          <span class="badge ${cls}">${lab}</span>
-          <span>${esc(h.mode)}</span>
-          <span>🕒 ${fmtTime(h.createdAt)}</span>
-          ${h.score != null ? `<span>🎯 ${h.score}/100</span>` : ''}
-          ${h.fbPostId && h.status === 'sent' ? `<span>🆔 ${esc(h.fbPostId)}</span>` : ''}
-          ${link}
-        </div>
-        ${h.error ? `<div class="small" style="color:var(--err);margin-top:5px">${esc(h.error)}</div>` : ''}
-        ${h.caption ? `<div class="small muted" style="margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px">💬 ${esc(h.caption)}</div>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-$('#histFilter').addEventListener('click', e => {
-  const c = e.target.closest('.fchip'); if (!c) return;
-  $$('#histFilter .fchip').forEach(x => x.classList.remove('active'));
-  c.classList.add('active'); histFilter = c.dataset.f; renderHistory();
-});
-$('#btnRefreshHist').addEventListener('click', refreshHistory);
-$('#btnExport').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), history: serverHistory }, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'reelpro-riwayat-' + Date.now() + '.json'; a.click();
-  toast('Riwayat diekspor sebagai JSON.', 'ok', '⬇️ Export');
-});
-$('#btnClearHistory').addEventListener('click', async () => {
-  if (!serverHistory.length) return;
-  if (confirm('Hapus semua riwayat posting di server?')) {
-    try { await api('/history', { method: 'DELETE' }); serverHistory = []; renderHistory(); updateStats(); toast('Riwayat dihapus.', 'ok'); } catch (err) { toast(errMsg(err), 'err'); }
-  }
-});
-
-/* ---------- PENGATURAN (SERVER) ---------- */
-let saveTimer = null;
-function showSave() {
-  const el = $('#saveState');
-  el.style.display = 'inline-flex'; el.textContent = 'Menyimpan…';
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { el.style.display = 'none'; }, 1500);
-}
-async function loadServerSettings() {
-  try {
-    serverSettings = await api('/settings');
-    $('#inpPageId').value = serverSettings.pageId || '';
-    $('#inpToken').value = serverSettings.accessToken || '';
-    $('#selApi').value = serverSettings.apiVersion || 'v19.0';
-    $('#chkSim').checked = !!serverSettings.simulate;
-    $('#chkAutoHashtag').checked = !!serverSettings.autoHashtag;
-    refreshStatus();
-  } catch (e) {
-    log('❌ Muat pengaturan server: ' + errMsg(e), 'err');
-    toast('Backend tidak terjangkau. Buka aplikasi lewat server/preview, bukan file lokal.', 'err', 'Koneksi API gagal');
+function sceneInputHandler(e){
+  const card=e.target.closest('.scene-card');if(!card)return;
+  const sc=state.scenes.find(s=>s.id===+card.dataset.id);if(!sc)return;
+  if(e.target.classList.contains('sc-nar')){
+    sc.narasi=e.target.value;sc.chunks=null;
+    if(sc.playback)sc.stale=true;
+    const mi=card.querySelector('.sc-meta-info');
+    if(mi)mi.textContent=sc.narasi.length+' karakter · ≈ '+Math.round(estSec(sc.narasi))+' dtk';
+    const du=card.querySelector('.sc-dur');
+    if(du)du.textContent='≈ '+Math.round(scDurSec(sc))+' dtk';
+    const sv=card.querySelector('.st-voice');
+    if(sv&&sc.playback&&sc.playback.type==='puter'){sv.className='pill st-voice warn';sv.textContent='🎙️ ⟳';}
+    saveLocalDebounced();updateToolbar();renderTimelineDebounced();
+    autoGrow(e.target);
+  }else if(e.target.classList.contains('sc-title')){
+    sc.judul=e.target.value;saveLocalDebounced();
+  }else if(e.target.classList.contains('sc-visual')){
+    sc.visual=e.target.value;saveLocalDebounced();
   }
 }
-async function saveServerSettings() {
-  showSave();
-  try {
-    serverSettings = await api('/settings', {
-      method: 'PUT',
-      body: {
-        pageId: $('#inpPageId').value.trim(),
-        accessToken: $('#inpToken').value.trim(),
-        apiVersion: $('#selApi').value,
-        simulate: $('#chkSim').checked,
-        autoHashtag: $('#chkAutoHashtag').checked
-      }
-    });
-    refreshStatus(); refreshEngineStatus();
-  } catch (e) { log('❌ Simpan pengaturan: ' + errMsg(e), 'err'); }
+function renderTimelineDebounced(){clearTimeout(_rtT);_rtT=setTimeout(renderTimeline,400);}
+function spaceHandler(e){
+  if(e.code!=='Space')return;
+  if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;
+  if(state.recording)return;
+  e.preventDefault();
+  player.toggle();
 }
-function queueSave() { showSave(); clearTimeout(saveTimer); saveTimer = setTimeout(saveServerSettings, 800); }
-['inpPageId', 'inpToken'].forEach(id => $('#' + id).addEventListener('input', () => { serverSettings[id === 'inpPageId' ? 'pageId' : 'accessToken'] = $('#' + id).value.trim(); queueSave(); }));
-$('#selApi').addEventListener('change', () => { serverSettings.apiVersion = $('#selApi').value; queueSave(); });
-$('#chkSim').addEventListener('change', e => { serverSettings.simulate = e.target.checked; queueSave(); });
-$('#chkAutoHashtag').addEventListener('change', e => { serverSettings.autoHashtag = e.target.checked; queueSave(); });
-$('#btnShowToken').addEventListener('click', () => {
-  const i = $('#inpToken');
-  i.type = i.type === 'password' ? 'text' : 'password';
-  i.focus();
-});
-$('#btnTestConn').addEventListener('click', async () => {
-  const out = $('#fbTestResult'), btn = $('#btnTestConn');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menghubungi Facebook…';
-  try {
-    const j = await api('/settings/test', { method: 'POST' });
-    const pageLine = j.page ? `<b>Halaman/Pro:</b> ${esc(j.page.name)}${j.page.fan_count != null ? ` · ${j.page.fan_count} pengikut` : ''}` : `<b>User:</b> ${esc(j.user?.name || '')} — isi Page ID untuk posting.`;
-    out.innerHTML = `<div class="result-box">✅ <b>Koneksi berhasil!</b><br>${pageLine}<br><span class="small muted">Simulasi: ${j.simulate ? 'MASIH AKTIF — matikan "Mode Simulasi" untuk posting sungguhan.' : 'MATI — posting akan benar-benar terkirim oleh server 24/7.'}</span></div>`;
-    log(`🔌 Koneksi FB OK: ${j.user?.name || '-'}`, 'ok');
-    toast('Koneksi Facebook berhasil!', 'ok', '📘 Terhubung');
-    refreshStatus(); refreshEngineStatus();
-  } catch (err) {
-    out.innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
-    log('❌ Koneksi FB gagal: ' + errMsg(err), 'err');
-  } finally { btn.disabled = false; btn.textContent = '🔌 Test Koneksi'; }
-});
-$('#btnPageToken').addEventListener('click', async () => {
-  const out = $('#fbTestResult'), btn = $('#btnPageToken');
-  btn.disabled = true; btn.textContent = '⏳ Menukar…';
-  try {
-    const j = await api('/settings/pagetoken', { method: 'POST' });
-    await loadServerSettings();
-    out.innerHTML = `<div class="result-box">✅ Page Token diperoleh &amp; tersimpan di server untuk <b>${esc(j.pageName || '-')}</b>. Token ini lebih stabil untuk posting.</div>`;
-    log('🔑 Page Token berhasil ditukar & disimpan di server.', 'ok');
-    toast('Page Token tersimpan di server.', 'ok', '🔑 Berhasil');
-  } catch (err) {
-    out.innerHTML = `<div class="result-box">❌ ${esc(errMsg(err))}</div>`;
-    log('❌ Tukar token gagal: ' + errMsg(err), 'err');
-  } finally { btn.disabled = false; btn.textContent = '🔑 Ambil Page Token'; }
-});
-$('#btnClearLog').addEventListener('click', () => { $('#console').innerHTML = ''; log('Log dibersihkan.'); });
-$('#btnResetAll').addEventListener('click', async () => {
-  if (!confirm('Yakin reset SEMUA data di server (token, antrean, riwayat)?')) return;
-  try {
-    await api('/history', { method: 'DELETE' });
-    for (const q of serverQueue) { try { await api('/queue/' + q.id, { method: 'DELETE' }); } catch (_) {} }
-    await api('/settings', { method: 'PUT', body: { pageId: '', accessToken: '', simulate: true, autoHashtag: true, pageName: '' } });
-    localStorage.removeItem(LS_KEY);
-    store = defaultState();
-    serverQueue = []; serverHistory = [];
-    $('#inpPageId').value = ''; $('#inpToken').value = '';
-    $('#selModel').value = 'gpt-4o-mini';
-    renderQueue(); renderHistory(); refreshStatus(); refreshEngineStatus(); updateStats();
-    toast('Semua data direset.', 'ok', 'Reset selesai');
-    log('♻️ Semua data server & browser direset.', 'warn');
-  } catch (err) { toast(errMsg(err), 'err', 'Reset gagal'); }
-});
-
-/* ---------- STATS & RECENT ---------- */
-let engineData = null;
-async function refreshEngineStatus() {
-  try { engineData = await api('/engine'); refreshEngine(engineData); updateStats(); }
-  catch (e) { refreshEngine(null); }
+function updateSpeedLabel(){
+  const v=state.speed;
+  const lbl=v<0.9?'Santai':v>1.1?'Cepat':'Normal';
+  $('#speedLabel').textContent=v.toFixed(2)+'× · '+lbl;
 }
-setInterval(refreshEngineStatus, 10000);
-setInterval(refreshQueue, 12000);
-
-function updateStats() {
-  const done = engineData?.counts?.done ?? 0;
-  const queued = engineData ? (engineData.counts.pending + engineData.counts.posting) : 0;
-  const scores = sessionMedia.map(m => m.score).filter(v => v != null);
-  $('#stPosted').textContent = done;
-  $('#stQueued').textContent = queued;
-  $('#stScore').textContent = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : '—';
-  $('#stAi').textContent = store.prefs.aiCaptions || 0;
-  const recent = serverHistory.slice(0, 5);
-  const ST = { sent: ['green', 'TERKIRIM'], simulation: ['amber', 'SIMULASI'], failed: ['red', 'GAGAL'] };
-  $('#homeRecent').innerHTML = recent.length ? recent.map(h => {
-    const [cls, lab] = ST[h.status] || ['gray', h.status];
-    return `<div class="row-item">
-      <div class="ri-ico">${h.mediaType === 'video' ? '🎬' : '🖼️'}</div>
-      <div class="ri-main">
-        <div class="ri-title">${esc(h.fileName)}</div>
-        <div class="ri-sub">
-          <span class="badge ${cls}">${lab}</span>
-          <span>${esc(h.mode)}</span>
-          <span>🕒 ${fmtTime(h.createdAt)}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('') : '<div class="empty"><span class="big">📭</span>Belum ada aktivitas. Mulai dengan upload media pertamamu!</div>';
+function renderChips(){
+  TOPIC_CHIPS.forEach(pair=>{
+    const b=document.createElement('button');
+    b.className='chip';b.type='button';b.textContent=pair[0];b.dataset.t=pair[1];
+    $('#topicChips').appendChild(b);
+  });
+}
+function wireEvents(){
+  $('#btnSignIn').onclick=signIn;
+  $('#btnSignOut').onclick=signOut;
+  $('#btnGenScript').onclick=generateProject;
+  $('#btnAddScene').onclick=addScene;
+  $('#btnGenAllImgs').onclick=()=>generateAll('img');
+  $('#btnGenAllVoices').onclick=()=>generateAll('voice');
+  $('#btnTestVoice').onclick=testVoice;
+  $('#selVoice').onchange=e=>{state.voice=e.target.value;saveLocal();toast('Mesin suara: '+(VOICE_LABELS[state.voice]||state.voice),'info');};
+  $('#rngSpeed').oninput=e=>{state.speed=+e.target.value;updateSpeedLabel();updateToolbar();renderTimeline();saveLocalDebounced();};
+  $('#chkNatural').onchange=e=>{state.naturalize=e.target.checked;saveLocal();};
+  $('#btnPlay').onclick=()=>player.toggle();
+  $('#btnPrev').onclick=()=>player.step(-1);
+  $('#btnNext').onclick=()=>player.step(1);
+  $('#btnStop').onclick=()=>player.stop();
+  $('#btnExport').onclick=exportVideo;
+  $('#ovCancel').onclick=cancelAll;
+  $('#timeline').onclick=e=>{const seg=e.target.closest('.seg');if(!seg)return;player.playOne(+seg.dataset.i);};
+  $('#topicChips').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;$('#inpTopic').value=c.dataset.t;$('#inpTopic').focus();};
+  $('#inpTopic').addEventListener('input',saveLocalDebounced);
+  $('#selLevel').onchange=saveLocal;
+  $('#selDuration').onchange=saveLocal;
+  $('#selStyle').onchange=saveLocal;
+  const list=$('#scenesList');
+  list.addEventListener('click',sceneClickHandler);
+  list.addEventListener('input',sceneInputHandler);
+  window.addEventListener('keydown',spaceHandler);
 }
 
-/* ---------- PUTER WATCHER & INIT ---------- */
-function checkPuter() {
-  if (puterReady()) {
-    refreshStatus();
-    log('🟣 Puter AI terhubung — fitur AI aktif.', 'ok');
-    loadInsight(false);
-  } else {
-    $('#puterStatus').textContent = '⏳ Menunggu js.puter.com… Jika lama, cek koneksi internet. Fitur AI browser tidak tersedia tanpa Puter (caption server tetap jalan).';
-  }
+/* ================= Init ================= */
+function init(){
+  renderChips();
+  wireEvents();
+  loadLocal();
+  updateSpeedLabel();
+  updateToolbar();
+  renderTimeline();
+  drawFrame();
+  if(window.speechSynthesis){try{speechSynthesis.getVoices();}catch(_){ }}
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(!state.scenes.length)drawFrame();});
+  refreshAuth();
 }
-let inited = false;
-async function init() {
-  if (inited) return;
-  inited = true;
-  $('#selModel').value = store.prefs.model || 'gpt-4o-mini';
-  $('#chkInstant').checked = !!store.prefs.instant;
-  $('#chkAutoAnalyze').checked = !!store.prefs.autoAnalyze;
-  $('#selModel').addEventListener('change', e => { store.prefs.model = e.target.value; save(); refreshStatus(); });
-  $('#chkAutoAnalyze').addEventListener('change', e => { store.prefs.autoAnalyze = e.target.checked; save(); });
-  renderMedia();
-  refreshStatus();
-  await loadServerSettings();
-  refreshQueue(); refreshHistory(); refreshEngineStatus();
-  checkPuter();
-  setTimeout(checkPuter, 2500); setTimeout(checkPuter, 7000);
-  log('👋 Selamat datang di ReelPro AI! Engine posting 24/7 berjalan di server — PC boleh dimatikan.', 'ok');
-  if (!fbConfigured()) log('ℹ️ Facebook belum terhubung — Mode Simulasi aktif. Buka Pengaturan untuk menghubungkan.', 'warn');
-}
-if (document.readyState !== 'loading') init();
-document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('load',init);
 </script>
 </body>
 </html>
