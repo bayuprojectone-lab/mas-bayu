@@ -1,1345 +1,2087 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EduVid AI Studio — Pembuat Video Konten Edukasi (Puter AI · Suara Natural Indonesia)</title>
-<meta name="description" content="Studio pembuatan video edukasi berbasis Puter AI: naskah otomatis, ilustrasi AI, dan suara natural Bahasa Indonesia (Damayanti Neural).">
-<meta name="theme-color" content="#070b15">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!--
-  EduVid AI Studio — Aplikasi Pembuatan Video Konten Edukasi
-  Powered by Puter AI (js.puter.com/v2) — gratis tanpa API key
-  Suara natural Bahasa Indonesia: Damayanti (neural, id-ID)
-  Cara pakai: buka file ini di browser (Chrome/Edge disarankan)
-  → Masuk dengan Puter → Buat Naskah → Pratinjau → Rekam & Unduh Video.
--->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVideo Studio — Pembuat Video Edukasi AI (Naskah · VIDEO AI · Narasi · Ekspor WebM)</title>
+<meta name="description" content="Buat video edukasi lengkap dengan AI: naskah, visual VIDEO AI, narasi suara, pratinjau player, dan ekspor WebM. Tanpa API key — bertenaga Puter.js. Ada Mode Hemat Kredit." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E" />
+<!-- Puter.js dimuat SECARA LAZY (lihat loadPuterScript di kode) agar membuka file langsung
+     via file:// tetap bersih tanpa popup; script baru diambil saat AI sungguhan dipakai. -->
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-[hidden]{display:none!important}
 :root{
-  --bg:#070b15;--panel:#0f1729;--panel2:#0c1322;--line:#1f2b47;--line2:#26314e;
-  --text:#e6edf7;--muted:#8b98ad;--acc:#6d5ef2;--acc2:#22d3ee;
-  --grad:linear-gradient(135deg,#6d5ef2,#22d3ee);
-  --ok:#34d399;--warn:#fbbf24;--err:#fb7185;
+  --bg:#0b0f1a; --bg2:#0e1424; --panel:#131a2d; --panel2:#182136; --line:#253052; --line2:#2e3b63;
+  --text:#e8edf9; --muted:#94a2c3; --muted2:#6b7a9e;
+  --acc:#6366f1; --acc2:#8b5cf6; --grad:linear-gradient(135deg,#6366f1,#8b5cf6 55%,#d946ef);
+  --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --eco:#34d399;
+  --r:14px; --r2:10px; --shadow:0 12px 34px rgba(3,8,24,.45);
 }
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;font-size:14.5px;line-height:1.55}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
- radial-gradient(700px 420px at 88% -8%,rgba(109,94,242,.16),transparent 60%),
- radial-gradient(760px 520px at -12% 28%,rgba(34,211,238,.10),transparent 60%),
- radial-gradient(620px 420px at 55% 112%,rgba(109,94,242,.10),transparent 60%)}
-::selection{background:rgba(109,94,242,.35)}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:#1c2942;border-radius:8px;border:2px solid #0a0f1c}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,'Helvetica Neue',Arial,sans-serif;
+  background:radial-gradient(1200px 700px at 85% -10%,rgba(139,92,246,.16),transparent 60%),
+             radial-gradient(1000px 600px at -10% 10%,rgba(99,102,241,.14),transparent 55%),var(--bg);
+  color:var(--text);min-height:100vh;line-height:1.55;
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2a3557;border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit;color:var(--text)}
+a{color:#a5b4fc}
 
-/* ---------- Topbar ---------- */
-.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 22px;background:rgba(7,11,21,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:44px;height:44px;border-radius:13px;background:var(--grad);display:grid;place-items:center;font-size:22px;box-shadow:0 8px 24px rgba(109,94,242,.35)}
-.brand h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
-.brand h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.brand p{font-size:11.5px;color:var(--muted);margin-top:1px}
-.authbox{display:flex;align-items:center;gap:10px}
-.auth-chip{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
-.auth-chip b{color:var(--text)}
-.dot{width:8px;height:8px;border-radius:50%;background:#334155}
-.dot.on{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-
-.banner{max-width:1560px;margin:14px auto 0;padding:11px 16px;border:1px solid #2b3a5e;background:linear-gradient(90deg,rgba(109,94,242,.12),rgba(34,211,238,.08));border-radius:12px;font-size:13px;color:#c7d2e8;width:calc(100% - 44px)}
-.banner b{color:#fff}
+/* ---------- Navbar ---------- */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(11,15,26,.78);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1160px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:.2px;cursor:pointer;user-select:none}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--grad);display:grid;place-items:center;font-size:19px;box-shadow:0 6px 18px rgba(99,102,241,.4)}
+.brand small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
+.nav-sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:var(--panel);color:var(--muted);white-space:nowrap}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--muted2)}
+.pill.ok .dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.pill.ok{color:#86efac;border-color:rgba(16,185,129,.35)}
+.pill.warn .dot{background:var(--warn)}
+.pill.demo{color:#c4b5fd;border-color:rgba(139,92,246,.45)}
 
 /* ---------- Layout ---------- */
-.main{max-width:1560px;margin:16px auto 0;padding:0 22px 46px;display:grid;grid-template-columns:340px minmax(0,1fr) 400px;gap:16px;align-items:start}
-.col{display:flex;flex-direction:column;gap:16px;min-width:0}
-
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
-.card h3{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.step{width:22px;height:22px;border-radius:7px;background:rgba(109,94,242,.18);color:#b3a6ff;display:grid;place-items:center;font-size:11.5px;font-weight:800;flex-shrink:0}
-.step.mic{background:rgba(34,211,238,.15);color:#7ee3f4}
-.lb{display:block;font-size:12px;font-weight:700;color:#aab7cf;margin:12px 0 6px}
-.lb b{color:var(--acc2)}
-.desc{font-size:12.5px;color:var(--muted);margin:-6px 0 2px}
-.hint{font-size:11.5px;color:#6d7b93;margin-top:10px;line-height:1.5}
-
-textarea,input[type=text],select{width:100%;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-family:inherit;font-size:13.5px;padding:10px 12px;outline:none;transition:border .15s,box-shadow .15s}
-textarea:focus,input:focus,select:focus{border-color:rgba(109,94,242,.7);box-shadow:0 0 0 3px rgba(109,94,242,.15)}
-textarea{resize:vertical;min-height:64px}
-select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238b98ad' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.chip{font-size:11.5px;color:#b9c6dd;background:#141d33;border:1px solid var(--line2);border-radius:999px;padding:5px 11px;cursor:pointer;transition:.15s;font-family:inherit}
-.chip:hover{border-color:var(--acc);color:#fff;transform:translateY(-1px)}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 20px 80px}
+.card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-pad{padding:22px}
+.hide{display:none!important}
 
 /* ---------- Buttons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#141d33;border:1px solid var(--line2);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;border-radius:11px;padding:10px 16px;cursor:pointer;transition:.16s;white-space:nowrap}
-.btn:hover{border-color:#3d4c74;transform:translateY(-1px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;
+  padding:10px 16px;border-radius:var(--r2);border:1px solid var(--line2);background:var(--panel2);color:var(--text);
+  cursor:pointer;transition:.16s;user-select:none;white-space:nowrap}
+.btn:hover{border-color:#3b4a7d;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn-p{background:var(--grad);border:none;color:#fff;box-shadow:0 8px 22px rgba(109,94,242,.35)}
-.btn-p:hover{filter:brightness(1.08);border:none}
-.btn-block{width:100%;margin-top:14px}
-.btn-s{padding:7px 11px;font-size:12px;border-radius:9px}
-.btn.ghost{background:transparent}
-.linkish{background:none;border:none;color:#7f96c4;font-family:inherit;font-size:11.5px;cursor:pointer;text-decoration:underline dotted;padding:0}
-.linkish:hover{color:var(--acc2)}
+.btn-p{background:var(--grad);border:none;color:#fff;box-shadow:0 8px 22px rgba(99,102,241,.35)}
+.btn-p:hover{filter:brightness(1.08)}
+.btn-ok{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.4);color:#6ee7b7}
+.btn-ok:hover{border-color:var(--ok)}
+.btn-bad{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:#fca5a5}
+.btn-bad:hover{border-color:var(--bad)}
+.btn-sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+.btn-lg{padding:13px 24px;font-size:15px;border-radius:12px}
 
-/* ---------- Kartu suara ---------- */
-.voice-card{background:linear-gradient(180deg,rgba(109,94,242,.10),rgba(15,23,41,.55)),var(--panel);border-color:#3d3f78}
-input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:#1c2942;outline:none;margin:8px 0 4px}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--grad);cursor:pointer;box-shadow:0 2px 10px rgba(109,94,242,.6)}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:#6d5ef2;cursor:pointer}
-.switch{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#b9c6dd;margin:12px 0 2px;cursor:pointer;user-select:none}
-.switch input{display:none}
-.switch .track{width:38px;height:21px;border-radius:99px;background:#1c2942;border:1px solid var(--line2);position:relative;transition:.18s;flex-shrink:0}
-.switch .track::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#64748b;transition:.18s}
-.switch input:checked+.track{background:rgba(109,94,242,.4);border-color:#6d5ef2}
-.switch input:checked+.track::after{left:19px;background:var(--acc2)}
+/* ---------- Home ---------- */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:center;margin-bottom:26px}
+.hero h1{font-size:clamp(28px,4.4vw,44px);line-height:1.14;font-weight:800;letter-spacing:-.5px}
+.hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{color:var(--muted);font-size:16px;margin:14px 0 20px;max-width:56ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.hero-vis{border-radius:18px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--shadow);background:
+  radial-gradient(400px 200px at 20% 0%,rgba(217,70,239,.25),transparent 60%),
+  radial-gradient(400px 260px at 90% 100%,rgba(59,130,246,.28),transparent 60%),var(--panel)}
+.hero-vis-in{padding:22px;display:grid;gap:12px}
+.hv-bar{display:flex;align-items:center;gap:8px}
+.hv-dots{display:flex;gap:5px}
+.hv-dots i{width:9px;height:9px;border-radius:50%;background:#2c3860;display:block}
+.hv-title{font-size:12px;color:var(--muted2);font-weight:600}
+.hv-canvas{aspect-ratio:16/9;border-radius:12px;border:1px solid var(--line);position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#151d3a,#1b1440);display:grid;place-items:center}
+.hv-play{width:58px;height:58px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:22px;
+  box-shadow:0 10px 30px rgba(99,102,241,.5);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hv-strip{display:flex;gap:8px;flex-wrap:wrap}
+.hv-tag{font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(99,102,241,.14);
+  border:1px solid rgba(99,102,241,.35);color:#c7d2fe}
+.hv-tag.g{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#6ee7b7}
+.sec-t{font-size:20px;font-weight:800;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+.sec-t .ln{flex:1;height:1px;background:var(--line)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fcard{padding:18px;border-radius:var(--r);border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg2))}
+.fcard .ic{font-size:26px;margin-bottom:10px;display:block}
+.fcard b{display:block;margin-bottom:6px;font-size:14.5px}
+.fcard span{font-size:12.8px;color:var(--muted)}
+.eco{border:1px solid rgba(52,211,153,.35);background:linear-gradient(180deg,rgba(16,185,129,.09),rgba(11,15,26,.4));border-radius:var(--r);padding:20px}
+.eco h3{color:#6ee7b7;font-size:16px;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+.eco ul{list-style:none;display:grid;gap:8px}
+.eco li{font-size:13.3px;color:#c9d6ef;display:flex;gap:9px}
+.eco li::before{content:"✔";color:var(--eco);font-weight:800}
+.tpl{padding:16px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);cursor:pointer;transition:.15s}
+.tpl:hover{border-color:#3b4a7d;transform:translateY(-2px)}
+.tpl .em{font-size:24px}
+.tpl b{display:block;margin:8px 0 4px;font-size:13.5px}
+.tpl span{font-size:12px;color:var(--muted)}
+.proj{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1px solid var(--line);border-radius:var(--r2);background:var(--panel);margin-bottom:9px}
+.proj .meta{flex:1;min-width:0}
+.proj b{display:block;font-size:13.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj span{font-size:11.8px;color:var(--muted2)}
+.empty{color:var(--muted2);font-size:13.5px;padding:18px;text-align:center;border:1px dashed var(--line2);border-radius:var(--r)}
 
-/* ---------- Toolbar & scene ---------- */
-.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}
-.tb-stats{display:flex;align-items:baseline;gap:10px}
-.tb-stats b{font-size:14px}
-.tb-stats span{font-size:12px;color:var(--muted)}
-.tb-actions{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- Stepper ---------- */
+.stepper{display:flex;align-items:center;gap:0;margin:6px 0 22px;overflow-x:auto;padding-bottom:4px}
+.steP{display:flex;align-items:center;gap:9px;flex-shrink:0;cursor:pointer;opacity:.5;transition:.15s;user-select:none}
+.steP.on,.steP.done{opacity:1}
+.steP.lock{cursor:not-allowed}
+.step-n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;
+  border:1.5px solid var(--line2);background:var(--panel);flex-shrink:0}
+.steP.on .step-n{background:var(--grad);border-color:transparent;box-shadow:0 4px 14px rgba(99,102,241,.45)}
+.steP.done .step-n{background:rgba(16,185,129,.16);border-color:rgba(16,185,129,.5);color:#6ee7b7}
+.steP .lbl{font-size:12.6px;font-weight:700;white-space:nowrap}
+.steP .lbl small{display:block;font-weight:600;font-size:10.5px;color:var(--muted2)}
+.ste-line{flex:1;min-width:18px;height:1.5px;background:var(--line2);margin:0 10px;flex-shrink:0}
 
-.scenes{display:flex;flex-direction:column;gap:12px}
-.scene-card{background:var(--panel);border:1px solid var(--line);border-left:3px solid transparent;border-radius:14px;padding:14px;animation:fadeUp .3s ease}
-.scene-card.active{border-color:#4d4394;border-left-color:var(--acc);box-shadow:0 10px 34px rgba(109,94,242,.15)}
-.sc-head{display:flex;align-items:center;gap:9px}
-.sc-num{width:26px;height:26px;border-radius:8px;background:var(--grad);display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex-shrink:0}
-.sc-title{flex:1;background:transparent;border:1px solid transparent;font-weight:800;font-size:14px;padding:6px 8px;min-width:0}
-.sc-title:hover{border-color:var(--line2)}
-.sc-title:focus{background:var(--panel2)}
-.sc-dur{font-size:11px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);padding:4px 8px;border-radius:99px;white-space:nowrap}
-.sc-tools{display:flex;gap:5px}
-.ib{width:27px;height:27px;border-radius:8px;background:#141d33;border:1px solid var(--line2);color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:13px;font-family:inherit;transition:.14s}
-.ib:hover{color:#fff;border-color:#3d4c74}
-.ib.danger:hover{color:#fda4af;border-color:rgba(127,29,29,.5)}
-.sc-nar{margin-top:10px;font-size:13.5px;line-height:1.6;min-height:70px;overflow:hidden}
-.sc-meta{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
-.sc-meta-info{font-size:11px;color:#64748b}
-.pills{display:flex;gap:6px;margin-left:auto}
-.pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
-.pill.ok{color:var(--ok);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}
-.pill.busy{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
-.pill.warn{color:var(--warn);border-color:rgba(251,191,36,.3)}
-.sc-visual-row{margin-top:9px}
-.sc-media{display:flex;gap:12px;margin-top:12px;align-items:stretch}
-.sc-thumb{width:180px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
-.sc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.sc-thumb .ph{font-size:26px;opacity:.45}
-.sc-actions{display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0}
-.sc-actions .btn{justify-content:flex-start}
+/* ---------- Forms ---------- */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px}
+.field label{font-size:12.3px;font-weight:700;color:#b9c5e2;display:flex;justify-content:space-between;gap:8px}
+.field label em{font-style:normal;color:var(--muted2);font-weight:600}
+.in,.ta,select.in{width:100%;background:#0d1322;border:1px solid var(--line2);border-radius:var(--r2);padding:10px 12px;font-size:13.8px;outline:none;transition:.15s}
+.in:focus,.ta:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(99,102,241,.18)}
+.ta{resize:vertical;min-height:74px;line-height:1.5}
+select.in option{background:#131a2d}
+input[type=range].rng{width:100%;accent-color:var(--acc);height:26px}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0;display:inline-block}
+.switch input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#232c4d;border-radius:999px;transition:.2s;cursor:pointer;border:1px solid var(--line2)}
+.sl::before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#aab6d8;top:2px;left:2px;transition:.2s}
+.switch input:checked + .sl{background:linear-gradient(135deg,#10b981,#34d399);border-color:transparent}
+.switch input:checked + .sl::before{transform:translateX(20px);background:#fff}
+.ecoline{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid rgba(52,211,153,.4);
+  border-radius:var(--r2);background:rgba(16,185,129,.08)}
+.ecoline .tx{flex:1}
+.ecoline b{color:#6ee7b7;font-size:13.5px;display:block}
+.ecoline span{font-size:12px;color:var(--muted)}
+.radios{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.radios.r2{grid-template-columns:repeat(2,1fr)}
+.rc{border:1px solid var(--line2);border-radius:var(--r2);padding:12px;cursor:pointer;text-align:center;transition:.14s;background:var(--panel)}
+.rc:hover{border-color:#3b4a7d}
+.rc b{display:block;font-size:12.8px}
+.rc span{font-size:11px;color:var(--muted2)}
+.rc.on{border-color:var(--acc);background:rgba(99,102,241,.13);box-shadow:0 0 0 2px rgba(99,102,241,.22)}
+.chk{display:flex;align-items:center;gap:9px;font-size:13px;color:#c3cdea;cursor:pointer;user-select:none}
+.chk input{width:16px;height:16px;accent-color:var(--acc)}
 
-.empty{border-style:dashed;text-align:center;padding:44px 20px;color:var(--muted)}
-.empty-emoji{font-size:44px;margin-bottom:10px}
-.empty h4{color:var(--text);margin-bottom:6px}
+/* ---------- Segmented ---------- */
+.seg{display:flex;background:#0d1322;border:1px solid var(--line2);border-radius:var(--r2);padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{flex:1;min-width:86px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:12px;
+  padding:8px 6px;border-radius:8px;cursor:pointer;transition:.14s;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--grad);color:#fff;box-shadow:0 3px 10px rgba(99,102,241,.35)}
 
-/* ---------- Pratinjau ---------- */
-.stage{position:relative;margin-bottom:12px}
-.stage canvas{width:100%;aspect-ratio:16/9;display:block;border-radius:12px;background:#000;border:1px solid var(--line)}
-.rec{position:absolute;top:12px;right:12px;display:none;align-items:center;gap:7px;background:rgba(127,29,29,.35);border:1px solid rgba(239,68,68,.5);color:#fecaca;font-size:11px;font-weight:800;letter-spacing:.08em;padding:5px 11px;border-radius:99px;backdrop-filter:blur(4px)}
-.rec.on{display:flex}
-.rec i{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
+/* ---------- Badges / chips ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10.8px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.3px}
+.badge.b-video{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.4)}
+.badge.b-image{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.4)}
+.badge.b-text{background:rgba(217,70,239,.13);color:#f0abfc;border:1px solid rgba(217,70,239,.38)}
+.badge.b-upload{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.35)}
+.badge.b-ok{background:rgba(16,185,129,.14);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+.badge.b-warn{background:rgba(245,158,11,.13);color:#fcd34d;border:1px solid rgba(245,158,11,.4)}
+.badge.b-err{background:rgba(239,68,68,.13);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+.badge.b-free{background:rgba(52,211,153,.13);color:#6ee7b7;border:1px solid rgba(52,211,153,.42)}
+.chiprow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.cchip{font-size:11.6px;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--panel);border:1px solid var(--line2);color:#b9c5e2}
+.cchip b{color:#fff}
 
-.pbar{display:flex;align-items:center;gap:9px;margin:4px 0 12px}
-.pbtn{width:38px;height:38px;border-radius:11px;background:#141d33;border:1px solid var(--line2);color:var(--text);font-size:14px;cursor:pointer;display:grid;place-items:center;transition:.14s;font-family:inherit}
-.pbtn:hover{border-color:#3d4c74}
-.pbtn.main{width:46px;height:46px;background:var(--grad);border:none;font-size:17px;box-shadow:0 6px 18px rgba(109,94,242,.4)}
-.pbtn:disabled{opacity:.4;cursor:not-allowed}
-.ptime{margin-left:auto;text-align:right}
-.ptime b{display:block;font-size:12.5px}
-.ptime span{font-size:11.5px;color:var(--muted)}
+/* ---------- Scene cards ---------- */
+.scard{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--panel),var(--bg2));margin-bottom:14px;overflow:hidden}
+.scard-h{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.018)}
+.scard-n{width:26px;height:26px;border-radius:8px;background:var(--grad);display:grid;place-items:center;font-size:12.5px;font-weight:800;color:#fff;flex-shrink:0}
+.scard-h .ttl{font-weight:700;font-size:13.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard-b{padding:14px;display:grid;gap:11px}
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.wc{font-size:11px;color:var(--muted2);font-weight:600}
+.iconbtn{width:29px;height:29px;display:grid;place-items:center;border-radius:8px;border:1px solid var(--line2);
+  background:var(--panel);cursor:pointer;font-size:13px;transition:.14s;color:var(--muted)}
+.iconbtn:hover{border-color:#3b4a7d;color:var(--text)}
 
-#timeline{display:flex;gap:5px;height:34px}
-.seg{position:relative;border-radius:8px;background:#141d33;border:1px solid var(--line);overflow:hidden;cursor:pointer;min-width:24px;transition:border-color .15s}
-.seg:hover{border-color:#3d4c74}
-.seg.active{border-color:var(--acc)}
-.seg .fill{position:absolute;inset:0;width:0%;background:linear-gradient(90deg,rgba(109,94,242,.85),rgba(34,211,238,.85))}
-.seg span{position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:#cbd5e1}
+/* ---------- Media panel ---------- */
+.mgrid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+.mprev{border-radius:var(--r2);border:1px solid var(--line2);background:#0a0e1b;overflow:hidden;aspect-ratio:16/9;
+  display:grid;place-items:center;position:relative;min-height:150px}
+.mprev.v{aspect-ratio:auto;min-height:0}
+.mprev img,.mprev video{width:100%;height:100%;object-fit:cover;display:block}
+.mprev .ph{text-align:center;color:var(--muted2);font-size:12.5px;padding:14px}
+.mprev .ph .em{font-size:34px;display:block;margin-bottom:8px;filter:grayscale(.3)}
+.mprev .dur{position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.66);font-size:10.5px;font-weight:700;
+  padding:2px 7px;border-radius:6px;color:#dfe6f7}
+.spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(99,102,241,.2);border-top-color:var(--acc);
+  animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.audrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.audrow audio{height:34px;flex:1;min-width:170px}
+.audrow audio::-webkit-media-controls-panel{background:#1a2340}
 
-.dl-link{display:block;margin-top:10px;font-size:12.5px;color:#7ee3f4;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3);padding:9px 12px;border-radius:10px;text-decoration:none}
-.dl-link:hover{background:rgba(34,211,238,.14)}
+/* ---------- Player ---------- */
+.player-wrap{background:#05070d;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.player-wrap canvas{display:block;width:100%;height:auto;max-height:62vh;background:#05070d}
+.ctrls{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.ctrls input[type=range]{flex:1;min-width:120px;accent-color:var(--acc)}
+.time{font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:700;min-width:86px;text-align:center}
+.pbtn{width:38px;height:38px;border-radius:50%;background:var(--grad);border:none;color:#fff;font-size:14px;cursor:pointer;
+  display:grid;place-items:center;box-shadow:0 5px 16px rgba(99,102,241,.4)}
+.pbtn.ghost{background:var(--panel2);border:1px solid var(--line2);box-shadow:none;color:var(--muted);width:34px;height:34px;font-size:13px}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{border:1px solid var(--line);border-radius:var(--r2);background:var(--panel);padding:11px 13px}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:11px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
 
-.tips ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-.tips li{font-size:12.5px;color:#aab7cf;padding-left:18px;position:relative}
-.tips li::before{content:'›';position:absolute;left:4px;color:var(--acc2);font-weight:800}
-.foot{text-align:center;font-size:11.5px;color:#5d6b84;padding:4px 0 10px}
-.foot b{color:#8b98ad}
+/* ---------- Progress / misc ---------- */
+.pbar{height:8px;border-radius:999px;background:#1a2340;overflow:hidden;border:1px solid var(--line2)}
+.pbar i{display:block;height:100%;background:var(--grad);border-radius:999px;transition:width .25s;width:0}
+.note{font-size:12.3px;color:var(--muted);background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.25);
+  border-radius:var(--r2);padding:10px 13px;display:flex;gap:9px}
+.note.g{background:rgba(16,185,129,.07);border-color:rgba(52,211,153,.3)}
+.note.w{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.35)}
+.note b{color:#dfe6f7}
+.toast-box{position:fixed;bottom:18px;right:18px;z-index:200;display:grid;gap:9px;max-width:min(380px,92vw)}
+.toast{background:var(--panel2);border:1px solid var(--line2);border-left:4px solid var(--acc);border-radius:12px;
+  padding:12px 15px;font-size:13px;box-shadow:var(--shadow);animation:tin .25s ease;line-height:1.45}
+.toast.ok{border-left-color:var(--ok)} .toast.err{border-left-color:var(--bad)} .toast.warn{border-left-color:var(--warn)}
+.toast b{display:block;margin-bottom:2px}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}}
+.modal-bg{position:fixed;inset:0;background:rgba(4,7,15,.72);backdrop-filter:blur(4px);z-index:150;display:grid;place-items:center;padding:20px}
+.modal{max-width:480px;width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.modal h3{margin-bottom:8px;font-size:16.5px}
+.modal p{font-size:13.5px;color:var(--muted);margin-bottom:16px}
+.modal .acts{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.demo-banner{background:linear-gradient(90deg,rgba(139,92,246,.16),rgba(217,70,239,.14));border:1px solid rgba(139,92,246,.45);
+  border-radius:var(--r2);padding:10px 15px;font-size:13px;display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.hrow h2{font-size:19px;flex:1;min-width:180px}
+.hint{font-size:11.8px;color:var(--muted2)}
+.sep{height:1px;background:var(--line);margin:16px 0}
+footer.ft{border-top:1px solid var(--line);margin-top:44px;padding:22px;text-align:center;color:var(--muted2);font-size:12.5px}
 
-/* ---------- Overlay & toast ---------- */
-.ov{position:fixed;inset:0;z-index:300;background:rgba(4,7,15,.84);backdrop-filter:blur(10px);display:grid;place-items:center}
-.ov-box{text-align:center;max-width:440px;padding:30px}
-.spin{width:56px;height:56px;margin:0 auto 20px;border-radius:50%;background:conic-gradient(from 0deg,#6d5ef2,#22d3ee,#6d5ef2);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));animation:rot .9s linear infinite}
-.ov-box h4{font-size:16px;margin-bottom:6px}
-.ov-box p{font-size:12.5px;color:var(--muted);margin-bottom:18px;min-height:18px}
-
-#toasts{position:fixed;top:74px;right:18px;z-index:400;display:flex;flex-direction:column;gap:8px;max-width:360px}
-.toast{background:rgba(15,23,41,.96);border:1px solid var(--line2);border-left:3px solid var(--acc2);padding:11px 15px;border-radius:11px;font-size:12.5px;box-shadow:0 12px 34px rgba(0,0,0,.45);animation:slideIn .25s ease;transition:.4s}
-.toast.success{border-left-color:var(--ok)}
-.toast.err{border-left-color:var(--err)}
-.toast.warn{border-left-color:var(--warn)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes rot{to{transform:rotate(360deg)}}
-@keyframes blink{50%{opacity:.25}}
-@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
-
-/* ---------- Responsif ---------- */
-@media(max-width:1360px){.main{grid-template-columns:320px minmax(0,1fr) 360px}}
-@media(max-width:1180px){.main{grid-template-columns:330px minmax(0,1fr)}.col.right{grid-column:1/-1}}
-@media(max-width:760px){.main{grid-template-columns:1fr;padding:0 14px 40px}.col.right{grid-column:auto}.banner{width:calc(100% - 28px)}.row2{grid-template-columns:1fr}.sc-media{flex-direction:column}.sc-thumb{width:100%}.topbar{padding:10px 14px}}
+@media (max-width:920px){
+  .hero{grid-template-columns:1fr}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:1fr 1fr}
+  .mgrid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .fgrid{grid-template-columns:1fr}
+  .srow{grid-template-columns:1fr}
+  .radios{grid-template-columns:1fr 1fr}
+  .grid4,.grid3{grid-template-columns:1fr}
+  .stat4{grid-template-columns:repeat(2,1fr)}
+  .nav-in{padding:10px 12px;flex-wrap:wrap;row-gap:8px}
+  .brand small{display:none}
+  .nav-sp{min-width:12px}
+  .pill{font-size:11px;padding:5px 9px}
+  .wrap{padding:18px 13px 70px}
+  .steP .lbl small{display:none}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">🎬</div>
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand" id="brandHome">
+      <div class="logo">🎬</div>
+      <div>EduVideo Studio<small>AI VIDEO EDUKASI · PUTER.JS</small></div>
+    </div>
+    <div class="nav-sp"></div>
+    <div class="pill" id="puterPill"><span class="dot"></span><span id="puterPillTx">Menghubungkan…</span></div>
+    <button class="btn btn-sm" id="btnAuth">Masuk Puter</button>
+    <button class="btn btn-sm hide" id="btnHome">🏠 Beranda</button>
+  </div>
+</nav>
+
+<!-- ================= BERANDA ================= -->
+<div class="wrap" id="viewHome">
+  <div class="note w hide" id="fileWarn" style="margin-bottom:16px">⚠️ <span><b>File dibuka langsung (file://).</b> Untuk memakai <b>AI sungguhan</b>, sajikan lewat http/https — mudahnya jalankan <b>python -m http.server 8080</b> di folder file ini lalu buka <b>http://localhost:8080/eduvideo-studio.html</b> (atau unggah ke hosting apa pun). <b>Mode Demo 🧪 tetap bisa dipakai tanpa server.</b></span></div>
+  <div class="hero">
     <div>
-      <h1>EduVid <span>AI Studio</span></h1>
-      <p>Studio Video Edukasi · Suara Natural Indonesia 🇮🇩</p>
+      <h1>Buat <span class="g">Video Edukasi AI</span><br />dari Sekadar Topik.</h1>
+      <p class="sub">Tulis topiknya — AI menyusun <b>naskah</b>, membuat <b>visual VIDEO AI</b> bergerak, dan <b>menaraskan</b> setiap scene. Pratinjau di player sinematik lalu ekspor <b>WebM</b>. Tanpa API key — semua berjalan di browser lewat Puter.js, plus <b>Mode Hemat Kredit</b>.</p>
+      <div class="cta">
+        <button class="btn btn-p btn-lg" id="ctaStart">🚀 Mulai Buat Video</button>
+        <button class="btn btn-lg" id="ctaDemo">🧪 Coba Mode Demo</button>
+      </div>
+      <p class="hint" style="margin-top:12px">Pemakaian AI pertama akan meminta masuk/akun tamu Puter (gratis). Mode Demo berjalan 100% tanpa kuota.</p>
     </div>
-  </div>
-  <div class="authbox">
-    <span id="authChip" class="auth-chip" hidden><span class="dot on"></span><b id="userName"></b></span>
-    <button id="btnSignIn" class="btn btn-p" type="button">Masuk dengan Puter</button>
-    <button id="btnSignOut" class="btn" type="button" hidden>Keluar</button>
-  </div>
-</header>
-
-<div id="authBanner" class="banner">⚡ Aplikasi ini memakai <b>Puter AI</b> — gratis, tanpa API key. Klik <b>Masuk dengan Puter</b> untuk mulai membuat video. <span id="sdkWarn"></span></div>
-
-<main class="main">
-
-  <!-- ===== KOLOM 1: SETUP ===== -->
-  <section class="col">
-    <div class="card">
-      <h3><span class="step">1</span> Ide &amp; Gaya Video</h3>
-      <label class="lb" for="inpTopic">Topik video</label>
-      <textarea id="inpTopic" rows="3" placeholder="cth: Fotosintesis untuk anak SMP — buat seru, gampang dicerna, ada contoh sehari-hari"></textarea>
-      <div class="chips" id="topicChips"></div>
-      <div class="row2">
-        <div>
-          <label class="lb" for="selLevel">Jenjang penonton</label>
-          <select id="selLevel">
-            <option>Umum (semua umur)</option>
-            <option>Anak SD (7–12 th)</option>
-            <option selected>SMP (13–15 th)</option>
-            <option>SMA (16–18 th)</option>
-            <option>Mahasiswa / Dewasa</option>
-          </select>
+    <div class="hero-vis">
+      <div class="hero-vis-in">
+        <div class="hv-bar">
+          <div class="hv-dots"><i></i><i></i><i></i></div>
+          <div class="hv-title">eduvideo-studio · pratinjau</div>
         </div>
-        <div>
-          <label class="lb" for="selDuration">Durasi target</label>
-          <select id="selDuration">
-            <option value="30">± 30 detik</option>
-            <option value="60" selected>± 1 menit</option>
-            <option value="120">± 2 menit</option>
-            <option value="180">± 3 menit</option>
-            <option value="300">± 5 menit</option>
-          </select>
+        <div class="hv-canvas"><div class="hv-play">▶</div></div>
+        <div class="hv-strip">
+          <span class="hv-tag">📝 Naskah AI</span>
+          <span class="hv-tag">🎬 VIDEO AI per scene</span>
+          <span class="hv-tag">🔊 Narasi TTS</span>
+          <span class="hv-tag g">Hemat kredit</span>
         </div>
       </div>
-      <label class="lb" for="selStyle">Gaya bicara</label>
-      <select id="selStyle">
-        <option value="santai" selected>Santai natural — ala kreator YouTube Indonesia</option>
-        <option value="semi">Semiformal — hangat seperti podcast edukasi</option>
-        <option value="cerita">Storytelling — dibuka dengan cerita menarik</option>
-        <option value="formal">Formal akademik — tetap enak didengar</option>
-      </select>
-      <button id="btnGenScript" class="btn btn-p btn-block" type="button">✨ Buat Naskah dengan AI</button>
     </div>
+  </div>
 
-    <div class="card voice-card">
-      <h3><span class="step mic">🎙️</span> Suara Iklan Indonesia</h3>
-      <p class="desc">Mesin suara neural dengan instruksi gaya announcer iklan TV. Rantai otomatis <b>100% suara Indonesia</b> — tidak pernah jatuh ke suara Inggris/robot. <b>Bukan robot.</b></p>
-      <label class="lb" for="selVoice">Mesin suara</label>
-      <select id="selVoice">
-        <option value="auto-iklan" selected>Otomatis · Suara Iklan Indonesia — rekomendasi</option>
-        <option value="gemini">Gemini TTS — paling natural &amp; ekspresif</option>
-        <option value="openai">OpenAI TTS — hangat &amp; stabil</option>
-        <option value="damayanti-neural">Damayanti · Neural (Polly id-ID)</option>
-        <option value="damayanti-standard">Damayanti · Standard (Polly id-ID)</option>
-        <option value="browser">Suara browser Indonesia (cadangan)</option>
-      </select>
-      <label class="lb" for="selKar">Karakter bicara</label>
-      <select id="selKar">
-        <option value="iklan" selected>Announcer iklan TV — hangat &amp; berenergi</option>
-        <option value="guru">Guru ramah — kalem &amp; jelas</option>
-        <option value="cerita">Storyteller — dramatis mengalir</option>
-        <option value="santai">Presenter muda — santai &amp; fun</option>
-      </select>
-      <label class="lb" for="rngSpeed">Kecepatan bicara — <b id="speedLabel">1.00× · Normal</b></label>
-      <input type="range" id="rngSpeed" min="0.75" max="1.25" step="0.05" value="1">
-      <label class="switch"><input type="checkbox" id="chkNatural" checked><span class="track"></span> Optimasi jeda &amp; tanda baca agar terdengar manusiawi</label>
-      <button id="btnTestVoice" class="btn btn-block" type="button">🔊 Coba Suara Ini</button>
-      <p class="hint">Rahasia suara iklan: naskah percakapan + instruksi karakter announcer ke mesin TTS + jeda tanda baca otomatis. Jika mesin utama gagal, otomatis pindah ke mesin Indonesia lain — bila semua gagal, aplikasi memberi tahu, bukan diam-diam memakai suara Inggris.</p>
-    </div>
-  </section>
+  <div class="eco">
+    <h3>🌿 Mode Hemat Kredit — dirancang agar kuota AI-mu awet</h3>
+    <ul>
+      <li><b>Cache AI permanen</b> — gambar, narasi, dan video yang pernah dibuat dengan input sama tidak ditagih dua kali.</li>
+      <li><b>Klip contoh gratis (test mode)</b> — txt2vid bisa mencoba tanpa memakai kredit sama sekali.</li>
+      <li><b>Scene tanpa biaya</b> — Teks Animasi (✨), unggah videomu sendiri (⬆️), dan Gambar AI multi-shot, semua tersedia sebagai alternatif murah.</li>
+      <li><b>Batch cerdas</b> — hanya scene yang belum bermedia yang diproses; durasi & resolusi video otomatis dikecilkan saat Mode Hemat aktif.</li>
+      <li><b>Fallback otomatis</b> — jika kuota video habis, scene beralih ke Gambar AI / Teks tanpa menggagalkan proyek.</li>
+    </ul>
+  </div>
 
-  <!-- ===== KOLOM 2: NASKAH & SCENE ===== -->
-  <section class="col">
-    <div class="toolbar card">
-      <div class="tb-stats"><b id="sceneCount">0 scene</b><span id="totalDur">≈ 0:00</span></div>
-      <div class="tb-actions">
-        <button id="btnGenAllImgs" class="btn btn-s" type="button">🎨 Gambar Semua</button>
-        <button id="btnGenAllVoices" class="btn btn-s" type="button">🎙️ Suarakan Semua</button>
-        <button id="btnAddScene" class="btn btn-s" type="button">＋ Scene</button>
-      </div>
-    </div>
-    <div id="emptyState" class="empty card">
-      <div class="empty-emoji">🎬</div>
-      <h4>Belum ada naskah</h4>
-      <p>Isi topik di panel kiri, pilih gaya bicara, lalu klik <b>“Buat Naskah dengan AI”</b>.<br>Setiap scene otomatis mendapat ilustrasi &amp; suara natural Bahasa Indonesia.</p>
-    </div>
-    <div id="scenesList" class="scenes"></div>
-  </section>
+  <div class="sec-t">✨ Fitur Utama <div class="ln"></div></div>
+  <div class="grid4">
+    <div class="fcard"><span class="ic">📝</span><b>Naskah Instan</b><span>Struktur scene lengkap (narasi, prompt visual, teks layar) dari satu topik — bisa diedit penuh.</span></div>
+    <div class="fcard"><span class="ic">🎬</span><b>Scene VIDEO AI</b><span>Tiap scene menjadi klip video AI bergerak (Wan, Seedance, dst.) — bukan sekadar gambar diam.</span></div>
+    <div class="fcard"><span class="ic">🔊</span><b>Narasi AI</b><span>Suara TTS natural dalam Bahasa Indonesia, Jawa, Sunda, Melayu, dan Inggris.</span></div>
+    <div class="fcard"><span class="ic">💾</span><b>Pratinjau &amp; Ekspor</b><span>Player canvas sinematik (intro, subtitle, transisi) lalu render WebM siap unggah.</span></div>
+  </div>
 
-  <!-- ===== KOLOM 3: PRATINJAU & EKSPOR ===== -->
-  <section class="col right">
-    <div class="card">
-      <h3><span class="step">3</span> Pratinjau &amp; Ekspor</h3>
-      <div class="stage">
-        <canvas id="cv" width="1280" height="720"></canvas>
-        <div id="recBadge" class="rec"><i></i> REC</div>
-      </div>
-      <div class="pbar">
-        <button id="btnPrev" class="pbtn" type="button" title="Scene sebelumnya">⏮</button>
-        <button id="btnPlay" class="pbtn main" type="button" title="Putar / Jeda">▶️</button>
-        <button id="btnNext" class="pbtn" type="button" title="Scene berikutnya">⏭</button>
-        <button id="btnStop" class="pbtn" type="button" title="Berhenti">⏹</button>
-        <div class="ptime"><b id="sceneLabel">Scene –</b><span id="timeLabel">0:00 / 0:00</span></div>
-      </div>
-      <div id="timeline"></div>
-      <p class="hint">Klik segmen untuk lompat &amp; putar dari scene tersebut.</p>
-      <button id="btnExport" class="btn btn-p btn-block" type="button">🎥 Rekam &amp; Unduh Video (WebM)</button>
-      <div id="dlArea"></div>
-      <p class="hint">Perekaman berjalan real-time di browser (gambar + suara + subtitle menyatu). Butuh MP4? Konversi WebM → MP4 lewat convertio.co atau HandBrake.</p>
-    </div>
-    <div class="card tips">
-      <h3>💡 Tips Hasil Paling Natural</h3>
-      <ul>
-        <li>Edit teks narasi langsung di tiap scene — lalu klik 🎙️ untuk membuat ulang suaranya.</li>
-        <li>Ganti <i>prompt visual</i> untuk mengubah gaya ilustrasi scene.</li>
-        <li>Kombinasi paling alami: <b>Damayanti Neural</b> + kecepatan <b>1.0×</b> + gaya bicara <b>santai</b>.</li>
-        <li>Proyek tersimpan otomatis di browser ini (teks saja — gambar &amp; suara dibuat ulang saat perlu).</li>
-      </ul>
-    </div>
-    <p class="foot">EduVid AI Studio · Ditenagai <b>Puter AI</b> · Suara: Damayanti (id-ID) 🇮🇩</p>
-  </section>
+  <div class="sec-t">⚡ Template Cepat <div class="ln"></div></div>
+  <div class="grid3" id="tplGrid"></div>
 
-</main>
+  <div class="sec-t">📂 Proyek Saya <div class="ln"></div></div>
+  <div id="projList"></div>
+
+  <footer class="ft">Ditenagai <b>Puter.js</b> — naskah · txt2vid · txt2img · txt2speech. Semua pemrosesan AI berjalan di browser-mu. 🎬</footer>
 </div>
 
-<div id="overlay" class="ov" hidden>
-  <div class="ov-box">
-    <div class="spin"></div>
-    <h4 id="ovTitle">Memproses…</h4>
-    <p id="ovSub">Mohon tunggu sebentar</p>
-    <button id="ovCancel" class="btn btn-s" type="button">Batalkan</button>
+<!-- ================= STUDIO ================= -->
+<div class="wrap hide" id="viewStudio">
+  <div class="demo-banner hide" id="demoBanner">
+    <span>🧪</span><div style="flex:1"><b>Mode Demo aktif</b> — semua hasil AI disimulasikan, <b>0 kredit</b> dipakai.</div>
+    <button class="btn btn-sm" id="btnExitDemo">Keluar Demo</button>
+  </div>
+
+  <div class="hrow">
+    <h2 id="projTitle">Proyek tanpa judul</h2>
+    <span class="hint" id="saveHint"></span>
+  </div>
+
+  <div class="stepper" id="stepper"></div>
+
+  <!-- STEP 1 -->
+  <div class="panel card card-pad" id="panel1">
+    <div class="fgrid">
+      <div class="field">
+        <label>Judul video <em>opsional — AI bisa membuatkan</em></label>
+        <input class="in" id="fTitle" placeholder="cth: Fotosintesis: Dapur Hijau Tumbuhan" />
+      </div>
+      <div class="field">
+        <label>Materi / topik <em>wajib</em></label>
+        <textarea class="ta" id="fTopic" style="min-height:74px" placeholder="Jelaskan materi yang ingin disampaikan, poin penting, dan analogi yang diinginkan…"></textarea>
+      </div>
+      <div class="field">
+        <label>Jenjang audiens</label>
+        <select class="in" id="fLevel"></select>
+      </div>
+      <div class="field">
+        <label>Gaya penyampaian</label>
+        <select class="in" id="fTone"></select>
+      </div>
+      <div class="field">
+        <label>Gaya visual</label>
+        <select class="in" id="fStyle"></select>
+      </div>
+      <div class="field">
+        <label>Bahasa narasi</label>
+        <select class="in" id="fLang"></select>
+      </div>
+      <div class="field">
+        <label>Model penulis naskah</label>
+        <select class="in" id="fModel"></select>
+      </div>
+      <div class="field">
+        <label>Jumlah scene <em id="fSceneCountLbl">5 scene</em></label>
+        <input type="range" class="rng" id="fSceneCount" min="3" max="10" value="5" />
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:14px">
+      <label>Rasio aspek</label>
+      <div class="radios" id="fAspect"></div>
+    </div>
+
+    <div class="sep"></div>
+    <div class="ecoline" style="margin-bottom:14px">
+      <div class="tx"><b>🌿 Mode Hemat Kredit</b><span id="ecoDesc">Scene baru default Teks Animasi (0 kredit) · video 4 dtk · resolusi hemat · batch melewati scene yang sudah berisi.</span></div>
+      <label class="switch"><input type="checkbox" id="fEco" checked /><span class="sl"></span></label>
+    </div>
+
+    <div class="field">
+      <label>⚙️ Pengaturan Video AI (txt2vid)</label>
+      <div class="fgrid" style="margin-top:6px">
+        <div class="field">
+          <label>Model video <em id="videoModelHint"></em></label>
+          <select class="in" id="fVideoModel"></select>
+        </div>
+        <div class="field">
+          <label>Durasi klip per scene <em id="fVidSecLbl">4 detik</em></label>
+          <input type="range" class="rng" id="fVidSec" min="3" max="10" value="4" />
+        </div>
+      </div>
+      <div class="radios" id="fVidRes" style="margin-top:10px"></div>
+      <label class="chk" style="margin-top:12px"><input type="checkbox" id="fVidTest" /><span>🧪 <b>Klip contoh gratis</b> — pakai klip contoh Puter (0 kredit) untuk menguji alur</span></label>
+    </div>
+
+    <div style="display:flex;gap:11px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn btn-p btn-lg" id="btnGen">✨ Buat Naskah dengan AI</button>
+      <button class="btn btn-lg" id="btnDemoGen">🧪 Buat Naskah (Demo)</button>
+    </div>
+    <div id="genStatus" style="margin-top:14px"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="panel card card-pad hide" id="panel2">
+    <div class="hrow">
+      <h2>✍️ Editor Naskah</h2>
+      <button class="btn" id="btnRegenAll">🔄 Buat Ulang Naskah</button>
+      <button class="btn" id="btnAddScene">＋ Tambah Scene</button>
+      <button class="btn btn-p" id="btnToMedia">Lanjut → Visual &amp; Suara</button>
+    </div>
+    <p class="hint" style="margin-bottom:14px">Sempurnakan tiap scene: judul, teks layar, narasi (dibaca TTS), dan <b>prompt video</b> (bahasa Inggris, jelaskan subjek + gerakan + kamera). Seret ▲▼ untuk mengurutkan.</p>
+    <div id="sceneList"></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="panel card card-pad hide" id="panel3">
+    <div class="hrow">
+      <h2>🎨 Visual &amp; Suara</h2>
+      <button class="btn btn-p" id="btnBatchVisual">🎬 Buat Semua Visual</button>
+      <button class="btn btn-ok" id="btnBatchAudio">🔊 Buat Semua Narasi</button>
+    </div>
+    <div class="chiprow" style="margin-bottom:12px" id="costChips"></div>
+    <div class="pbar" style="margin-bottom:14px"><i id="batchBar"></i></div>
+    <div id="batchStatus" class="hint" style="margin-bottom:16px"></div>
+    <div id="mediaList"></div>
+    <input type="file" id="fileVideo" accept="video/*" class="hide" />
+    <input type="file" id="fileImage" accept="image/*" class="hide" />
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="panel card card-pad hide" id="panel4">
+    <div class="hrow">
+      <h2>🎞️ Pratinjau &amp; Ekspor</h2>
+      <label class="chk"><input type="checkbox" id="optSub" checked /> Subtitle</label>
+      <label class="chk"><input type="checkbox" id="optWm" checked /> Watermark</label>
+    </div>
+    <div class="stat4" id="projStats"></div>
+    <div class="player-wrap">
+      <canvas id="stage"></canvas>
+      <div class="ctrls">
+        <button class="pbtn" id="btnPlay">▶</button>
+        <input type="range" id="seek" min="0" max="1000" value="0" />
+        <div class="time" id="timeLbl">0.0 / 0.0s</div>
+        <button class="pbtn ghost" id="btnMute" title="Bisukan narasi">🔊</button>
+        <select class="in" id="speedSel" style="width:86px;padding:6px 8px;font-size:12.5px">
+          <option value="0.5">0.5×</option><option value="1" selected>1×</option>
+          <option value="1.5">1.5×</option><option value="2">2×</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-p btn-lg" id="btnRender">🎬 Render &amp; Unduh WebM</button>
+      <div style="flex:1;min-width:200px"><div class="pbar"><i id="renderBar"></i></div><div class="hint" id="renderStatus" style="margin-top:6px"></div></div>
+    </div>
+    <div id="renderOut" style="margin-top:14px"></div>
+    <div class="note w" style="margin-top:14px">💡 <span><b>Render berjalan di browser</b> — biarkan tab aktif sampai selesai. Klip video AI diputar tanpa suara (narasi TTS yang dipakai). Untuk hasil terbaik, buat narasi &amp; visual semua scene dulu di Langkah 3.</span></div>
   </div>
 </div>
-<div id="toasts"></div>
-<script src="https://js.puter.com/v2/"></script>
+
+<div class="toast-box" id="toastBox"></div>
+<div id="modalRoot"></div>
 <script>
+/* ============================================================
+   EduVideo Studio — standalone (single-file) app
+   Powered by Puter.js: chat · txt2vid · txt2img · txt2speech
+   ============================================================ */
 'use strict';
-/* ================= Helper umum ================= */
-const $=s=>document.querySelector(s);
-const $$=s=>Array.from(document.querySelectorAll(s));
-const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const lerp=(a,b,t)=>a+(b-a)*t;
-const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtTime=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-const slug=s=>String(s||'video').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'video';
-let _uid=0;const uid=()=>(++_uid)+(Date.now()%100000);
 
-/* ================= Konfigurasi ================= */
-const SCENE_MAP={'30':3,'60':5,'120':7,'180':10,'300':13};
-const STYLES={
-  santai:"Santai natural ala kreator YouTube Indonesia yang populer: boleh pakai sapaan santai secukupnya, banyak interaksi seperti 'kan?', 'coba deh perhatiin', 'nih justru yang bikin seru'.",
-  semi:"Semiformal hangat seperti podcast edukasi: sapa penonton dengan 'kamu', nada ramah dan mengajak, bahasa tetap rapi tapi tidak kaku.",
-  cerita:"Storytelling: scene pertama dibuka dengan hook cerita atau pertanyaan yang bikin penasaran, lalu alurnya mengantar penonton memahami materi pelan-pelan.",
-  formal:"Formal akademik namun tetap mengalir, jelas, dan enak diucapkan; hindari struktur kalimat buku yang berat."
-};
-const IMG_STYLE='modern educational illustration, vibrant colors, clean flat vector style with soft gradients, friendly and engaging, wide 16:9 composition, high detail, no text, no letters, no watermark';
-const VOICE_LABELS={'auto-iklan':'Otomatis · Suara Iklan Indonesia','gemini':'Gemini TTS','openai':'OpenAI TTS','damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
-const VOICE_KAR={
-  iklan:'Berbicaralah seperti announcer iklan TV Indonesia profesional: hangat, bersemangat, meyakinkan, dan ramah. Gunakan intonasi yang hidup, penekanan pada kata-kata penting, dan jeda alami antar kalimat. Lafalkan setiap kata seperti penutur asli bahasa Indonesia — jangan terdengar seperti robot atau orang asing.',
-  guru:'Berbicaralah seperti guru Indonesia yang sabar dan ramah saat menjelaskan pelajaran kepada murid: tenang, jelas, hangat, tempo santai, dengan intonasi naik-turun natural seperti penutur asli bahasa Indonesia.',
-  cerita:'Berbicaralah seperti pendongeng Indonesia yang dramatis dan hangat: penuh ekspresi, irama mengalir, ada jeda menegangkan di momen penting, seperti narator film dokumenter berbahasa Indonesia yang profesional.',
-  santai:'Berbicaralah seperti kreator konten edukasi muda Indonesia: santai, ceria, penuh semangat, seperti mengobrol hangat dengan teman di video YouTube. Natural khas penutur asli bahasa Indonesia.'
-};
-const TOPIC_CHIPS=[
-  ['Fotosintesis 🌱','Fotosintesis untuk anak SMP — jelaskan dengan analogi dapur dan contoh sehari-hari'],
-  ['Tata Surya 🪐','Tata surya: perjalanan planet mengelilingi matahari beserta fakta unik tiap planet'],
-  ['Pythagoras 📐','Teorema Pythagoras untuk SMP dengan contoh soal kehidupan sehari-hari'],
-  ['Perubahan Iklim 🌍','Perubahan iklim: penyebab, dampak, dan aksi nyata yang bisa dilakukan pelajar'],
-  ['Proklamasi 1945 🇮🇩','Latar belakang dan tokoh-tokoh Proklamasi Kemerdekaan Indonesia 17 Agustus 1945'],
-  ['Literasi Digital 📱','Literasi digital: cara mengenali hoaks dan berita palsu di internet']
+/* ---------------- Konstanta ---------------- */
+const LEVELS = ['SD (Kelas 1-6)', 'SMP (Kelas 7-9)', 'SMA (Kelas 10-12)', 'Umum / Dewasa'];
+const TONES = ['Santai & Menarik', 'Formal Akademik', 'Cerita (Storytelling)', 'Tanya Jawab'];
+const IMAGE_STYLES = [
+  { id: 'flat-illustration', label: 'Ilustrasi Flat', prompt: 'flat vector illustration, clean geometric shapes, soft shadows, vibrant modern colors, minimal' },
+  { id: 'cartoon', label: 'Kartun Edukatif', prompt: 'colorful educational cartoon style, friendly characters, expressive, detailed background' },
+  { id: 'realistic', label: 'Realistis', prompt: 'photorealistic, high detail, natural lighting, professional photography, 4k' },
+  { id: '3d-render', label: '3D Render', prompt: 'cute 3D render, soft studio lighting, clay material, pastel colors, octane render' },
+  { id: 'watercolor', label: 'Cat Air', prompt: 'watercolor painting style, soft brush strokes, pastel colors, paper texture' },
+  { id: 'infographic', label: 'Infografis', prompt: 'modern infographic style, minimalist icons, clean diagram, bright accent colors, light background' },
 ];
-const PERSONA=`Kamu adalah penulis naskah video edukasi paling populer di Indonesia. Tugasmu menulis narasi yang 100% terdengar seperti orang Indonesia asli yang sedang bicara santai di depan kamera — hangat, mengalir, dan punya irama — BUKAN seperti robot, bukan seperti terjemahan, dan bukan bahasa buku pelajaran.
+const VOICE_LANGS = [
+  { id: 'id-ID', label: 'Bahasa Indonesia' }, { id: 'en-US', label: 'English (US)' },
+  { id: 'en-GB', label: 'English (UK)' }, { id: 'ms-MY', label: 'Bahasa Melayu' },
+  { id: 'jv-ID', label: 'Bahasa Jawa' }, { su: 1, id: 'su-ID', label: 'Bahasa Sunda' },
+];
+const AI_MODELS = [
+  { id: 'gpt-5-nano', label: 'GPT-5 Nano (cepat)' }, { id: 'gpt-4o-mini', label: 'GPT-4o Mini' },
+  { id: 'claude-sonnet-4', label: 'Claude Sonnet 4' }, { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+  { id: 'deepseek-chat', label: 'DeepSeek V3' },
+];
+/** Model video txt2vid — diurutkan dari yang paling hemat. */
+const VIDEO_MODELS = [
+  { id: 'seedance-2-0-mini', label: 'Seedance 2.0 Mini — paling hemat ⭐', hint: 'BytePlus · 4-15 dtk · hemat' },
+  { id: 'wan2.7-t2v', label: 'Wan 2.7 (default Puter)', hint: 'Together · 2-15 dtk · berbayar per detik' },
+  { id: 'seedance-1-0-pro-fast', label: 'Seedance 1.0 Pro Fast — cepat', hint: 'BytePlus · 2-12 dtk' },
+  { id: 'seedance-2-5', label: 'Seedance 2.5 — kualitas tinggi', hint: 'BytePlus · 4-30 dtk' },
+  { id: 'gemini-omni-1.1-flash', label: 'Gemini Omni — mahal ⚠️', hint: 'per token, tanpa kontrol durasi' },
+];
+const VID_RES = [
+  { id: '480p', label: '480p', hint: 'paling hemat' },
+  { id: '720p', label: '720p', hint: 'seimbang' },
+  { id: '1080p', label: '1080p', hint: 'tajam, lebih mahal' },
+];
+const ASPECTS = [
+  { id: '16:9', label: '16:9', hint: 'YouTube / layar' },
+  { id: '9:16', label: '9:16', hint: 'Shorts / Reels' },
+  { id: '1:1', label: '1:1', hint: 'Feed sosmed' },
+];
+const MEDIA_TYPES = [
+  { id: 'video', label: 'Video AI', icon: '🎬', badge: 'b-video', cost: 'txt2vid' },
+  { id: 'image', label: 'Gambar AI', icon: '🖼️', badge: 'b-image', cost: '1 panggilan' },
+  { id: 'text', label: 'Teks Animasi', icon: '✨', badge: 'b-text', cost: '0 kredit' },
+  { id: 'upload', label: 'Unggahan', icon: '⬆️', badge: 'b-upload', cost: '0 kredit' },
+];
+const TEMPLATES = [
+  { title: 'Fotosintesis: Dapur Hijau Tumbuhan', topic: 'Proses fotosintesis pada tumbuhan: bagaimana daun menangkap sinar matahari, menyerap air dari akar dan karbon dioksida dari udara, lalu mengubahnya menjadi glukosa dan oksigen. Sertakan analogi dapur masak-masakan.', level: 'SD (Kelas 1-6)', emoji: '🌿' },
+  { title: 'Mengenal Tata Surya Kita', topic: 'Perkenalan tata surya: matahari sebagai pusat, delapan planet beserta ciri uniknya, orbit, dan fakta menarik seperti cincin Saturnus dan badai merah di Jupiter.', level: 'SD (Kelas 1-6)', emoji: '🪐' },
+  { title: 'Teorema Pythagoras dengan Mudah', topic: 'Penjelasan teorema Pythagoras untuk segitiga siku-siku: rumus a² + b² = c², bukti visual dengan persegi satuan, dan contoh soal kehidupan sehari-hari seperti mengecek sudut bangunan.', level: 'SMA (Kelas 10-12)', emoji: '📐' },
+  { title: 'Perubahan Iklim & Aksi Kita', topic: 'Apa itu perubahan iklim, peran efek rumah kaca, penyebab utama seperti pembakaran bahan bakar fosil dan deforestasi, dampaknya, serta aksi nyata yang bisa dilakukan pelajar.', level: 'SMP (Kelas 7-9)', emoji: '🌏' },
+  { title: 'Daur Ulang Sampah Plastik', topic: 'Siklus daur ulang sampah plastik: pemilahan, pencucian, pencacahan hingga menjadi bahan baku baru. Mengapa plastik butuh ratusan tahun untuk terurai dan cara mengurangi sampah plastik harian.', level: 'SMP (Kelas 7-9)', emoji: '♻️' },
+  { title: 'Literasi Digital: Waspadai Hoaks', topic: 'Cara mengenali berita hoaks di internet: cek sumber, bandingkan dengan media terpercaya, kenali judul provokatif, dan pahami jejak digital. Sertakan langkah praktis verifikasi informasi.', level: 'Umum / Dewasa', emoji: '🔎' },
+];
 
-KAIDAH NARASI (WAJIB dipatuhi):
-1. Gunakan Bahasa Indonesia percakapan sehari-hari yang alami: "Nah,", "Jadi", "Oke", "Eh tapi", "Ternyata", "Uniknya", "Coba bayangkan deh", "Simpelnya gini".
-2. Kalimat pendek dan mudah diucapkan (maksimal sekitar 15 kata per kalimat).
-3. Sapa penonton langsung dan ajak mereka berpikir: "...kan?", "Penasaran gimana caranya?".
-4. DILARANG memakai frasa buku yang kaku seperti: "Pada kesempatan kali ini", "Dengan demikian", "Sebagai kesimpulan", "Hal tersebut dikarenakan", "Adapun".
-5. DILARANG menyebut diri sendiri sebagai AI, asisten, atau model.
-6. Hindari simbol aneh saat diucapkan: tulis "%" sebagai "persen", "&" sebagai "dan", "+" sebagai "plus".
-7. Gunakan 100% Bahasa Indonesia: DILARANG memakai kata/kalimat bahasa Inggris. Jika ada nama aplikasi/merek asing yang wajib disebut, ucapkan singkat lalu lanjut bahasa Indonesia.
-8. Tulis semua angka dengan huruf agar wajar saat dibaca: "8" menjadi "delapan", "50%" menjadi "lima puluh persen".
-
-`;
-
-/* ================= State ================= */
-const state={scenes:[],voice:'auto-iklan',kar:'iklan',speed:1,naturalize:true,user:null,busy:false,recording:false};
-let pipelineCancel=false,exportCancel=false,mediaRec=null,exportChunks=[],exportNodes=[],actx=null,_dbT=null,_rtT=null;
-
-/* ================= Kanvas ================= */
-const cv=$('#cv'),ctx=cv.getContext('2d');
-const W=cv.width,H=cv.height;
-
-function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-function drawCover(img,z,px,py){
-  const ir=img.naturalWidth/img.naturalHeight,cr=W/H;
-  let w,h;
-  if(ir>cr){h=H*z;w=h*ir;}else{w=W*z;h=w/ir;}
-  ctx.drawImage(img,(W-w)/2+px,(H-h)/2+py,w,h);
+/* ---------------- Util ---------------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+function uid() {
+  return (crypto.randomUUID) ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
 }
-function wrapText(c,text,maxW){
-  const words=String(text).split(/\s+/);const lines=[];let cur='';
-  for(const w of words){
-    const t=cur?cur+' '+w:w;
-    if(c.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;
-  }
-  if(cur)lines.push(cur);
-  return lines;
-}
-function chunkNarration(text){
-  const t=String(text||'').replace(/\s+/g,' ').trim();
-  const parts=t.match(/[^.!?…]+[.!?…]+["']?\s*|[^.!?…]+$/g)||[t];
-  const chunks=[];let cur='';
-  for(const p of parts){
-    const q=p.trim();if(!q)continue;
-    if((cur?cur+' '+q:q).length<=92)cur=cur?cur+' '+q:q;
-    else{if(cur)chunks.push(cur);cur=q;}
-  }
-  if(cur)chunks.push(cur);
-  return chunks.length?chunks:[t||' '];
-}
-function drawIdle(){
-  const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0d1329');g.addColorStop(1,'#0a0f20');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  const gl=ctx.createRadialGradient(W/2,H*0.42,60,W/2,H*0.42,520);
-  gl.addColorStop(0,'rgba(109,94,242,.20)');gl.addColorStop(1,'rgba(109,94,242,0)');
-  ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font='800 58px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#eef2ff';
-  ctx.fillText('🎬 EduVid AI Studio',W/2,H*0.42);
-  ctx.font='500 26px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#93a1ba';
-  ctx.fillText('Isi topik di panel kiri → klik “Buat Naskah dengan AI”',W/2,H*0.42+56);
-  ctx.font='600 20px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#5d6b84';
-  ctx.fillText('Naskah · Ilustrasi AI · Suara Natural Indonesia (Damayanti)',W/2,H*0.42+100);
-}
-function drawSubtitle(sc,dur,t){
-  if(!sc.narasi)return;
-  if(!sc.chunks)sc.chunks=chunkNarration(sc.narasi);
-  const chunks=sc.chunks;
-  const total=chunks.reduce((a,c)=>a+c.length,0)||1;
-  const speakMs=Math.max(1000,dur-700);
-  const pos=clamp(t/speakMs,0,0.999)*total;
-  let acc=0,txt=chunks[chunks.length-1];
-  for(let i=0;i<chunks.length;i++){acc+=chunks[i].length;if(pos<=acc){txt=chunks[i];break;}}
-  ctx.font='600 33px "Plus Jakarta Sans",sans-serif';
-  const lines=wrapText(ctx,txt,W-180).slice(0,3);
-  if(!lines.length)return;
-  const lh=45,bh=lines.length*lh+26;
-  let bw=0;lines.forEach(l=>bw=Math.max(bw,ctx.measureText(l).width));bw+=60;
-  const y=H-84-bh;
-  ctx.fillStyle='rgba(4,9,20,.66)';rr(W/2-bw/2,y,bw,bh,16);ctx.fill();
-  ctx.fillStyle='#f4f7ff';ctx.textAlign='center';ctx.textBaseline='middle';
-  lines.forEach((l,i)=>ctx.fillText(l,W/2,y+13+lh/2+i*lh));
-}
-function drawProgress(){
-  const n=state.scenes.length;if(!n)return;
-  const pad=24,gap=6,totalW=W-pad*2,totalMs=player.totalDur()||1;
-  let x=pad;
-  for(let i=0;i<n;i++){
-    const d=player.sceneDur(i);const w=Math.max(8,totalW*(d/totalMs)-gap);
-    ctx.fillStyle='rgba(255,255,255,.14)';rr(x,H-16,w,7,4);ctx.fill();
-    const f=i<player.idx?100:i>player.idx?0:clamp(player.t/d*100,0,100);
-    if(f>0){ctx.fillStyle='rgba(109,94,242,.95)';rr(x,H-16,w*Math.min(1,f/100),7,4);ctx.fill();}
-    x+=w+gap;
-  }
-}
-function drawFrame(){
-  const sc=state.scenes[player.idx];
-  if(!sc){drawIdle();return;}
-  const dur=player.sceneDur(player.idx),t=player.t;
-  if(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth){
-    const p=clamp(t/dur,0,1),dir=player.idx%4;
-    let z=1.05,px=0,py=0;
-    if(dir===0)z=1+0.10*p;
-    else if(dir===1)z=1.10-0.10*p;
-    else if(dir===2){z=1.08;px=lerp(-26,26,p);}
-    else{z=1.08;px=lerp(26,-26,p);}
-    drawCover(sc.imgEl,z,px,py);
-  }else{
-    const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#131a36');g.addColorStop(1,'#0c1124');
-    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(109,94,242,.16)';
-    ctx.font='800 230px "Plus Jakarta Sans",sans-serif';
-    ctx.fillText(String(player.idx+1),W/2,H/2);
-    ctx.font='600 30px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='rgba(230,237,247,.35)';
-    ctx.fillText($('#inpTopic').value.trim()||'Ilustrasi sedang dibuat…',W/2,H-140);
-  }
-  const gg=ctx.createLinearGradient(0,H*0.5,0,H);gg.addColorStop(0,'rgba(4,8,18,0)');gg.addColorStop(1,'rgba(4,8,18,.82)');
-  ctx.fillStyle=gg;ctx.fillRect(0,H*0.5,W,H*0.5);
-  const chipA=clamp(1-Math.max(0,t-1700)/800,0,1);
-  if(chipA>0&&sc.judul){
-    ctx.globalAlpha=chipA;
-    ctx.font='800 26px "Plus Jakarta Sans",sans-serif';
-    const tw=ctx.measureText(sc.judul).width;
-    ctx.fillStyle='rgba(10,14,26,.72)';rr(28,28,tw+44,52,14);ctx.fill();
-    ctx.fillStyle='#22d3ee';rr(28,28,6,52,3);ctx.fill();
-    ctx.fillStyle='#f2f6ff';ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillText(sc.judul,52,55);
-    ctx.globalAlpha=1;
-  }
-  drawSubtitle(sc,dur,t);
-  drawProgress();
-  ctx.font='700 19px "Plus Jakarta Sans",sans-serif';ctx.textAlign='right';ctx.textBaseline='alphabetic';
-  ctx.fillStyle='rgba(230,237,247,.4)';
-  ctx.fillText('🎬 EduVid AI Studio',W-26,44);
-  const fade=1-Math.min(clamp(t/350,0,1),clamp((dur-t)/350,0,1));
-  if(fade>0.01){ctx.fillStyle='rgba(3,6,12,'+fade.toFixed(3)+')';ctx.fillRect(0,0,W,H);}
+function hashStr(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtT(sec) { sec = Math.max(0, sec || 0); const m = Math.floor(sec / 60), s = sec - m * 60; return (m ? m + 'm ' : '') + s.toFixed(1) + 's'; }
+function wordCount(t) { t = (t || '').trim(); return t ? t.split(/\s+/).length : 0; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function fmtBytes(b) {
+  if (!b) return '0 B'; const u = ['B', 'KB', 'MB', 'GB']; const i = Math.min(u.length - 1, Math.floor(Math.log(b) / Math.log(1024)));
+  return (b / Math.pow(1024, i)).toFixed(i ? 1 : 0) + ' ' + u[i];
 }
 
-/* ================= Pemain (player) ================= */
-const player={
-  idx:0,t:0,playing:false,raf:null,lastTs:null,stopAfter:null,onFinish:null,
-  sceneDur(i){const sc=state.scenes[i];const base=(sc&&sc.playback&&sc.playback.dur)||estSec(sc?sc.narasi:'');return Math.max(2500,(base/state.speed)*1000+400);},
-  totalDur(){let s=0;for(let i=0;i<state.scenes.length;i++)s+=this.sceneDur(i);return s;},
-  elapsedTotal(){let s=0;for(let i=0;i<this.idx;i++)s+=this.sceneDur(i);return s+Math.min(this.t,this.sceneDur(this.idx));},
-  toggle(){if(this.playing)this.pause();else this.play();},
-  play(){
-    if(!state.scenes.length){toast('Belum ada scene untuk diputar','warn');return;}
-    if(!this.playing&&this.t>=this.sceneDur(this.idx)&&this.idx>=state.scenes.length-1)this.seek(0);
-    this.playing=true;this.lastTs=null;this.resumeAudio();updatePlayUI();
-    if(!this.raf)this.raf=requestAnimationFrame(ts=>this.tick(ts));
-  },
-  pause(){this.playing=false;this.pauseAudio();updatePlayUI();drawFrame();},
-  stop(){this.pauseAudio();this.playing=false;this.stopAfter=null;this.idx=0;this.t=0;this.lastTs=null;highlightSceneCard();updatePlayUI();drawFrame();updateTimeUI();},
-  playOne(i){if(!state.scenes.length)return;this.seek(i);this.stopAfter=i;this.play();},
-  step(d){const max=Math.max(0,state.scenes.length-1);const i=clamp(this.idx+d,0,max);
-    if(this.playing){this.toScene(i);this.resumeAudio();}else{this.seek(i);drawFrame();updateTimeUI();}},
-  seek(i){this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;highlightSceneCard();updateTimeUI();},
-  toScene(i){this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;
-    const sc=state.scenes[this.idx];if(sc&&sc.playback&&sc.playback.el){try{sc.playback.el.currentTime=0;}catch(_){}}
-    highlightSceneCard();},
-  pauseAudio(){
-    const sc=state.scenes[this.idx];if(!sc)return;
-    if(state.recording){const a=exportNodes[this.idx];if(a){try{a.pause();}catch(_){}}return;}
-    const pb=sc.playback;
-    if(pb&&pb.type==='puter'){try{pb.el.pause();}catch(_){}}
-    if(window.speechSynthesis){try{speechSynthesis.pause();}catch(_){}}
-  },
-  resumeAudio(){
-    const sc=state.scenes[this.idx];if(!sc)return;
-    if(state.recording){const a=exportNodes[this.idx];if(a){a.playbackRate=state.speed;a.play().catch(()=>{});}return;}
-    const pb=sc.playback;
-    if(pb&&pb.type==='puter'){
-      const el=pb.el;el.playbackRate=state.speed;
-      if(this.t>0){el.play().catch(()=>{});}else{try{el.currentTime=0;}catch(_){}el.play().catch(()=>{});}
-    }else if(pb&&pb.type==='browser'){
-      if(this.t>0){try{speechSynthesis.resume();}catch(_){}}else{speechSpeak(pb.text);}
-    }
-  },
-  tick(ts){
-    if(!this.playing){this.raf=null;this.lastTs=null;return;}
-    const dt=this.lastTs?Math.min(120,ts-this.lastTs):0;this.lastTs=ts;this.t+=dt;
-    const sc=state.scenes[this.idx];
-    if(!sc){this.pause();return;}
-    const dur=this.sceneDur(this.idx);
-    if(this.t>=dur){
-      const ended=(this.stopAfter!=null&&this.idx>=this.stopAfter)||this.idx>=state.scenes.length-1;
-      if(ended){
-        this.stopAfter=null;this.playing=false;this.t=dur;this.lastTs=null;this.raf=null;
-        drawFrame();updatePlayUI();updateTimeUI();
-        if(state.recording){const f=this.onFinish;this.onFinish=null;if(f)f();}
-        return;
-      }
-      this.toScene(this.idx+1);
-    }
-    if(state.recording)overlaySub(Math.round(clamp(this.elapsedTotal()/Math.max(1,this.totalDur()),0,1)*100)+'% terrekam · jangan pindah tab…');
-    drawFrame();updateTimeUI();
-    this.raf=requestAnimationFrame(t2=>this.tick(t2));
-  }
-};
-function updatePlayUI(){$('#btnPlay').textContent=player.playing?'⏸':'▶️';}
-function updateTimeUI(){
-  const n=state.scenes.length;
-  $('#sceneLabel').textContent=n?('Scene '+(player.idx+1)+'/'+n):'Scene –';
-  $('#timeLabel').textContent=fmtTime(player.elapsedTotal()/1000)+' / '+fmtTime(player.totalDur()/1000);
-  updateTimelineFill();
+/* ---------------- Toast & Modal ---------------- */
+function toast(msg, type, ms) {
+  const box = $('#toastBox'); const t = document.createElement('div');
+  t.className = 'toast ' + (type || ''); t.innerHTML = msg; box.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 320); }, ms || 4200);
 }
-function highlightSceneCard(){
-  $$('.scene-card.active').forEach(el=>el.classList.remove('active'));
-  const sc=state.scenes[player.idx];if(!sc)return;
-  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
-  if(card){card.classList.add('active');card.scrollIntoView({block:'nearest',behavior:'smooth'});}
-}
-function renderTimeline(){
-  const tl=$('#timeline');tl.innerHTML='';
-  state.scenes.forEach((sc,i)=>{
-    const d=player.sceneDur(i);
-    const seg=document.createElement('div');
-    seg.className='seg';seg.style.flexGrow=String(d);seg.dataset.i=i;
-    const f=document.createElement('div');f.className='fill';
-    const s=document.createElement('span');s.textContent=i+1;
-    seg.appendChild(f);seg.appendChild(s);tl.appendChild(seg);
-  });
-  updateTimelineFill();
-}
-function updateTimelineFill(){
-  const segs=$('#timeline').children;
-  for(let i=0;i<segs.length;i++){
-    const fill=segs[i].querySelector('.fill');
-    const d=player.sceneDur(i);
-    const pct=i<player.idx?100:i>player.idx?0:clamp(player.t/d*100,0,100);
-    fill.style.width=pct+'%';
-    segs[i].classList.toggle('active',i===player.idx);
-  }
-}
-
-/* ================= TTS: suara natural Indonesia ================= */
-function estSec(t){return Math.max(2.5,String(t||'').length/14.5);}
-function naturalizeForSpeech(t){
-  let s=' '+String(t||'')+' ';
-  s=s.replace(/\s+/g,' ');
-  const MAP=[
-    [/\bdll\.?\b/gi,'dan sebagainya'],[/\bdsb\.?\b/gi,'dan sebagainya'],
-    [/\bdgn\b/gi,'dengan'],[/\butk\b/gi,'untuk'],[/\byg\b/gi,'yang'],
-    [/\btsb\.?\b/gi,'tersebut'],[/\bvs\.?\b/gi,'versus'],
-    [/\s+%\b/g,' persen'],[/&/g,' dan '],[/\+/g,' plus '],[/=/g,' sama dengan '],
-    [/€/g,' euro'],[/\$/g,' dolar '],[/Rp\.?\s*(?=\d)/gi,'Rp ']
-  ];
-  for(const m of MAP)s=s.replace(m[0],m[1]);
-  s=s.replace(/\b(Nah|Jadi|Oke|Ok|Eh|Tapi|Ternyata|Uniknya|Menariknya|Bayangkan|Simpelnya|Intinya|Pokoknya|Sekarang|Lalu|Kemudian|Selain itu|Gini|Nih|Tu|Tuh)\b(?![:,.!?])/g,'$1,');
-  s=s.replace(/…|\.\.\./g,',');
-  s=s.replace(/\s+([,.!?;:])/g,'$1').replace(/([,.!?;:])(?=[^\s\d])/g,'$1 ');
-  s=s.replace(/,{2,}/g,',').replace(/\s{2,}/g,' ').trim();
-  if(!/[.!?]$/.test(s))s+='.';
-  if(s.length>2900){
-    let cut=s.slice(0,2900);
-    const i=Math.max(cut.lastIndexOf('. '),cut.lastIndexOf('! '),cut.lastIndexOf('? '));
-    if(i>1200)cut=cut.slice(0,i+1);
-    s=cut;
-  }
-  return s;
-}
-function audioDuration(a){
-  return new Promise(res=>{
-    let done=false;
-    const fin=v=>{if(!done){done=true;res(v);}};
-    const tm=setTimeout(()=>fin(0),8000);
-    a.addEventListener('loadedmetadata',()=>{clearTimeout(tm);fin(isFinite(a.duration)&&a.duration>0?a.duration:0);});
-    a.addEventListener('error',()=>{clearTimeout(tm);fin(0);});
-    try{a.load();}catch(_){ }
+function confirmModal(title, body, okLabel, cancelLabel) {
+  return new Promise(res => {
+    const root = $('#modalRoot');
+    root.innerHTML = '<div class="modal-bg"><div class="modal"><h3>' + esc(title) + '</h3><p>' + body + '</p>' +
+      '<div class="acts"><button class="btn" id="mCancel">' + esc(cancelLabel || 'Batal') + '</button>' +
+      '<button class="btn btn-p" id="mOk">' + esc(okLabel || 'Ya, lanjut') + '</button></div></div></div>';
+    const done = v => { root.innerHTML = ''; res(v); };
+    $('#mOk', root).onclick = () => done(true);
+    $('#mCancel', root).onclick = () => done(false);
+    $('.modal-bg', root).addEventListener('click', e => { if (e.target === e.currentTarget) done(false); });
   });
 }
-function speechSpeak(text){
-  if(!window.speechSynthesis)return;
-  try{speechSynthesis.cancel();}catch(_){ }
-  const u=new SpeechSynthesisUtterance(String(text));
-  u.lang='id-ID';u.rate=clamp(state.speed,0.5,2);u.pitch=1;
-  const vs=(speechSynthesis.getVoices()||[]).filter(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
-  if(vs.length){const pref=vs.find(v=>/natural/i.test(v.name))||vs.find(v=>/google/i.test(v.name))||vs[0];u.voice=pref;}
-  else{toast('Perangkat tidak punya suara browser Indonesia — pakai mesin AI (Otomatis/Gemini/OpenAI/Damayanti)','warn');return;}
-  speechSynthesis.speak(u);
-}
-function browserVoiceLabel(){
-  if(!window.speechSynthesis)return 'id-ID';
-  const vs=(speechSynthesis.getVoices()||[]).filter(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
-  const pref=vs.find(v=>/natural/i.test(v.name))||vs.find(v=>/google/i.test(v.name))||vs[0];
-  return pref?pref.name:'id-ID';
-}
-/* Rantai mesin suara 100% INDONESIA — pilihan user dulu, lalu alternatif lain.
-   TIDAK ADA fallback suara Inggris: lebih baik gagal jelas daripada suara robot. */
-function ttsChain(){
-  const instr=VOICE_KAR[state.kar]||VOICE_KAR.iklan;
-  const gem=v=>({label:'Gemini TTS · '+v,opts:{provider:'gemini',voice:v,instructions:instr}});
-  const oai=v=>({label:'OpenAI TTS · '+v,opts:{provider:'openai',model:'gpt-4o-mini-tts',voice:v,instructions:instr}});
-  const pol=(extra,label)=>({label,opts:Object.assign({voice:'Damayanti',language:'id-ID'},extra)});
-  const G=[gem('Kore'),gem('Puck'),gem('Leda')];
-  const O=[oai('shimmer'),oai('nova'),oai('coral')];
-  const P=[pol({engine:'neural'},'Damayanti · Neural (id-ID)'),pol({},'Damayanti · Standard (id-ID)'),{label:'Polly · id-ID otomatis',opts:{language:'id-ID'}}];
-  let c;
-  if(state.voice==='gemini')c=G.concat(O,P);
-  else if(state.voice==='openai')c=O.concat(G,P);
-  else if(state.voice==='damayanti-neural')c=P.concat(G,O);
-  else if(state.voice==='damayanti-standard')c=[P[1],P[2]].concat(G,O);
-  else c=G.concat(O,P);
-  const seen=new Set();
-  return c.filter(a=>seen.has(a.label)?false:(seen.add(a.label),true));
-}
-async function makeTTS(text){
-  const processed=state.naturalize?naturalizeForSpeech(text):String(text||'');
-  if(state.voice==='browser'){
-    const hasId=window.speechSynthesis&&(speechSynthesis.getVoices()||[]).some(x=>/^id/i.test(x.lang||'')||/indones/i.test(x.name||''));
-    if(!hasId)throw new Error('Perangkat tidak punya suara browser Indonesia. Pilih mesin AI (Otomatis/Gemini/OpenAI/Damayanti).');
-    return {type:'browser',text:processed,dur:estSec(processed),label:browserVoiceLabel()};
-  }
-  let lastErr=null;
-  for(const at of ttsChain()){
-    try{
-      const el=await puter.ai.txt2speech(processed,at.opts);
-      const src=el&&el.src;
-      if(!src)throw new Error('Audio kosong');
-      let url=src,blob=null;
-      try{const r=await fetch(src);if(r.ok){blob=await r.blob();url=URL.createObjectURL(blob);}}catch(_){ }
-      const a=new Audio(url);a.preload='auto';
-      const dur=await audioDuration(a);
-      return {type:'puter',el:a,blob:blob,url:url,dur:dur||estSec(processed),label:at.label};
-    }catch(e){lastErr=e;console.warn('[TTS] gagal:',at.label,e);}
-  }
-  throw new Error('Semua mesin suara Indonesia gagal'+(lastErr?': '+(lastErr.message||lastErr):'')+'. Cek koneksi internet / login Puter, lalu coba lagi.');
-}
 
-/* ================= AI: chat, naskah, gambar ================= */
-function extractText(r){
-  if(r==null)return '';
-  if(typeof r==='string')return r;
-  if(typeof r.text==='string'&&r.text.trim())return r.text;
-  const c=r.message&&r.message.content;
-  if(typeof c==='string')return c;
-  if(Array.isArray(c))return c.map(p=>typeof p==='string'?p:(p&&p.text)||'').join('');
-  if(typeof r.content==='string')return r.content;
-  if(Array.isArray(r.content))return r.content.map(p=>(p&&p.text)||'').join('');
-  try{return JSON.stringify(r);}catch(_){return String(r);}
-}
-async function chatOnce(prompt){
-  const tries=[null,'gpt-5-nano','gpt-4o-mini','gpt-4.1-nano'];
-  let err=null;
-  for(const m of tries){
-    try{
-      const r=m?await puter.ai.chat(prompt,{model:m}):await puter.ai.chat(prompt);
-      const t=extractText(r).trim();
-      if(t)return t;
-    }catch(e){err=e;}
-  }
-  throw err||new Error('Layanan chat tidak merespons');
-}
-function buildPrompt(topic,level,dur,style,n){
-  return PERSONA+'Buatkan naskah video edukasi.\n'+
-    'Topik: '+topic+'\n'+
-    'Penonton: '+level+'\n'+
-    'Durasi total target: sekitar '+dur+' detik, dibagi menjadi TEPAT '+n+' scene.\n\n'+
-    'GAYA BICARA: '+STYLES[style]+'\n\n'+
-    'Panjang tiap narasi scene: 2-4 kalimat (sekitar 15-30 detik dibaca dengan tempo wajar).\n\n'+
-    'Balas HANYA array JSON valid — TANPA penjelasan dan TANPA markdown — dengan bentuk persis:\n'+
-    '[{"judul":"judul scene singkat","narasi":"teks yang dibacakan penyiar","visual":"english image prompt for the scene illustration"}]\n'+
-    'Mulai jawabanmu langsung dengan karakter [';
-}
-function normalizeSceneRaw(o){
-  o=o||{};
-  return {judul:String(o.judul||'Scene').slice(0,70),narasi:String(o.narasi||'').trim(),visual:String(o.visual||'').trim()};
-}
-function normalizeScene(o){
-  const s=normalizeSceneRaw(o);
-  let nar=s.narasi
-    .replace(/\*\*/g,'')
-    .replace(/^(baiklah|baik|tentu|siap|berikut( naskah| ini)?)[,.!]?\s*/i,'')
-    .replace(/\b(sebagai|as)\s+(sebuah\s+)?(AI|artificial intelligence|kecerdasan buatan|model bahasa|language model)\b[^.!?]*[.!?]?/gi,'')
-    .replace(/^scene\s*\d+\s*[:.\-]\s*/i,'')
-    .trim();
-  return {id:uid(),judul:s.judul||'Scene',narasi:nar,visual:s.visual,imgSrc:null,imgEl:null,playback:null,audioDur:0,chunks:null,stale:false};
-}
-function tryParseScenes(raw){
-  if(!raw)return null;
-  let s=String(raw).replace(/```(?:json)?/gi,'');
-  const a=s.indexOf('['),b=s.lastIndexOf(']');
-  if(a===-1||b<=a)return null;
-  let arr=null;
-  try{arr=JSON.parse(s.slice(a,b+1));}catch(e){return null;}
-  if(!Array.isArray(arr)&&arr&&Array.isArray(arr.scenes))arr=arr.scenes;
-  if(!Array.isArray(arr))return null;
-  const list=arr.map((o,i)=>{
-    o=o||{};
-    let nar=String(o.narasi!=null?o.narasi:(o.narration!=null?o.narration:(o.text!=null?o.text:''))).trim();
-    nar=nar.replace(/^scene\s*\d+\s*[:.\-]\s*/i,'').trim();
-    const jud=String(o.judul||o.title||o.scene||('Scene '+(i+1))).replace(/^scene\s*\d+\s*[:.\-]\s*/i,'').trim()||('Scene '+(i+1));
-    const vis=String(o.visual||o.image||o.image_prompt||o.gambar||'').trim();
-    return {judul:jud.slice(0,70),narasi:nar,visual:vis};
-  }).filter(o=>o.narasi&&o.narasi.length>3);
-  return list.length?list:null;
-}
-function fallbackParseScenes(raw){
-  if(!raw)return null;
-  const lines=String(raw).split(/\n+/).map(l=>l.trim()).filter(Boolean);
-  const out=[];let cur=null;
-  for(const l of lines){
-    const m=l.match(/^(?:scene|bagian|sc)\s*\d+\s*[:.\-–)]\s*(.*)$/i)||l.match(/^(\d+)[.)]\s*(.*)$/);
-    if(m){
-      if(cur&&cur.narasi)out.push(cur);
-      const head=(m[2]||m[1]||'').replace(/^judul\s*[:\-]\s*/i,'').trim();
-      cur={judul:(head||('Scene '+(out.length+1))).slice(0,70),narasi:'',visual:''};
-      continue;
-    }
-    if(!cur)continue;
-    const jm=l.match(/^judul\s*[:\-]\s*(.+)$/i);
-    const nm=l.match(/^(?:narasi|naskah|teks|voice)\s*[:\-]\s*(.+)$/i);
-    const vm=l.match(/^(?:visual|gambar|image|img)\s*[:\-]\s*(.+)$/i);
-    if(jm)cur.judul=jm[1].slice(0,70);
-    else if(nm)cur.narasi+=(cur.narasi?' ':'')+nm[1];
-    else if(vm)cur.visual=vm[1];
-    else if(/^(?:judul|scene)\b/i.test(l))continue;
-    else cur.narasi+=(cur.narasi?' ':'')+l;
-  }
-  if(cur&&cur.narasi)out.push(cur);
-  const list=out.map(normalizeScene).filter(s=>s.narasi&&s.narasi.length>10);
-  return list.length>=2?list:null;
-}
-async function genScript(topic){
-  const level=$('#selLevel').value,dv=$('#selDuration').value,style=$('#selStyle').value;
-  const n=SCENE_MAP[dv]||5;
-  const prompt=buildPrompt(topic,level,dv,style,n);
-  let raw=null,parsed=null;
-  for(let att=0;att<2;att++){
-    if(att)overlayShow('Merapikan format naskah…','AI diminta mengirim ulang dalam format JSON',true);
-    raw=await chatOnce(att?(prompt+'\n\nPENTING: balas HANYA array JSON. Tanpa teks lain.'):prompt);
-    parsed=tryParseScenes(raw);
-    if(parsed&&parsed.length>=2)break;
-  }
-  if(!parsed||!parsed.length)parsed=fallbackParseScenes(raw);
-  if(!parsed||!parsed.length)throw new Error('AI tidak mengembalikan naskah yang bisa dibaca — coba lagi ya');
-  return parsed;
-}
-async function makeImage(prompt){
-  const full=(String(prompt||'').trim()||'educational illustration')+', '+IMG_STYLE;
-  const res=await puter.ai.txt2img(full);
-  const src=typeof res==='string'?res:(res&&res.src);
-  if(!src)throw new Error('Gambar tidak diterima dari AI');
-  return src;
-}
-function ensureImgEl(sc){
-  if(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth)return Promise.resolve(sc.imgEl);
-  if(!sc.imgSrc)return Promise.resolve(null);
-  const load=u=>new Promise((res,rej)=>{
-    const im=new Image();im.crossOrigin='anonymous';
-    im.onload=()=>res(im);im.onerror=rej;im.src=u;
-  });
-  return (async()=>{
-    let src=sc.imgSrc;
-    if(!src.startsWith('data:')){
-      try{const r=await fetch(src);const b=await r.blob();src=URL.createObjectURL(b);sc.imgSrc=src;}catch(_){ }
-    }
-    try{sc.imgEl=await load(src);}catch(_){sc.imgEl=null;}
-    return sc.imgEl;
-  })();
-}
-
-/* ================= UI Scene ================= */
-function scDurSec(sc){const base=(sc.playback&&sc.playback.dur)||estSec(sc.narasi);return Math.max(2.5,base/state.speed);}
-function sceneCardHTML(sc,i){
-  const hasV=sc.playback&&sc.playback.type==='puter';
-  const hasImg=!!sc.imgSrc;
-  const pillV=hasV?(sc.stale?'🎙️ ⟳':'🎙️ ✓'):(sc.playback&&sc.playback.type==='browser'?'🎙️ ✓ (browser)':'🎙️ —');
-  const clsV=hasV&&!sc.stale?'pill st-voice ok':hasV?'pill st-voice warn':'pill st-voice';
-  return ''+
-  '<div class="sc-head">'+
-    '<span class="sc-num">'+(i+1)+'</span>'+
-    '<input class="sc-title" value="'+esc(sc.judul)+'" placeholder="Judul scene">'+
-    '<span class="sc-dur">≈ '+Math.round(scDurSec(sc))+' dtk</span>'+
-    '<div class="sc-tools">'+
-      '<button class="ib" type="button" data-act="up" title="Naikkan">↑</button>'+
-      '<button class="ib" type="button" data-act="down" title="Turunkan">↓</button>'+
-      '<button class="ib danger" type="button" data-act="del" title="Hapus">🗑</button>'+
-    '</div>'+
-  '</div>'+
-  '<textarea class="sc-nar" rows="3" placeholder="Teks yang dibacakan penyiar…">'+esc(sc.narasi)+'</textarea>'+
-  '<div class="sc-meta">'+
-    '<span class="sc-meta-info">'+sc.narasi.length+' karakter · ≈ '+Math.round(estSec(sc.narasi))+' dtk</span>'+
-    '<span class="pills">'+
-      '<span class="pill st-img'+(hasImg?' ok':'')+'">'+(hasImg?'🖼️ ✓':'🖼️ —')+'</span>'+
-      '<span class="'+clsV+'">'+pillV+'</span>'+
-    '</span>'+
-    '<button class="linkish" type="button" data-act="vis">Prompt visual</button>'+
-  '</div>'+
-  '<div class="sc-visual-row"'+(sc.visual?'':' hidden')+'>'+
-    '<input class="sc-visual" value="'+esc(sc.visual)+'" placeholder="Prompt gambar (bahasa Inggris) — cth: plant photosynthesis diagram, sunlight">'+
-  '</div>'+
-  '<div class="sc-media">'+
-    '<div class="sc-thumb">'+(hasImg?'<img src="'+esc(sc.imgSrc)+'" alt="">':'<div class="ph">🖼️</div>')+'</div>'+
-    '<div class="sc-actions">'+
-      '<button class="btn btn-s" type="button" data-act="img">🎨 '+(hasImg?'Ganti Gambar':'Buat Gambar')+'</button>'+
-      '<button class="btn btn-s" type="button" data-act="voice">🎙️ '+(hasV?'Ganti Suara':'Buat Suara')+'</button>'+
-      '<button class="btn btn-s ghost" type="button" data-act="test">▶️ Tes Scene</button>'+
-    '</div>'+
-  '</div>';
-}
-function renderScenes(){
-  const list=$('#scenesList');list.innerHTML='';
-  $('#emptyState').hidden=state.scenes.length>0;
-  state.scenes.forEach((sc,i)=>{
-    const div=document.createElement('div');
-    div.className='scene-card'+(i===player.idx?' active':'');
-    div.dataset.id=sc.id;
-    div.innerHTML=sceneCardHTML(sc,i);
-    list.appendChild(div);
-  });
-  $$('.scene-card .sc-nar').forEach(autoGrow);
-}
-function autoGrow(el){el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
-function updateSceneMedia(sc){
-  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');if(!card)return;
-  const th=card.querySelector('.sc-thumb');
-  th.innerHTML='';
-  if(sc.imgSrc){const im=document.createElement('img');im.src=sc.imgSrc;im.alt='';th.appendChild(im);}
-  else{const p=document.createElement('div');p.className='ph';p.textContent='🖼️';th.appendChild(p);}
-  const si=card.querySelector('.st-img');
-  if(si){si.className='pill st-img'+(sc.imgSrc?' ok':'');si.textContent=sc.imgSrc?'🖼️ ✓':'🖼️ —';}
-  const hasV=sc.playback&&sc.playback.type==='puter';
-  const sv=card.querySelector('.st-voice');
-  if(sv){
-    sv.className=hasV&&!sc.stale?'pill st-voice ok':hasV?'pill st-voice warn':'pill st-voice';
-    sv.textContent=hasV?(sc.stale?'🎙️ ⟳':'🎙️ ✓'):(sc.playback&&sc.playback.type==='browser'?'🎙️ ✓ (browser)':'🎙️ —');
-  }
-  const du=card.querySelector('.sc-dur');
-  if(du)du.textContent='≈ '+Math.round(scDurSec(sc))+' dtk';
-  const bi=card.querySelector('[data-act="img"]');
-  if(bi){bi.disabled=false;bi.textContent=sc.imgSrc?'🎨 Ganti Gambar':'🎨 Buat Gambar';}
-  const bv=card.querySelector('[data-act="voice"]');
-  if(bv){bv.disabled=false;bv.textContent=hasV?'🎙️ Ganti Suara':'🎙️ Buat Suara';}
-}
-async function genImageFor(sc){
-  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
-  const si=card&&card.querySelector('.st-img');
-  if(si){si.className='pill st-img busy';si.textContent='🖼️ ⏳';}
-  const prompt=sc.visual||($('#inpTopic').value+' — '+sc.judul);
-  sc.imgSrc=await makeImage(prompt);
-  sc.imgEl=null;
-  await ensureImgEl(sc);
-  updateSceneMedia(sc);
-  drawFrame();
-}
-async function genVoiceFor(sc){
-  if(sc.playback&&sc.playback.el){try{sc.playback.el.pause();}catch(_){ }}
-  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
-  const sv=card&&card.querySelector('.st-voice');
-  if(sv){sv.className='pill st-voice busy';sv.textContent='🎙️ ⏳';}
-  sc.stale=false;
-  sc.playback=await makeTTS(sc.narasi);
-  updateSceneMedia(sc);
-  renderTimeline();updateToolbar();
-}
-
-/* ================= Toolbar & pipeline ================= */
-function updateToolbar(){
-  $('#sceneCount').textContent=state.scenes.length+' scene';
-  $('#totalDur').textContent='≈ '+fmtTime(player.totalDur()/1000);
-}
-function addScene(){
-  const sc=normalizeScene({judul:'Scene '+(state.scenes.length+1),narasi:'',visual:''});
-  state.scenes.push(sc);
-  renderScenes();renderTimeline();updateToolbar();saveLocal();
-  const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
-  if(card){card.querySelector('.sc-nar').focus();card.scrollIntoView({block:'center',behavior:'smooth'});}
-}
-function setBusyUI(b){
-  ['#btnGenScript','#btnGenAllImgs','#btnGenAllVoices','#btnAddScene'].forEach(s=>{
-    const el=$(s);if(el)el.disabled=b;
-  });
-}
-async function generateProject(){
-  if(state.busy)return;
-  const topic=$('#inpTopic').value.trim();
-  if(!topic){toast('Tulis dulu topik videonya ya 😊','warn');$('#inpTopic').focus();return;}
-  if(!requireAuth())return;
-  if(state.scenes.length&&!confirm('Ganti naskah yang sekarang dengan yang baru?'))return;
-  state.busy=true;setBusyUI(true);pipelineCancel=false;
-  try{
-    overlayShow('Menulis naskah…','AI menyusun kalimat percakapan natural khas orang Indonesia',true);
-    const list=await genScript(topic);
-    if(pipelineCancel)throw new Error('cancel');
-    state.scenes=list.map(normalizeScene);
-    player.idx=0;player.t=0;player.playing=false;player.stopAfter=null;player.onFinish=null;player.lastTs=null;
-    renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();updatePlayUI();
-    for(let i=0;i<state.scenes.length;i++){
-      if(pipelineCancel)break;
-      const sc=state.scenes[i];
-      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Membuat ilustrasi…',true);
-      try{await genImageFor(sc);}catch(e){toast('Gambar scene '+(i+1)+' gagal: '+(e.message||e),'err');}
-      if(pipelineCancel)break;
-      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia…',true);
-      try{await genVoiceFor(sc);}catch(e){toast('Suara scene '+(i+1)+' gagal: '+(e.message||e),'err');}
-    }
-    overlayHide();
-    saveLocal();renderTimeline();updateToolbar();
-    toast('Naskah siap! Klik ▶️ untuk pratinjau videonya 🎬','success');
-  }catch(e){
-    overlayHide();
-    if(e.message!=='cancel')toast('Gagal: '+(e.message||e),'err');
-  }finally{
-    state.busy=false;setBusyUI(false);
-  }
-}
-async function generateAll(kind){
-  if(state.busy)return;
-  if(!state.scenes.length){toast('Belum ada scene','warn');return;}
-  if(!requireAuth())return;
-  state.busy=true;setBusyUI(true);pipelineCancel=false;
-  const jobs=[];
-  state.scenes.forEach((sc,i)=>{
-    const need=kind==='img'?!sc.imgSrc:!(sc.playback&&sc.playback.type==='puter');
-    if(need)jobs.push({sc:sc,i:i});
-  });
-  if(!jobs.length){
-    state.busy=false;setBusyUI(false);
-    toast(kind==='img'?'Semua scene sudah punya gambar 🖼️':'Semua scene sudah bersuara 🔊','info');
-    return;
-  }
-  let okc=0;
-  for(let k=0;k<jobs.length;k++){
-    if(pipelineCancel)break;
-    const sc=jobs[k].sc,i=jobs[k].i;
-    overlayShow((kind==='img'?'Membuat ilustrasi':'Merekam suara iklan Indonesia')+' · scene '+(i+1)+'/'+state.scenes.length,(k+1)+' dari '+jobs.length+' sedang diproses…',true);
-    try{if(kind==='img')await genImageFor(sc);else await genVoiceFor(sc);okc++;}
-    catch(err){toast('Scene '+(i+1)+': '+(err.message||err),'err');}
-  }
-  overlayHide();
-  state.busy=false;setBusyUI(false);
-  saveLocal();renderTimeline();updateToolbar();
-  if(okc)toast(okc+' scene selesai diperbarui ✨','success');
-}
-async function testVoice(){
-  if(typeof puter==='undefined')return toast('SDK Puter belum termuat','err');
-  if(state.voice!=='browser'&&!requireAuth())return;
-  const btn=$('#btnTestVoice');const old=btn.textContent;
-  btn.disabled=true;btn.textContent='Menyiapkan suara…';
-  const done=()=>{btn.disabled=false;btn.textContent=old;};
-  try{
-    const text='Halo teman-teman! Nah, ini dia contoh suaraku. Gimana, terdengar natural kan seperti announcer iklan? Tahukah kamu? Tubuh kita butuh sekitar 8 gelas air setiap hari. Seru, kan? Oke, sekarang kamu siap bikin video edukasi yang keren!';
-    const pb=await makeTTS(text);
-    if(pb.type==='puter'){
-      pb.el.addEventListener('ended',done,{once:true});
-      pb.el.playbackRate=state.speed;
-      pb.el.play().catch(()=>{});
-      toast('Suara aktif: '+pb.label,'success');
-    }else{
-      speechSpeak(pb.text);
-      const iv=setInterval(()=>{if(!speechSynthesis.speaking){clearInterval(iv);done();}},300);
-      toast('Suara browser: '+pb.label,'info');
-    }
-  }catch(e){done();toast('Gagal: '+(e.message||e),'err');}
-}
-
-/* ================= Ekspor video (MediaRecorder) ================= */
-function setRecUI(b){
-  state.recording=b;
-  $('#recBadge').classList.toggle('on',b);
-  ['#btnExport','#btnPlay','#btnPrev','#btnNext','#btnStop'].forEach(s=>{
-    const el=$(s);if(el)el.disabled=b;
-  });
-  if(!b)updatePlayUI();
-}
-function onRecStop(){
-  state.recording=false;setRecUI(false);exportNodes=[];
-  try{if(actx){actx.close();}}catch(_){ }actx=null;
-  overlayHide();
-  if(exportCancel||!exportChunks.length){toast('Perekaman dibatalkan','info');return;}
-  const blob=new Blob(exportChunks,{type:'video/webm'});
-  const url=URL.createObjectURL(blob);
-  const name='EduVid-'+slug($('#inpTopic').value)+'-'+new Date().toISOString().slice(0,10)+'.webm';
-  const a=document.createElement('a');a.href=url;a.download=name;
-  document.body.appendChild(a);a.click();a.remove();
-  const area=$('#dlArea');area.innerHTML='';
-  const link=document.createElement('a');
-  link.href=url;link.download=name;link.className='dl-link';
-  link.textContent='⬇️ '+name+' · '+(blob.size/1048576).toFixed(1)+' MB';
-  area.appendChild(link);
-  toast('Video selesai & terunduh! 🎉','success');
-}
-async function exportVideo(){
-  if(state.busy||state.recording)return;
-  if(!state.scenes.length){toast('Buat naskah dulu sebelum merekam','warn');return;}
-  const cs=cv.captureStream||cv.mozCaptureStream||cv.webkitCaptureStream;
-  if(!window.MediaRecorder||!cs){toast('Browser ini tidak mendukung perekaman video','err');return;}
-  const silent=state.scenes.filter(sc=>!(sc.playback&&sc.playback.type==='puter'&&sc.playback.blob)).length;
-  if(state.voice==='browser'||silent===state.scenes.length){
-    if(!confirm('Scene belum punya audio Puter — video bisa jadi tanpa suara. Lanjutkan?'))return;
-  }else if(silent){
-    toast(silent+' scene tanpa audio akan sunyi di video','warn');
-  }
-  state.busy=true;
-  try{
-    const AC=window.AudioContext||window.webkitAudioContext;
-    actx=actx||new AC();
-    if(actx.state==='suspended')await actx.resume();
-    const dest=actx.createMediaStreamDestination();
-    exportNodes=state.scenes.map(sc=>{
-      if(sc.playback&&sc.playback.type==='puter'&&sc.playback.url){
-        const a=new Audio(sc.playback.url);a.preload='auto';
-        try{const src=actx.createMediaElementSource(a);src.connect(dest);src.connect(actx.destination);}catch(_){ }
-        return a;
-      }
-      return null;
+/* ---------------- IndexedDB (proyek + cache AI) ---------------- */
+const IDB = (() => {
+  let dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      const rq = indexedDB.open('eduvideo-standalone', 1);
+      rq.onupgradeneeded = () => {
+        const d = rq.result;
+        if (!d.objectStoreNames.contains('projects')) d.createObjectStore('projects');
+        if (!d.objectStoreNames.contains('cache')) d.createObjectStore('cache');
+      };
+      rq.onsuccess = () => res(rq.result);
+      rq.onerror = () => rej(rq.error);
     });
-    const stream=cs.call(cv,30);
-    const at=dest.stream.getAudioTracks();
-    if(at.length)stream.addTrack(at[0]);
-    const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m));
-    exportChunks=[];exportCancel=false;
-    mediaRec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:6000000}:undefined);
-    mediaRec.ondataavailable=e=>{if(e.data&&e.data.size)exportChunks.push(e.data);};
-    mediaRec.onstop=onRecStop;
-    setRecUI(true);
-    const total=Math.round(player.totalDur()/1000);
-    overlayShow('Merekam video…','Durasi ± '+fmtTime(total)+' — biarkan tab ini terbuka & aktif',true);
-    mediaRec.start(500);
-    player.seek(0);player.stopAfter=null;
-    player.onFinish=()=>{try{if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();}catch(_){ }};
-    player.play();
-  }catch(e){
-    state.recording=false;setRecUI(false);overlayHide();exportNodes=[];
-    toast('Ekspor gagal: '+(e.message||e),'err');
-  }finally{
-    state.busy=false;
+    return dbp;
   }
-}
-function cancelAll(){
-  pipelineCancel=true;
-  if(state.recording){
-    exportCancel=true;
-    player.playing=false;
-    player.pauseAudio();
-    try{if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();}catch(_){ }
+  async function tx(store, mode, fn) {
+    const d = await db();
+    return new Promise((res, rej) => {
+      const t = d.transaction(store, mode);
+      const rq = fn(t.objectStore(store));
+      t.oncomplete = () => res(rq && rq.result);
+      t.onerror = () => rej(t.error);
+    });
   }
-  toast('Dibatalkan','info');
-}
+  return {
+    get: (store, k) => tx(store, 'readonly', s => s.get(k)),
+    put: (store, k, v) => tx(store, 'readwrite', s => s.put(v, k)),
+    del: (store, k) => tx(store, 'readwrite', s => s.delete(k)),
+    keys: (store) => tx(store, 'readonly', s => s.getAllKeys()),
+    getAll: (store) => tx(store, 'readonly', s => s.getAll()),
+  };
+})();
+async function cacheGet(key) { try { return await IDB.get('cache', key); } catch { return null; } }
+async function cachePut(key, v) { try { await IDB.put('cache', key, v); } catch (e) { console.warn('cache put gagal', e); } }
+async function cacheClear() { try { const ks = await IDB.keys('cache'); await Promise.all(ks.map(k => IDB.del('cache', k))); return ks.length; } catch { return 0; } }
 
-/* ================= Auth Puter ================= */
-function requireAuth(){
-  if(typeof puter==='undefined'){toast('SDK Puter belum termuat — periksa koneksi internet','err');return false;}
-  let signed=true;
-  try{const s=puter.auth.isSignedIn();signed=(typeof s==='boolean')?s:true;}catch(_){signed=true;}
-  if(!signed){toast('Masuk dulu dengan akun Puter (gratis) untuk memakai AI','warn');signIn();return false;}
-  return true;
-}
-async function refreshAuth(){
-  if(typeof puter==='undefined'){
-    $('#sdkWarn').textContent='⚠️ SDK Puter gagal dimuat — periksa koneksi internet lalu muat ulang halaman.';
-    return;
-  }
-  try{
-    const s=puter.auth.isSignedIn();
-    const signed=(typeof s==='boolean')?s:false;
-    state.user=signed?await puter.auth.getUser():null;
-  }catch(_){state.user=null;}
-  updateAuthUI();
-}
-async function signIn(){
-  if(typeof puter==='undefined')return toast('SDK Puter belum termuat','err');
-  try{
-    await puter.auth.signIn();
-    await refreshAuth();
-    toast('Selamat datang, '+((state.user&&state.user.username)||'kreator')+'! 👋','success');
-  }catch(_){/* popup ditutup user */}
-}
-function signOut(){
-  try{puter.auth.signOut();}catch(_){ }
-  state.user=null;updateAuthUI();
-  toast('Sudah keluar dari Puter','info');
-}
-function updateAuthUI(){
-  const signed=!!state.user;
-  $('#authBanner').hidden=signed;
-  $('#btnSignIn').hidden=signed;
-  $('#btnSignOut').hidden=!signed;
-  $('#authChip').hidden=!signed;
-  $('#userName').textContent=state.user?(state.user.username||'kreator'):'';
-}
+/* ---------------- State ---------------- */
+const state = {
+  demo: sessionStorage.getItem('edu-demo') === '1' || new URLSearchParams(location.search).get('demo') === '1',
+  counters: { aiCalls: 0, cacheHits: 0 },
+  project: null,           // proyek aktif
+  projects: [],            // daftar meta proyek
+  batchBusy: false,
+};
 
-/* ================= Simpan / muat proyek ================= */
-function saveLocal(){
-  try{
-    localStorage.setItem('eduvid_v1',JSON.stringify({
-      topic:$('#inpTopic').value,level:$('#selLevel').value,dur:$('#selDuration').value,style:$('#selStyle').value,
-      voice:state.voice,kar:state.kar,speed:state.speed,naturalize:state.naturalize,
-      scenes:state.scenes.map(s=>({judul:s.judul,narasi:s.narasi,visual:s.visual}))
-    }));
-  }catch(_){ }
+function newScene(over) {
+  const eco = state.project ? state.project.ecoMode : true;
+  return Object.assign({
+    id: uid(), title: '', narration: '', videoPrompt: '', onScreenText: '',
+    mediaType: eco ? 'text' : 'video',
+    imageData: '', videoBlob: null, videoUrl: '', videoMime: '', videoDur: 0,
+    audioBlob: null, audioUrl: '', audioDur: 0,
+    visStatus: 'idle', audStatus: 'idle', visErr: '', audErr: '', fromCache: false,
+  }, over || {});
 }
-function saveLocalDebounced(){clearTimeout(_dbT);_dbT=setTimeout(saveLocal,600);}
-function loadLocal(){
-  try{
-    const d=JSON.parse(localStorage.getItem('eduvid_v1')||'null');
-    if(!d)return;
-    $('#inpTopic').value=d.topic||'';
-    if(d.level)$('#selLevel').value=d.level;
-    if(d.dur)$('#selDuration').value=d.dur;
-    if(d.style)$('#selStyle').value=d.style;
-    state.voice=d.voice||'auto-iklan';
-    if(!document.querySelector('#selVoice option[value="'+state.voice+'"]'))state.voice='auto-iklan';
-    state.kar=VOICE_KAR[d.kar]?d.kar:'iklan';
-    state.speed=+d.speed||1;
-    state.naturalize=d.naturalize!==false;
-    $('#selVoice').value=state.voice;
-    $('#selKar').value=state.kar;
-    $('#rngSpeed').value=String(state.speed);
-    $('#chkNatural').checked=state.naturalize;
-    if(Array.isArray(d.scenes)&&d.scenes.length){
-      state.scenes=d.scenes.map(normalizeScene);
-      renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();
-      setTimeout(()=>toast('Proyek terakhir dipulihkan — buat ulang gambar & suara bila perlu','info'),800);
-    }
-  }catch(_){ }
+function newProject(over) {
+  return Object.assign({
+    id: uid(), title: '', topic: '', level: LEVELS[0], tone: TONES[0], style: IMAGE_STYLES[0].id,
+    language: 'id-ID', chatModel: AI_MODELS[0].id, aspect: '16:9', sceneCount: 5,
+    ecoMode: true, videoModel: VIDEO_MODELS[0].id, videoSeconds: 4, videoRes: '480p', videoTest: false,
+    autoFallback: true, scenes: [], step: 1, createdAt: Date.now(), updatedAt: Date.now(),
+  }, over || {});
 }
-
-/* ================= Overlay & toast ================= */
-function overlayShow(title,sub,cancellable){
-  $('#ovTitle').textContent=title;
-  $('#ovSub').textContent=sub||'';
-  $('#ovCancel').hidden=!cancellable;
-  $('#overlay').hidden=false;
-}
-function overlaySub(s){$('#ovSub').textContent=s;}
-function overlayHide(){$('#overlay').hidden=true;}
-function toast(msg,type){
-  type=type||'info';
-  const t=document.createElement('div');
-  t.className='toast '+type;t.textContent=msg;
-  $('#toasts').appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(14px)';},3200);
-  setTimeout(()=>t.remove(),3650);
-}
-
-/* ================= Event handler scene ================= */
-function sceneClickHandler(e){
-  const btn=e.target.closest('[data-act]');if(!btn)return;
-  const card=btn.closest('.scene-card');if(!card)return;
-  const sc=state.scenes.find(s=>s.id===+card.dataset.id);if(!sc)return;
-  const act=btn.dataset.act;
-  if(act==='up'||act==='down'){
-    const i=state.scenes.indexOf(sc),j=act==='up'?i-1:i+1;
-    if(j<0||j>=state.scenes.length)return;
-    state.scenes.splice(j,0,state.scenes.splice(i,1)[0]);
-    renderScenes();renderTimeline();saveLocal();
-  }else if(act==='del'){
-    if(state.scenes.length<=1){toast('Minimal harus ada 1 scene','warn');return;}
-    if(!confirm('Hapus scene ini?'))return;
-    const i=state.scenes.indexOf(sc);
-    if(sc.playback&&sc.playback.el){try{sc.playback.el.pause();}catch(_){ }}
-    state.scenes.splice(i,1);
-    if(i<player.idx)player.idx--;
-    else if(i===player.idx){player.t=0;if(player.playing)player.resumeAudio();}
-    renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();saveLocal();
-  }else if(act==='vis'){
-    const row=card.querySelector('.sc-visual-row');row.hidden=!row.hidden;
-  }else if(act==='img'){
-    if(state.busy)return toast('Tunggu proses selesai ya','warn');
-    if(!requireAuth())return;
-    btn.disabled=true;btn.textContent='⏳…';
-    genImageFor(sc).then(()=>saveLocal()).catch(err=>toast('Gambar gagal: '+(err.message||err),'err'));
-  }else if(act==='voice'){
-    if(state.busy)return toast('Tunggu proses selesai ya','warn');
-    if(!requireAuth())return;
-    btn.disabled=true;btn.textContent='⏳…';
-    genVoiceFor(sc).then(()=>saveLocal()).catch(err=>toast('Suara gagal: '+(err.message||err),'err'));
-  }else if(act==='test'){
-    player.playOne(state.scenes.indexOf(sc));
-  }
-}
-function sceneInputHandler(e){
-  const card=e.target.closest('.scene-card');if(!card)return;
-  const sc=state.scenes.find(s=>s.id===+card.dataset.id);if(!sc)return;
-  if(e.target.classList.contains('sc-nar')){
-    sc.narasi=e.target.value;sc.chunks=null;
-    if(sc.playback)sc.stale=true;
-    const mi=card.querySelector('.sc-meta-info');
-    if(mi)mi.textContent=sc.narasi.length+' karakter · ≈ '+Math.round(estSec(sc.narasi))+' dtk';
-    const du=card.querySelector('.sc-dur');
-    if(du)du.textContent='≈ '+Math.round(scDurSec(sc))+' dtk';
-    const sv=card.querySelector('.st-voice');
-    if(sv&&sc.playback&&sc.playback.type==='puter'){sv.className='pill st-voice warn';sv.textContent='🎙️ ⟳';}
-    saveLocalDebounced();updateToolbar();renderTimelineDebounced();
-    autoGrow(e.target);
-  }else if(e.target.classList.contains('sc-title')){
-    sc.judul=e.target.value;saveLocalDebounced();
-  }else if(e.target.classList.contains('sc-visual')){
-    sc.visual=e.target.value;saveLocalDebounced();
-  }
-}
-function renderTimelineDebounced(){clearTimeout(_rtT);_rtT=setTimeout(renderTimeline,400);}
-function spaceHandler(e){
-  if(e.code!=='Space')return;
-  if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;
-  if(state.recording)return;
-  e.preventDefault();
-  player.toggle();
-}
-function updateSpeedLabel(){
-  const v=state.speed;
-  const lbl=v<0.9?'Santai':v>1.1?'Cepat':'Normal';
-  $('#speedLabel').textContent=v.toFixed(2)+'× · '+lbl;
-}
-function renderChips(){
-  TOPIC_CHIPS.forEach(pair=>{
-    const b=document.createElement('button');
-    b.className='chip';b.type='button';b.textContent=pair[0];b.dataset.t=pair[1];
-    $('#topicChips').appendChild(b);
+/** Bersihkan transient (object URL) sebelum disimpan — TANPA JSON.stringify agar Blob utuh. */
+function serializeProject(p) {
+  return Object.assign({}, p, {
+    scenes: p.scenes.map(s => Object.assign({}, s, {
+      videoUrl: '', audioUrl: '',
+      visStatus: (s.videoBlob || s.imageData) ? 'done' : 'idle',
+      audStatus: s.audioBlob ? 'done' : 'idle',
+      visErr: '', audErr: '',
+    })),
   });
 }
-function wireEvents(){
-  $('#btnSignIn').onclick=signIn;
-  $('#btnSignOut').onclick=signOut;
-  $('#btnGenScript').onclick=generateProject;
-  $('#btnAddScene').onclick=addScene;
-  $('#btnGenAllImgs').onclick=()=>generateAll('img');
-  $('#btnGenAllVoices').onclick=()=>generateAll('voice');
-  $('#btnTestVoice').onclick=testVoice;
-  $('#selVoice').onchange=e=>{state.voice=e.target.value;saveLocal();toast('Mesin suara: '+(VOICE_LABELS[state.voice]||state.voice),'info');};
-  $('#selKar').onchange=e=>{state.kar=e.target.value;saveLocal();toast('Karakter bicara: '+e.target.selectedOptions[0].text,'info');};
-  $('#rngSpeed').oninput=e=>{state.speed=+e.target.value;updateSpeedLabel();updateToolbar();renderTimeline();saveLocalDebounced();};
-  $('#chkNatural').onchange=e=>{state.naturalize=e.target.checked;saveLocal();};
-  $('#btnPlay').onclick=()=>player.toggle();
-  $('#btnPrev').onclick=()=>player.step(-1);
-  $('#btnNext').onclick=()=>player.step(1);
-  $('#btnStop').onclick=()=>player.stop();
-  $('#btnExport').onclick=exportVideo;
-  $('#ovCancel').onclick=cancelAll;
-  $('#timeline').onclick=e=>{const seg=e.target.closest('.seg');if(!seg)return;player.playOne(+seg.dataset.i);};
-  $('#topicChips').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;$('#inpTopic').value=c.dataset.t;$('#inpTopic').focus();};
-  $('#inpTopic').addEventListener('input',saveLocalDebounced);
-  $('#selLevel').onchange=saveLocal;
-  $('#selDuration').onchange=saveLocal;
-  $('#selStyle').onchange=saveLocal;
-  const list=$('#scenesList');
-  list.addEventListener('click',sceneClickHandler);
-  list.addEventListener('input',sceneInputHandler);
-  window.addEventListener('keydown',spaceHandler);
+function hydrateProject(p) {
+  const asBlob = v => (v instanceof Blob ? v : null);
+  p.scenes = (p.scenes || []).map(s => {
+    s.videoBlob = asBlob(s.videoBlob);
+    s.audioBlob = asBlob(s.audioBlob);
+    s.videoUrl = s.videoBlob ? URL.createObjectURL(s.videoBlob) : '';
+    s.audioUrl = s.audioBlob ? URL.createObjectURL(s.audioBlob) : '';
+    s.visStatus = (s.videoBlob || s.imageData) ? 'done' : 'idle';
+    s.audStatus = s.audioBlob ? 'done' : 'idle';
+    s.fromCache = !!s.fromCache;
+    return s;
+  });
+  return p;
+}
+let saveTimer = null;
+function touch(imm) {
+  if (!state.project) return;
+  state.project.updatedAt = Date.now();
+  clearTimeout(saveTimer);
+  const doSave = () => {
+    if (!state.project) return;
+    IDB.put('projects', state.project.id, serializeProject(state.project)).catch(() => {});
+    refreshSaveHint();
+  };
+  if (imm) doSave(); else saveTimer = setTimeout(doSave, 700);
+}
+function refreshSaveHint() {
+  const el = $('#saveHint'); if (!el || !state.project) return;
+  el.textContent = '✓ Tersimpan otomatis · ' + new Date(state.project.updatedAt).toLocaleTimeString('id-ID');
+}
+async function loadProjects() {
+  try {
+    const all = await IDB.getAll('projects');
+    state.projects = (all || []).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  } catch { state.projects = []; }
 }
 
-/* ================= Init ================= */
-function init(){
-  renderChips();
-  wireEvents();
-  loadLocal();
-  updateSpeedLabel();
-  updateToolbar();
-  renderTimeline();
-  drawFrame();
-  if(window.speechSynthesis){try{speechSynthesis.getVoices();}catch(_){ }}
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(!state.scenes.length)drawFrame();});
-  refreshAuth();
+/* ---------------- Lapisan AI (Puter / Demo) ---------------- */
+let puterReady = null, puterLoadPromise = null;
+/** Muat script Puter.js hanya saat dibutuhkan (lazy) — menghindari popup origin di file:// saat halaman dibuka. */
+function loadPuterScript() {
+  if (window.puter) return Promise.resolve();
+  if (puterLoadPromise) return puterLoadPromise;
+  puterLoadPromise = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://js.puter.com/v2/';
+    s.onload = () => res();
+    s.onerror = () => { puterLoadPromise = null; rej(new Error('Gagal memuat Puter.js — periksa koneksi internet lalu coba lagi.')); };
+    document.head.appendChild(s);
+  });
+  return puterLoadPromise;
 }
-window.addEventListener('load',init);
-</script>
-</body>
-</html>
+function getPuter(timeoutMs) {
+  if (state.demo) return Promise.reject(new Error('DEMO'));
+  if (puterReady) return puterReady;
+  puterReady = (async () => {
+    try {
+      let loadErr = null;
+      for (let attempt = 0; attempt < 2; attempt++) { // retry 2× untuk jaringan flaky
+        try { await loadPuterScript(); loadErr = null; break; }
+        catch (e) { loadErr = e; await sleep(1500); }
+      }
+      if (loadErr && !(window.puter && window.puter.ai)) throw loadErr;
+      const t0 = Date.now();
+      while (Date.now() - t0 < (timeoutMs || 15000)) {
+        if (window.puter && window.puter.ai) return window.puter;
+        await sleep(200);
+      }
+      throw new Error('Puter.js gagal dimuat. Periksa koneksi internet lalu muat ulang halaman.');
+    } catch (e) {
+      puterReady = null; // jangan cache rejection — panggilan berikutnya boleh mencoba lagi
+      throw e;
+    }
+  })();
+  return puterReady;
+}
+function friendly(err, what) {
+  const m = (err && (err.message || err.error)) ? String(err.message || err.error) : String(err || '');
+  const code = err && err.code ? String(err.code) : '';
+  const all = (m + ' ' + code).toLowerCase();
+  if (all.includes('demo')) return new Error('Mode Demo aktif — keluar dari demo untuk memakai AI sungguhan.');
+  if (all.includes('insufficient_funds') || all.includes('insufficient') || /429|quota|limit|exceed|credit/.test(all)) {
+    return new Error('Kuota kredit AI-mu kemungkinan habis/terbatas untuk ' + what + '. Tips: aktifkan 🧪 Klip contoh gratis, pilih model video lebih hemat, kecilkan resolusi, atau pakai tipe scene Teks Animasi / Unggahan (0 kredit).');
+  }
+  if (all.includes('auth') || all.includes('sign') || all.includes('permission') || all.includes('403') || all.includes('401') || all.includes('access_denied')) {
+    return new Error('Puter meminta otorisasi untuk ' + what + '. Klik tombol lagi lalu selesaikan popup yang muncul (boleh mode tamu).');
+  }
+  if (all.includes('moderation')) return new Error('Permintaan ditolak filter konten. Ubah prompt-nya dengan kata lain.');
+  return new Error(m || ('Gagal ' + what + ' — coba lagi.'));
+}
+
+/* ---- Chat (naskah) ---- */
+function extractChatText(resp) {
+  if (!resp) return '';
+  if (typeof resp === 'string') return resp;
+  const msg = resp.message;
+  if (msg && typeof msg.content === 'string') return msg.content;
+  if (msg && Array.isArray(msg.content)) return msg.content.map(c => (c && c.text) || '').join('\n');
+  if (typeof resp.text === 'string') return resp.text;
+  if (typeof resp.content === 'string') return resp.content;
+  try { return String(resp); } catch { return ''; }
+}
+async function aiChat(messages, model) {
+  if (state.demo) return demoChat(messages);
+  const puter = await getPuter();
+  let resp;
+  try { resp = model ? await puter.ai.chat(messages, { model }) : await puter.ai.chat(messages); }
+  catch (e) {
+    if (model) { try { resp = await puter.ai.chat(messages); } catch (e2) { throw friendly(e2, 'menulis naskah'); } }
+    else throw friendly(e, 'menulis naskah');
+  }
+  const text = extractChatText(resp).trim();
+  if (!text) throw new Error('AI mengembalikan respons kosong. Coba lagi / ganti model.');
+  state.counters.aiCalls++;
+  return text;
+}
+
+/* ---- txt2img (cache) ---- */
+async function aiImage(prompt, opts) {
+  const key = 'img:' + hashStr(prompt.trim().toLowerCase());
+  if (!(opts && opts.force)) {
+    const hit = await cacheGet(key);
+    if (hit) { state.counters.cacheHits++; return { url: hit, cached: true }; }
+  }
+  let src;
+  if (state.demo) { src = await demoImage(prompt); }
+  else {
+    const puter = await getPuter();
+    try {
+      const out = await puter.ai.txt2img(prompt);
+      src = typeof out === 'string' ? out : (out && out.src) || String(out);
+    } catch (e) { throw friendly(e, 'membuat gambar'); }
+    if (!src) throw new Error('Gagal membuat gambar — respons kosong.');
+    state.counters.aiCalls++;
+  }
+  await cachePut(key, src);
+  return { url: src, cached: false };
+}
+
+/* ---- txt2speech (cache) ---- */
+async function aiSpeech(text, lang, opts) {
+  const clean = (text || '').trim() || ' ';
+  const key = 'tts:' + lang + ':' + hashStr(clean);
+  if (!(opts && opts.force)) {
+    const hit = await cacheGet(key);
+    if (hit) { state.counters.cacheHits++; return { blob: hit, url: URL.createObjectURL(hit), cached: true }; }
+  }
+  let blob;
+  if (state.demo) { blob = await demoSpeech(clean); }
+  else {
+    const puter = await getPuter();
+    const attempts = [[clean, { language: lang, engine: 'neural' }], [clean, { language: lang }], [clean]];
+    let lastErr = null;
+    let ok = false;
+    for (const [t, o] of attempts) {
+      try {
+        const el = await puter.ai.txt2speech(t, o);
+        const src = typeof el === 'string' ? el : (el && el.src) || String(el);
+        if (!src) throw new Error('URL audio tidak ditemukan');
+        const r = await fetch(src); if (!r.ok) throw new Error('Unduh audio gagal (' + r.status + ')');
+        blob = await r.blob(); ok = true; break;
+      } catch (e) {
+        lastErr = e;
+        if (String((e && e.message) || '').includes('Kuota')) throw e;
+      }
+    }
+    if (!ok) throw friendly(lastErr, 'membuat narasi suara');
+    state.counters.aiCalls++;
+  }
+  await cachePut(key, blob);
+  return { blob, url: URL.createObjectURL(blob), cached: false };
+}
+
+/* ---- txt2vid (cache + fallback) ---- */
+function videoSizeFor(aspect, res) {
+  const map = { '16:9': { '480p': '854x480', '720p': '1280x720', '1080p': '1920x1080' }, '9:16': { '480p': '480x854', '720p': '720x1280', '1080p': '1080x1920' }, '1:1': { '480p': '480x480', '720p': '720x720', '1080p': '1080x1080' } };
+  return (map[aspect] || map['16:9'])[res] || '1280x720';
+}
+async function aiVideo(scene, p, opts) {
+  const prompt = (scene.videoPrompt || scene.imagePrompt || scene.narration || 'educational abstract motion background').trim();
+  const size = videoSizeFor(p.aspect, p.videoRes);
+  const refTag = (opts && opts.refDataUrl) ? ':i2v:' + hashStr(String(opts.refDataUrl).slice(-2048)) : '';
+  const key = 'vid:' + p.videoModel + ':' + p.videoSeconds + ':' + size + ':' + (p.videoTest ? 't' : 'r') + refTag + ':' + hashStr(prompt.toLowerCase());
+  if (!(opts && opts.force)) {
+    const hit = await cacheGet(key);
+    if (hit) { state.counters.cacheHits++; return { blob: hit, cached: true, sample: p.videoTest }; }
+  }
+  let blob;
+  if (state.demo) { blob = await demoVideo(prompt, scene); }
+  else {
+    const puter = await getPuter();
+    const options = {
+      model: p.videoModel,
+      seconds: Number(p.videoSeconds) || 4,
+      size,
+    };
+    if (p.videoTest) options.test_mode = true;
+    if (opts && opts.refDataUrl) options.input_reference = opts.refDataUrl; // image-to-video
+    let out;
+    try {
+      out = await puter.ai.txt2vid(prompt, options);
+    } catch (e) { throw friendly(e, 'membuat video AI'); }
+    const src = typeof out === 'string' ? out : (out && out.src) || String(out);
+    if (!src) throw new Error('Gagal membuat video — respons kosong.');
+    const r = await fetch(src);
+    if (!r.ok) throw new Error('Unduh video gagal (' + r.status + ')');
+    blob = await r.blob();
+    state.counters.aiCalls++;
+  }
+  await cachePut(key, blob);
+  return { blob, cached: false, sample: p.videoTest };
+}
+
+/* ---------------- Naskah (prompt + parser) ---------------- */
+function buildScriptPrompt(o) {
+  const st = IMAGE_STYLES.find(s => s.id === o.style);
+  const styleLabel = st ? st.label + ' (' + st.prompt + ')' : o.style;
+  const langLabel = o.language === 'id-ID' ? 'Bahasa Indonesia yang baik dan mudah dipahami' : 'Bahasa berkode "' + o.language + '"';
+  const ecoNote = o.ecoMode ? ' Narasi dibuat ringkas dan padat (sekitar 30-50 kata per scene) demi durasi singkat dan hemat.' : '';
+  const system = [
+    'Kamu adalah penulis naskah video edukasi profesional dan pengajar kreatif.',
+    'Tugasmu menulis naskah video edukasi dalam ' + langLabel + '.',
+    'Keluaran WAJIB berupa JSON murni — TANPA penjelasan, TANPA kalimat pembuka, TANPA blok kode markdown.',
+    'Skema JSON: {"title": string, "scenes": [{"title": string, "narration": string, "videoPrompt": string, "onScreenText": string}]}',
+    'Aturan penulisan:',
+    '- "title" (judul video) menarik dan relevan.',
+    '- Setiap scene: "narration" berisi narasi siap dibacakan 35-70 kata, mengalir, 1-3 kalimat.' + ecoNote,
+    '- "onScreenText" teks pendek maksimal 7 kata untuk ditampilkan di layar.',
+    '- "videoPrompt" HARUS bahasa Inggris untuk generator video AI: deskripsikan subjek, GERAKAN yang terlihat (motion), gaya visual, sudut kamera, suasana. Satu adegan kontinu. Tanpa teks/tulisan di dalam video, tanpa merek.' ,
+    '- Alur: pembuka memancing rasa ingin tahu, isi bertahap runtut, penutup rangkuman + ajakan bertindak.',
+  ].join('\n');
+  const user = [
+    'Topik materi: ' + o.topic,
+    (o.title && o.title.trim()) ? 'Judul yang diinginkan: ' + o.title : 'Buatkan judul terbaik.',
+    'Jenjang audiens: ' + o.level,
+    'Gaya penyampaian: ' + o.tone,
+    'Jumlah scene: tepat ' + o.sceneCount + ' scene.',
+    'Gaya visual: ' + styleLabel,
+  ].join('\n');
+  return [{ role: 'system', content: system }, { role: 'user', content: user }];
+}
+function parseScript(raw, sceneCount) {
+  const text = (raw || '').trim();
+  const candidates = [];
+  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence && fence[1]) candidates.push(fence[1].trim());
+  candidates.push(text);
+  const start = text.indexOf('{');
+  if (start !== -1) {
+    let depth = 0, inStr = false, esc2 = false;
+    for (let i = start; i < text.length; i++) {
+      const ch = text[i];
+      if (inStr) { if (esc2) esc2 = false; else if (ch === '\\') esc2 = true; else if (ch === '"') inStr = false; continue; }
+      if (ch === '"') inStr = true; else if (ch === '{') depth++;
+      else if (ch === '}') { depth--; if (depth === 0) { candidates.push(text.slice(start, i + 1)); break; } }
+    }
+  }
+  for (const c of candidates) {
+    try {
+      const parsed = JSON.parse(c);
+      const scenes = (parsed.scenes || []).map((s, i) => ({
+        title: String((s && s.title) || ('Bagian ' + (i + 1))).trim(),
+        narration: String((s && s.narration) || '').trim(),
+        videoPrompt: String((s && s.videoPrompt) || (s && s.imagePrompt) || '').trim(),
+        onScreenText: String((s && s.onScreenText) || '').trim(),
+      })).filter(s => s.narration);
+      if (scenes.length) return { title: String(parsed.title || '').trim(), scenes: scenes.slice(0, Math.max(sceneCount, scenes.length)) };
+    } catch (e) { /* kandidat berikutnya */ }
+  }
+  const paras = text.split(/\n{2,}/).map(p => p.replace(/^[-*\d.\s]+/, '').trim()).filter(p => p.split(/\s+/).length >= 8);
+  if (paras.length >= 2) return { title: '', scenes: paras.map((p, i) => ({ title: 'Bagian ' + (i + 1), narration: p, videoPrompt: '', onScreenText: '' })) };
+  throw new Error('Gagal membaca struktur naskah dari respons AI. Coba generate ulang.');
+}
+
+/* ---------------- Mock Mode Demo (0 kredit) ---------------- */
+function demoChat(messages) {
+  const p = state.project || {};
+  const n = clamp(p.sceneCount || 5, 3, 10);
+  const topic = (p.topic || 'fotosintesis pada tumbuhan').slice(0, 80);
+  const banks = [
+    { t: 'Pembuka Menarik', n: 'Pernahkah kamu bertanya-tanya tentang ' + topic + '? Di video ini kita akan menjelajahinya langkah demi langkah dengan cara yang menyenangkan. Siapkan dirimu, karena jawabannya lebih menakjubkan daripada yang kamu bayangkan!' , v: 'cinematic opening shot, slow push-in camera, vibrant educational animation style, glowing particles, sense of wonder' },
+    { t: 'Konsep Dasar', n: 'Mari kita mulai dari konsep dasarnya. ' + topic.charAt(0).toUpperCase() + topic.slice(1) + ' merupakan fondasi penting yang perlu dipahami terlebih dahulu. Bayangkan seperti menyiapkan bahan masakan sebelum mulai memasak — setiap komponen punya peran masing-masing.', v: 'clean animated diagram assembling itself, flat illustration style, smooth camera pan, bright colors' },
+    { t: 'Cara Kerjanya', n: 'Sekarang bagian seru: bagaimana prosesnya bekerja. Setiap tahap terhubung satu sama lain membentuk alur yang utuh. Perhatikan betapa rapihnya semuanya tersusun — seperti orkestra yang dimainkan selaras.', v: 'dynamic process visualization, gears and flowing energy, orbiting camera, colorful 3d render style' },
+    { t: 'Contoh di Kehidupan', n: 'Supaya makin mudah, mari lihat contoh nyata di sekitar kita. Fenomena ini terjadi setiap hari, bahkan mungkin sambil kamu membaca ini. Ilmu memang menyembunyikan keajaiban di balik hal-hal biasa.', v: 'real-life scene montage, warm natural lighting, gentle dolly shot, relatable everyday moments' },
+    { t: 'Fakta Menarik', n: 'Tahukah kamu? Ada fakta mengejutkan tentang ' + topic + ' yang jarang dibahas. Fakta ini akan mengubah cara pandangmu — dan membuatmu ingin menceritakannya kepada teman-temanmu.', v: 'surprising reveal animation, zoom burst transition, glowing highlights, playful infographic style' },
+    { t: 'Kesalahan Umum', n: 'Banyak orang keliru memahami bagian ini. Mari kita luruskan bersama agar konsepnya benar-benar jelas dan tidak tertukar lagi di kemudian hari.', v: 'split screen comparison animation, red cross and green check marks, clean modern style' },
+    { t: 'Langkah Praktis', n: 'Saatnya praktik! Coba ikuti langkah-langkah sederhana ini di rumah. Kamu hanya butuh alat-alat seadanya dan sedikit rasa penasaran. Mulailah dari langkah paling mudah.', v: 'step-by-step tutorial animation, hands demonstrating, top-down camera angle, cheerful tone' },
+    { t: 'Rangkuman', n: 'Mari kita rangkum pelajaran hari ini: tiga poin kunci yang wajib kamu ingat. Jika tiga hal ini paham, kamu sudah selangkah lebih maju dari kemarin.', v: 'summary board animation, icons popping in sequence, minimal background, confident pacing' },
+    { t: 'Ajakan Bertindak', n: 'Bagaimana, makin tertarik kan? Jangan berhenti di sini — teruslah bertanya dan mencoba. Sampai jumpa di video berikutnya, dan jangan lupa bagikan kepada temanmu yang juga penasaran!', v: 'uplifting closing shot, confetti particles, camera pull-back reveal, warm gradient background' },
+    { t: 'Refleksi Akhir', n: 'Sebelum pergi, renungkan sejenak: bagaimana kamu akan menggunakan pengetahuan ini mulai hari ini? Ilmu yang dipraktikkan adalah ilmu yang benar-benar hidup.', v: 'thoughtful cinematic shot, golden hour lighting, slow motion, inspiring mood' },
+  ];
+  const scenes = [];
+  for (let i = 0; i < n; i++) {
+    const b = banks[Math.min(i, banks.length - 1)];
+    scenes.push({ title: b.t, narration: b.n, videoPrompt: b.v, onScreenText: b.t.slice(0, 28) });
+  }
+  state.counters.aiCalls++;
+  return sleep(1400).then(() => JSON.stringify({ title: 'Mengenal ' + topic.charAt(0).toUpperCase() + topic.slice(1), scenes }));
+}
+function demoImage(prompt) {
+  state.counters.aiCalls++;
+  const words = esc(prompt.split(/\s+/).slice(0, 4).join(' '));
+  const hue = Math.floor(Math.random() * 360);
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(' + hue + ',60%,24%)"/><stop offset="1" stop-color="hsl(' + ((hue + 70) % 360) + ',70%,34%)"/></linearGradient></defs>' +
+    '<rect width="640" height="360" fill="url(#g)"/>' +
+    '<circle cx="' + (100 + Math.random() * 440) + '" cy="120" r="90" fill="rgba(255,255,255,.12)"/>' +
+    '<circle cx="' + (100 + Math.random() * 440) + '" cy="260" r="60" fill="rgba(0,0,0,.18)"/>' +
+    '<text x="320" y="188" font-size="30" font-weight="bold" text-anchor="middle" fill="#fff" font-family="sans-serif">🖼️ ' + words + '</text>' +
+    '<text x="320" y="222" font-size="14" text-anchor="middle" fill="rgba(255,255,255,.75)" font-family="sans-serif">MODE DEMO — gambar simulasi</text></svg>';
+  return sleep(900).then(() => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+}
+function demoSpeech(text) {
+  const dur = clamp(wordCount(text) / 2.6, 2.5, 14);
+  const rate = 8000, n = Math.floor(dur * rate);
+  const buf = new ArrayBuffer(44 + n * 2), dv = new DataView(buf);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); ws(8, 'WAVEfmt '); dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, rate, true);
+  dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  ws(36, 'data'); dv.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const t = i / rate; dv.setInt16(44 + i * 2, Math.round(Math.sin(t * 2 * Math.PI * 110) * 1200 * Math.min(1, Math.min(t, dur - t) * 8)), true); }
+  return sleep(600).then(() => new Blob([buf], { type: 'audio/wav' }));
+}
+function demoVideo(prompt, scene) {
+  state.counters.aiCalls++;
+  return new Promise(resolve => {
+    const c = document.createElement('canvas'); c.width = 640; c.height = 360;
+    const x = c.getContext('2d');
+    const label = esc(((scene && scene.onScreenText) || prompt).split(/\s+/).slice(0, 3).join(' '));
+    const stream = c.captureStream(24);
+    const rec = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp8') ? 'video/webm;codecs=vp8' : 'video/webm' });
+    const chunks = []; rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    rec.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+    const t0 = performance.now();
+    (function frame() {
+      const t = (performance.now() - t0) / 1000;
+      const g = x.createLinearGradient(0, 0, 640, 360);
+      g.addColorStop(0, 'hsl(' + Math.floor((t * 60) % 360) + ',65%,30%)');
+      g.addColorStop(1, 'hsl(' + Math.floor((t * 60 + 90) % 360) + ',70%,20%)');
+      x.fillStyle = g; x.fillRect(0, 0, 640, 360);
+      const bx = 320 + Math.sin(t * 2) * 140, by = 180 + Math.cos(t * 1.6) * 70;
+      x.fillStyle = 'rgba(255,255,255,.16)'; x.beginPath(); x.arc(bx, by, 70 + Math.sin(t * 3) * 12, 0, 7); x.fill();
+      x.fillStyle = '#fff'; x.font = 'bold 30px sans-serif'; x.textAlign = 'center';
+      x.fillText('🎬 ' + label, 320, 175);
+      x.font = '14px sans-serif'; x.fillStyle = 'rgba(255,255,255,.8)';
+      x.fillText('MODE DEMO — klip simulasi', 320, 205);
+      if (t < 3.2) requestAnimationFrame(frame); else rec.stop();
+    })();
+    rec.start();
+    setTimeout(() => { try { if (rec.state !== 'inactive') rec.stop(); } catch (e) {} }, 9000); // pengaman
+  });
+}
+/* ================= UI ================= */
+const STEPS = [
+  { n: 1, l: 'Topik', s: 'Beri tahu AI' },
+  { n: 2, l: 'Naskah', s: 'Sunting scene' },
+  { n: 3, l: 'Visual & Suara', s: 'Video · narasi' },
+  { n: 4, l: 'Pratinjau', s: 'Render WebM' },
+];
+function maxStep() { return state.project && state.project.scenes.length ? 4 : 1; }
+function showView(v) {
+  $('#viewHome').classList.toggle('hide', v !== 'home');
+  $('#viewStudio').classList.toggle('hide', v !== 'studio');
+  $('#btnHome').classList.toggle('hide', v === 'home');
+  window.scrollTo({ top: 0 });
+}
+function renderStepper() {
+  const p = state.project; if (!p) return;
+  const mx = maxStep();
+  $('#stepper').innerHTML = STEPS.map((st, i) => {
+    const cls = st.n === p.step ? 'on' : (st.n < p.step ? 'done' : '');
+    const lock = st.n > mx ? ' lock' : '';
+    const line = i < STEPS.length - 1 ? '<div class="ste-line"></div>' : '';
+    return '<div class="steP ' + cls + lock + '" data-act="goto" data-n="' + st.n + '"><div class="step-n">' + (st.n < p.step ? '✓' : st.n) + '</div><div class="lbl">' + st.l + '<small>' + st.s + '</small></div></div>' + line;
+  }).join('');
+}
+function gotoStep(n) {
+  const p = state.project; if (!p) return;
+  n = clamp(n, 1, maxStep());
+  p.step = n; touch();
+  renderStepper();
+  $('#panel1').classList.toggle('hide', n !== 1);
+  $('#panel2').classList.toggle('hide', n !== 2);
+  $('#panel3').classList.toggle('hide', n !== 3);
+  $('#panel4').classList.toggle('hide', n !== 4);
+  if (n === 1) fillStep1();
+  if (n === 2) renderStep2();
+  if (n === 3) { renderStep3(); updateCostChips(); }
+  if (n === 4) { renderStep4(); Engine.prepare(); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function updateProjHeader() {
+  const p = state.project; if (!p) return;
+  $('#projTitle').textContent = p.title || p.topic || 'Proyek tanpa judul';
+}
+
+/* ---------------- Beranda ---------------- */
+function renderHome() {
+  $('#tplGrid').innerHTML = TEMPLATES.map((t, i) =>
+    '<div class="tpl" data-act="tpl" data-i="' + i + '"><span class="em">' + t.emoji + '</span><b>' + esc(t.title) + '</b><span>' + esc(t.level) + ' — klik untuk pakai topik ini</span></div>'
+  ).join('');
+  const list = $('#projList');
+  if (!state.projects.length) {
+    list.innerHTML = '<div class="empty">Belum ada proyek. Klik <b>“Mulai Buat Video”</b> atau pilih template di atas untuk memulai — proyek tersimpan otomatis di browser ini.</div>';
+    return;
+  }
+  list.innerHTML = state.projects.map(p => {
+    const nv = (p.scenes || []).length;
+    const d = new Date(p.updatedAt || p.createdAt || Date.now()).toLocaleString('id-ID');
+    return '<div class="proj"><div class="meta"><b>' + esc(p.title || p.topic || 'Tanpa judul') + '</b><span>' + nv + ' scene · ' + esc(d) + '</span></div>' +
+      '<button class="btn btn-sm btn-p" data-act="proj-open" data-id="' + p.id + '">Buka</button>' +
+      '<button class="btn btn-sm" data-act="proj-dup" data-id="' + p.id + '">Duplikat</button>' +
+      '<button class="btn btn-sm btn-bad" data-act="proj-del" data-id="' + p.id + '">Hapus</button></div>';
+  }).join('');
+}
+async function startProject(tpl) {
+  const p = newProject();
+  if (tpl) { p.topic = tpl.topic; p.level = tpl.level; p.title = tpl.title.replace(/^\s+/, ''); }
+  state.project = p;
+  await IDB.put('projects', p.id, serializeProject(p));
+  await loadProjects();
+  updateProjHeader(); showView('studio'); gotoStep(1);
+}
+async function openProject(id) {
+  const p = await IDB.get('projects', id);
+  if (!p) { toast('Proyek tidak ditemukan.', 'err'); return; }
+  state.project = hydrateProject(p);
+  updateProjHeader(); showView('studio'); gotoStep(clamp(p.step || 1, 1, maxStep()));
+  toast('Proyek <b>' + esc(p.title || 'tanpa judul') + '</b> dibuka.', 'ok');
+}
+async function dupProject(id) {
+  const p = await IDB.get('projects', id); if (!p) return;
+  const c = serializeProject(hydrateProject(JSON.parse(JSON.stringify(Object.assign({}, p, { scenes: p.scenes.map(s => Object.assign({}, s)) })))));
+  c.id = uid(); c.title = (p.title || 'Tanpa judul') + ' (salinan)'; c.createdAt = c.updatedAt = Date.now();
+  c.scenes = c.scenes.map(s => Object.assign(s, {
+    videoBlob: (p.scenes.find(o => o.id === s.id) || {}).videoBlob instanceof Blob ? p.scenes.find(o => o.id === s.id).videoBlob : null,
+    audioBlob: (p.scenes.find(o => o.id === s.id) || {}).audioBlob instanceof Blob ? p.scenes.find(o => o.id === s.id).audioBlob : null,
+  }));
+  await IDB.put('projects', c.id, c); await loadProjects(); renderHome();
+  toast('Proyek diduplikat.', 'ok');
+}
+async function delProject(id) {
+  const p = state.projects.find(x => x.id === id); if (!p) return;
+  const ok = await confirmModal('Hapus proyek?', 'Proyek <b>' + esc(p.title || 'tanpa judul') + '</b> beserta media-nya akan dihapus permanen dari browser ini.', 'Hapus');
+  if (!ok) return;
+  await IDB.del('projects', id); await loadProjects(); renderHome();
+  if (state.project && state.project.id === id) state.project = null;
+  toast('Proyek dihapus.', 'ok');
+}
+
+/* ---------------- Step 1: Topik ---------------- */
+function opts(list, sel) { return list.map(o => { const id = o.id || o, lb = o.label || o; return '<option value="' + esc(id) + '"' + (id === sel ? ' selected' : '') + '>' + esc(lb) + '</option>'; }).join(''); }
+function fillStep1() {
+  const p = state.project; if (!p) return;
+  $('#fTitle').value = p.title || '';
+  $('#fTopic').value = p.topic || '';
+  $('#fLevel').innerHTML = opts(LEVELS, p.level);
+  $('#fTone').innerHTML = opts(TONES, p.tone);
+  $('#fStyle').innerHTML = opts(IMAGE_STYLES, p.style);
+  $('#fLang').innerHTML = opts(VOICE_LANGS, p.language);
+  $('#fModel').innerHTML = opts(AI_MODELS, p.chatModel);
+  $('#fSceneCount').value = p.sceneCount; $('#fSceneCountLbl').textContent = p.sceneCount + ' scene';
+  $('#fEco').checked = p.ecoMode;
+  $('#fVideoModel').innerHTML = VIDEO_MODELS.map(m => '<option value="' + m.id + '"' + (m.id === p.videoModel ? ' selected' : '') + '>' + esc(m.label) + '</option>').join('');
+  $('#videoModelHint').textContent = (VIDEO_MODELS.find(m => m.id === p.videoModel) || {}).hint || '';
+  $('#fVidSec').value = p.videoSeconds; $('#fVidSecLbl').textContent = p.videoSeconds + ' detik';
+  $('#fVidRes').innerHTML = VID_RES.map(r => '<div class="rc' + (r.id === p.videoRes ? ' on' : '') + '" data-act="vres" data-id="' + r.id + '"><b>' + r.label + '</b><span>' + r.hint + '</span></div>').join('');
+  $('#fVidTest').checked = !!p.videoTest;
+  $('#fAspect').innerHTML = ASPECTS.map(a => '<div class="rc' + (a.id === p.aspect ? ' on' : '') + '" data-act="aspect" data-id="' + a.id + '"><b>' + a.label + '</b><span>' + a.hint + '</span></div>').join('');
+  $('#ecoDesc').textContent = p.ecoMode
+    ? 'Scene baru default Teks Animasi (0 kredit) · video ' + p.videoSeconds + ' dtk · resolusi hemat · batch melewati scene yang sudah berisi · fallback otomatis saat kuota habis.'
+    : 'Mode normal: scene baru default Video AI, resolusi penuh. Kuota kredit akan terpakai lebih cepat.';
+}
+function readStep1() {
+  const p = state.project; if (!p) return;
+  p.title = $('#fTitle').value.trim();
+  p.topic = $('#fTopic').value.trim();
+  p.level = $('#fLevel').value; p.tone = $('#fTone').value; p.style = $('#fStyle').value;
+  p.language = $('#fLang').value; p.chatModel = $('#fModel').value;
+  p.sceneCount = Number($('#fSceneCount').value) || 5;
+  p.ecoMode = $('#fEco').checked;
+  p.videoModel = $('#fVideoModel').value; p.videoSeconds = Number($('#fVidSec').value) || 4;
+  p.videoTest = $('#fVidTest').checked;
+  const vr = $('.rc.on', $('#fVidRes')); if (vr) p.videoRes = vr.dataset.id;
+  const asp = $('.rc.on', $('#fAspect')); if (asp) p.aspect = asp.dataset.id;
+}
+let genBusy = false;
+async function generateScript(force) {
+  if (genBusy) return;
+  const p = state.project;
+  readStep1();
+  if (!p.topic) { toast('Isi <b>materi/topik</b> dulu ya.', 'warn'); $('#fTopic').focus(); return; }
+  genBusy = true;
+  const st = $('#genStatus');
+  st.innerHTML = '<div class="spin"></div><p class="hint" style="text-align:center;margin-top:9px">' +
+    (state.demo ? '🧪 Mode demo menyusun naskah…' : 'AI sedang menulis naskah ' + p.sceneCount + ' scene… (±10-40 dtk)') + '</p>';
+  $('#btnGen').disabled = true;
+  try {
+    const raw = await aiChat(buildScriptPrompt(p), p.chatModel);
+    const script = parseScript(raw, p.sceneCount);
+    if (!p.title && script.title) p.title = script.title;
+    p.scenes = script.scenes.map(s => newScene({
+      title: s.title, narration: s.narration, videoPrompt: s.videoPrompt, onScreenText: s.onScreenText,
+      mediaType: p.ecoMode ? 'text' : 'video',
+    }));
+    touch(true);
+    updateProjHeader();
+    st.innerHTML = '<div class="note g">✅ <span>Naskah <b>' + p.scenes.length + ' scene</b> siap! Scene baru bertipe <b>' + (p.ecoMode ? 'Teks Animasi (0 kredit)' : 'Video AI') + '</b>. Lanjut sunting atau langsung buat visual.</span></div>';
+    toast('Naskah berhasil dibuat 🎉', 'ok');
+    setTimeout(() => gotoStep(2), 700);
+  } catch (e) {
+    st.innerHTML = '<div class="note w">⚠️ <span>' + esc(e.message) + '</span></div>';
+    if (!state.demo && /Puter\.js gagal dimuat/.test(e.message)) offerDemo('Puter belum termuat');
+  } finally {
+    genBusy = false; $('#btnGen').disabled = false;
+  }
+}
+function offerDemo(reason) {
+  confirmModal('Pakai Mode Demo?', reason + '. Mode Demo menyimulasikan seluruh alur AI <b>tanpa kredit</b> — cocok untuk mencoba UI. Keluar kapan saja lewat banner ungu.',
+    '🧪 Aktifkan Demo', 'Tidak, nanti saja').then(ok => { if (ok) enableDemo(true); });
+}
+function enableDemo(on) {
+  state.demo = on;
+  sessionStorage.setItem('edu-demo', on ? '1' : '0');
+  $('#demoBanner').classList.toggle('hide', !on);
+  updatePill();
+  if (on) toast('Mode Demo aktif — semua AI disimulasikan, 0 kredit.', 'ok');
+  if (state.project) { renderStepper(); const p = state.project; if (p.step === 2) renderStep2(); if (p.step === 3) { renderStep3(); updateCostChips(); } }
+}
+async function regenOneScene(sceneId) {
+  const p = state.project; const idx = p.scenes.findIndex(s => s.id === sceneId); if (idx < 0) return;
+  const s = p.scenes[idx];
+  const ok = await confirmModal('Buat ulang scene ' + (idx + 1) + '?', 'AI akan menulis ulang <b>' + esc(s.title || 'scene ini') + '</b> berdasarkan topik proyek. Narasi & prompt saat ini diganti.', 'Buat ulang');
+  if (!ok) return;
+  toast('Menulis ulang scene…');
+  try {
+    const ctx = 'Topik: ' + p.topic + '\nTotal scene: ' + p.scenes.length + '\nScene ini adalah scene nomor ' + (idx + 1) + ' dengan judul lama: "' + s.title + '".' +
+      (p.scenes[idx - 1] ? '\nScene sebelumnya berjudul: "' + p.scenes[idx - 1].title + '".' : '') +
+      (p.scenes[idx + 1] ? '\nScene sesudahnya berjudul: "' + p.scenes[idx + 1].title + '".' : '') +
+      '\nTulis ulang scene ini. Keluaran WAJIB JSON murni skema: {"title":string,"narration":string,"videoPrompt":string,"onScreenText":string} — narasi 35-70 kata dalam bahasa proyek, videoPrompt bahasa Inggris (subjek + gerakan + kamera), tanpa markdown.';
+    const raw = await aiChat([{ role: 'user', content: ctx }], p.chatModel);
+    const parsed = parseScript(raw, 1);
+    if (parsed.scenes[0]) {
+      Object.assign(s, { title: parsed.scenes[0].title || s.title, narration: parsed.scenes[0].narration, videoPrompt: parsed.scenes[0].videoPrompt, onScreenText: parsed.scenes[0].onScreenText });
+      touch(); renderStep2();
+      toast('Scene berhasil dibuat ulang.', 'ok');
+    }
+  } catch (e) { toast(esc(e.message), 'err', 6000); }
+}
+
+/* ---------------- Step 2: Editor naskah ---------------- */
+function renderStep2() {
+  const p = state.project; if (!p) return;
+  const list = $('#sceneList');
+  if (!p.scenes.length) { list.innerHTML = '<div class="empty">Belum ada scene — buat naskah dulu di Langkah 1.</div>'; return; }
+  list.innerHTML = p.scenes.map((s, i) => {
+    return '<div class="scard" data-scene="' + s.id + '"><div class="scard-h">' +
+      '<div class="scard-n">' + (i + 1) + '</div><div class="ttl">' + esc(s.title || 'Scene ' + (i + 1)) + '</div>' +
+      badgeMedia(s) +
+      '<button class="iconbtn" data-act="sc-up" data-id="' + s.id + '" title="Naik">▲</button>' +
+      '<button class="iconbtn" data-act="sc-down" data-id="' + s.id + '" title="Turun">▼</button>' +
+      '<button class="iconbtn" data-act="sc-regen" data-id="' + s.id + '" title="Buat ulang dengan AI">🔄</button>' +
+      '<button class="iconbtn" data-act="sc-del" data-id="' + s.id + '" title="Hapus scene">🗑️</button></div>' +
+      '<div class="scard-b"><div class="srow">' +
+      '<div class="field"><label>Judul scene</label><input class="in" data-bind="title" value="' + esc(s.title) + '" /></div>' +
+      '<div class="field"><label>Teks layar <em>maks ±7 kata</em></label><input class="in" data-bind="onScreenText" value="' + esc(s.onScreenText) + '" /></div>' +
+      '</div><div class="field"><label>Narasi (dibaca TTS) <span class="wc" id="wc-' + s.id + '">' + wordCount(s.narration) + ' kata</span></label>' +
+      '<textarea class="ta" data-bind="narration">' + esc(s.narration) + '</textarea></div>' +
+      '<div class="field"><label>Prompt video AI (Inggris — subjek + gerakan + kamera)</label>' +
+      '<textarea class="ta" data-bind="videoPrompt" style="min-height:56px" placeholder="cth: colorful animated plant cell absorbing sunlight, gentle camera orbit, bright flat illustration style">' + esc(s.videoPrompt) + '</textarea></div>' +
+      '</div></div>';
+  }).join('');
+}
+function badgeMedia(s) {
+  const t = MEDIA_TYPES.find(m => m.id === s.mediaType) || MEDIA_TYPES[0];
+  if (s.visStatus === 'pending') return '<span class="badge b-warn">⏳ memproses…</span>';
+  if (s.visStatus === 'error') return '<span class="badge b-err">gagal</span>';
+  const done = (s.videoBlob || s.imageData) ? ' ✓' : '';
+  return '<span class="badge ' + t.badge + '">' + t.icon + ' ' + t.label + done + '</span>';
+}
+function moveScene(id, dir) {
+  const p = state.project; const i = p.scenes.findIndex(s => s.id === id); const j = i + dir;
+  if (i < 0 || j < 0 || j >= p.scenes.length) return;
+  const t = p.scenes[i]; p.scenes[i] = p.scenes[j]; p.scenes[j] = t;
+  touch(); renderStep2();
+}
+async function delScene(id) {
+  const p = state.project; const i = p.scenes.findIndex(s => s.id === id); if (i < 0) return;
+  const ok = await confirmModal('Hapus scene ' + (i + 1) + '?', 'Scene <b>' + esc(p.scenes[i].title || '') + '</b> beserta media-nya dihapus dari naskah.', 'Hapus');
+  if (!ok) return;
+  p.scenes.splice(i, 1); touch(); renderStep2(); updateProjHeader();
+}
+function addScene() {
+  const p = state.project;
+  p.scenes.push(newScene({ title: 'Bagian ' + (p.scenes.length + 1) }));
+  touch(); renderStep2();
+  const cards = $$('#sceneList .scard'); if (cards.length) cards[cards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function bindSceneInputs(card) {
+  const id = card.dataset.scene;
+  const s = state.project.scenes.find(x => x.id === id); if (!s) return;
+  $$('[data-bind]', card).forEach(inp => {
+    inp.addEventListener('input', () => {
+      const k = inp.dataset.bind;
+      s[k] = inp.value;
+      if (k === 'narration') { const wc = $('#wc-' + id); if (wc) wc.textContent = wordCount(inp.value) + ' kata'; }
+      if (k === 'title') { const ttl = $('.ttl', card); if (ttl) ttl.textContent = inp.value || 'Scene'; }
+      touch();
+    });
+  });
+}
+
+/* ---------------- Step 3: Media ---------------- */
+function mediaBadgeTxt(s) {
+  if (s.visStatus === 'pending') return '<span class="badge b-warn">⏳ memproses…</span>';
+  if (s.visStatus === 'error') return '<span class="badge b-err">⚠️ gagal — coba lagi</span>';
+  if (s.videoBlob || s.imageData) return '<span class="badge b-ok">✓ siap' + (s.fromCache ? ' · dari cache' : '') + '</span>';
+  return '<span class="badge b-warn">belum dibuat</span>';
+}
+function previewHTML(s) {
+  if (s.visStatus === 'pending') return '<div><div class="spin"></div><p class="hint" style="margin-top:9px">' + (s.mediaType === 'video' ? 'Membuat video AI…<br/>bisa 1–10 menit ⏳' : 'Membuat…') + '</p></div>';
+  if (s.mediaType === 'video' && s.videoBlob) {
+    return '<video src="' + esc(s.videoUrl) + '" muted loop playsinline preload="metadata" data-vdur="' + s.id + '"></video><span class="dur">' + (s.videoDur ? s.videoDur.toFixed(1) + 's' : 'video') + '</span>';
+  }
+  if (s.mediaType === 'image' && s.imageData) return '<img src="' + esc(s.imageData) + '" alt="" />';
+  const t = MEDIA_TYPES.find(m => m.id === s.mediaType) || MEDIA_TYPES[0];
+  return '<div class="ph"><span class="em">' + t.icon + '</span>' + (t.id === 'text' ? 'Teks animasi — siap dipakai,<br/>tanpa perlu media' : 'Belum ada media — klik "Buat" di samping') + '</div>';
+}
+function renderStep3() {
+  const p = state.project; if (!p) return;
+  const list = $('#mediaList');
+  if (!p.scenes.length) { list.innerHTML = '<div class="empty">Belum ada scene — buat naskah dulu di Langkah 1.</div>'; return; }
+  list.innerHTML = p.scenes.map((s, i) => {
+    const seg = MEDIA_TYPES.map(t => '<button data-act="seg-media" data-id="' + s.id + '" data-mt="' + t.id + '" class="' + (s.mediaType === t.id ? 'on' : '') + '">' + t.icon + ' ' + t.label + '</button>').join('');
+    let visBtns = '';
+    if (s.mediaType === 'video') {
+      visBtns = '<button class="btn btn-p btn-sm" data-act="v-gen" data-id="' + s.id + '">🎬 ' + (s.videoBlob ? 'Buat Ulang Video' : 'Buat Video AI') + '</button>' +
+        (s.imageData ? '<button class="btn btn-sm" data-act="v-anim" data-id="' + s.id + '" title="Pakai gambar scene ini sebagai frame awal (image-to-video)">🖼️→🎬 Animasikan Gambar</button>' : '') +
+        '<button class="btn btn-sm" data-act="v-upload" data-id="' + s.id + '">⬆️ Unggah Klip</button>';
+    } else if (s.mediaType === 'image') {
+      visBtns = '<button class="btn btn-p btn-sm" data-act="v-gen" data-id="' + s.id + '">🖼️ ' + (s.imageData ? 'Buat Ulang Gambar' : 'Buat Gambar') + '</button>' +
+        '<button class="btn btn-sm" data-act="v-upload" data-id="' + s.id + '">⬆️ Unggah Gambar</button>';
+    } else if (s.mediaType === 'upload') {
+      visBtns = '<button class="btn btn-p btn-sm" data-act="v-upload" data-id="' + s.id + '">⬆️ Pilih Klip Video</button>';
+    } else {
+      visBtns = '<span class="badge b-free">✨ 0 kredit — siap dipakai</span>';
+    }
+    const delBtn = (s.videoBlob || s.imageData) ? '<button class="btn btn-sm btn-bad" data-act="v-del" data-id="' + s.id + '">🗑️</button>' : '';
+    const aud = s.audioBlob
+      ? '<div class="audrow"><audio controls src="' + esc(s.audioUrl) + '"></audio><button class="btn btn-sm" data-act="a-gen" data-id="' + s.id + '">🔁</button><button class="btn btn-sm btn-bad" data-act="a-del" data-id="' + s.id + '">🗑️</button></div>'
+      : '<div class="audrow"><button class="btn btn-ok btn-sm" data-act="a-gen" data-id="' + s.id + '">🔊 Buat Narasi</button><span class="hint">' + wordCount(s.narration) + ' kata</span></div>';
+    const audBadge = s.audStatus === 'pending' ? '<span class="badge b-warn">⏳ TTS…</span>' : (s.audStatus === 'error' ? '<span class="badge b-err">gagal</span>' : (s.audioBlob ? '<span class="badge b-ok">✓' + (s.fromCacheAudio ? ' · cache' : '') + '</span>' : ''));
+    return '<div class="scard" data-scene="' + s.id + '"><div class="scard-h">' +
+      '<div class="scard-n">' + (i + 1) + '</div><div class="ttl">' + esc(s.title || 'Scene ' + (i + 1)) + '</div>' + mediaBadgeTxt(s) + audBadge + '</div>' +
+      '<div class="scard-b"><div class="seg">' + seg + '</div>' +
+      '<div class="mgrid"><div><div class="mprev' + (s.mediaType !== 'image' && s.videoBlob ? ' v' : '') + '" id="pv-' + s.id + '">' + previewHTML(s) + '</div></div>' +
+      '<div style="display:grid;gap:10px;align-content:start">' +
+      '<div class="chiprow">' + visBtns + delBtn + '</div>' +
+      (s.visErr ? '<div class="note w">⚠️ <span>' + esc(s.visErr) + '</span></div>' : '') +
+      '<div class="sep" style="margin:2px 0"></div>' +
+      aud + (s.audErr ? '<div class="note w">⚠️ <span>' + esc(s.audErr) + '</span></div>' : '') +
+      '<div class="hint">Prompt: ' + esc((s.videoPrompt || '(kosong — pakai narasi)').slice(0, 110)) + '…</div>' +
+      '</div></div></div></div>';
+  }).join('');
+  $$('video[data-vdur]', list).forEach(v => {
+    v.addEventListener('loadedmetadata', () => {
+      const s = state.project.scenes.find(x => x.id === v.dataset.vdur);
+      if (s) { s.videoDur = v.duration || 0; const d = $('.dur', v.parentElement); if (d) d.textContent = (s.videoDur || 0).toFixed(1) + 's'; }
+    });
+  });
+}
+function updateCostChips() {
+  const p = state.project; if (!p) return;
+  const n = { video: 0, image: 0, text: 0, upload: 0 };
+  p.scenes.forEach(s => n[s.mediaType] = (n[s.mediaType] || 0) + 1);
+  const ready = p.scenes.filter(s => s.videoBlob || s.imageData || s.mediaType === 'text').length;
+  const c = state.counters;
+  $('#costChips').innerHTML =
+    '<span class="cchip">🎬 Video AI <b>' + n.video + '</b></span>' +
+    '<span class="cchip">🖼️ Gambar AI <b>' + n.image + '</b></span>' +
+    '<span class="cchip">✨ Teks <b>' + n.text + '</b></span>' +
+    '<span class="cchip">⬆️ Unggahan <b>' + n.upload + '</b></span>' +
+    '<span class="cchip">📦 Visual siap <b>' + ready + '/' + p.scenes.length + '</b></span>' +
+    '<span class="cchip">🤖 Panggilan AI <b>' + c.aiCalls + '</b></span>' +
+    '<span class="cchip" style="border-color:rgba(52,211,153,.4);color:#6ee7b7">💾 Hemat via cache <b>' + c.cacheHits + '</b></span>' +
+    '<button class="btn btn-sm" data-act="cache-clear">🧹 Bersihkan Cache</button>';
+}
+function setSceneVisual(s, blobOrUrl, type) {
+  if (type === 'image') { s.imageData = blobOrUrl; }
+  else {
+    if (s.videoUrl) try { URL.revokeObjectURL(s.videoUrl); } catch (e) {}
+    s.videoBlob = blobOrUrl; s.videoUrl = URL.createObjectURL(blobOrUrl); s.videoDur = 0;
+  }
+  s.fromCache = !!arguments[3];
+  s.visStatus = 'done'; s.visErr = '';
+  touch();
+}
+async function genVisual(sceneId, opts) {
+  const p = state.project; const s = p.scenes.find(x => x.id === sceneId); if (!s || s.visStatus === 'pending') return;
+  opts = opts || {};
+  s.visStatus = 'pending'; s.visErr = '';
+  if (state.project.step === 3) { renderStep3(); updateCostChips(); }
+  try {
+    if (s.mediaType === 'video') {
+      const r = await aiVideo(s, p, { force: opts.force, refDataUrl: opts.refDataUrl });
+      setSceneVisual(s, r.blob, 'video', r.cached);
+      if (p.videoTest) toast('🧪 Klip contoh gratis dipakai (0 kredit).', 'ok');
+    } else if (s.mediaType === 'image') {
+      const prompt = (s.videoPrompt || s.narration || 'educational illustration').slice(0, 600);
+      const r = await aiImage(prompt, { force: opts.force });
+      setSceneVisual(s, r.url, 'image', r.cached);
+    } else { s.visStatus = 'done'; return; }
+  } catch (e) {
+    s.visStatus = 'error';
+    s.visErr = e.message;
+    // Fallback otomatis saat kuota habis (Mode Hemat)
+    if (p.autoFallback && s.mediaType === 'video' && /Kuota|insufficient/i.test(e.message)) {
+      toast('Kuota video habis → scene ' + (p.scenes.indexOf(s) + 1) + ' beralih ke <b>Gambar AI</b> (lebih murah).', 'warn', 6500);
+      s.mediaType = 'image';
+      s.visStatus = 'idle';
+      touch(); if (p.step === 3) { renderStep3(); updateCostChips(); }
+      return genVisual(sceneId, { force: false });
+    }
+    toast('Gagal membuat visual: ' + esc(e.message), 'err', 7000);
+  }
+  touch(true);
+  if (p.step === 3) { renderStep3(); updateCostChips(); }
+}
+async function genAudio(sceneId, force) {
+  const p = state.project; const s = p.scenes.find(x => x.id === sceneId); if (!s || s.audStatus === 'pending') return;
+  if (!s.narration.trim()) { toast('Narasi scene ini masih kosong.', 'warn'); return; }
+  s.audStatus = 'pending'; s.audErr = '';
+  if (p.step === 3) renderStep3();
+  try {
+    const r = await aiSpeech(s.narration, p.language, { force });
+    if (s.audioUrl) try { URL.revokeObjectURL(s.audioUrl); } catch (e) {}
+    s.audioBlob = r.blob; s.audioUrl = r.url; s.fromCacheAudio = r.cached;
+    s.audioDur = await audioDur(r.url);
+    s.audStatus = 'done';
+  } catch (e) {
+    s.audStatus = 'error'; s.audErr = e.message;
+    toast('Gagal membuat narasi: ' + esc(e.message), 'err', 7000);
+  }
+  touch(true);
+  if (p.step === 3) { renderStep3(); updateCostChips(); }
+}
+function audioDur(url) {
+  return new Promise(res => {
+    const a = new Audio(); a.preload = 'metadata';
+    a.onloadedmetadata = () => res(a.duration || 0);
+    a.onerror = () => res(0);
+    a.src = url;
+    setTimeout(() => res(a.duration || 0), 4000);
+  });
+}
+async function batchVisual() {
+  const p = state.project;
+  if (state.batchBusy) return;
+  const targets = p.scenes.filter(s => (s.mediaType === 'video' || s.mediaType === 'image') && !s.videoBlob && !s.imageData);
+  if (!targets.length) { toast('Semua scene visual sudah terisi — batch melewatinya (hemat kredit ✓). Pakai tombol per-scene untuk membuat ulang.', 'ok', 6000); return; }
+  state.batchBusy = true;
+  $('#btnBatchVisual').disabled = true;
+  let i = 0;
+  for (const s of targets) {
+    i++;
+    $('#batchBar').style.width = Math.round((i - 1) / targets.length * 100) + '%';
+    $('#batchStatus').textContent = 'Scene ' + (p.scenes.indexOf(s) + 1) + '/' + p.scenes.length + ' — ' + (s.mediaType === 'video' ? 'video AI (sabar, 1-10 menit/klip)…' : 'gambar…') + ' (' + i + '/' + targets.length + ')';
+    await genVisual(s.id, {});
+  }
+  $('#batchBar').style.width = '100%';
+  $('#batchStatus').textContent = '✓ Batch visual selesai — ' + targets.length + ' scene diproses.';
+  state.batchBusy = false;
+  $('#btnBatchVisual').disabled = false;
+  toast('Batch visual selesai 🎬', 'ok');
+}
+async function batchAudio() {
+  const p = state.project;
+  if (state.batchBusy) return;
+  const targets = p.scenes.filter(s => s.narration.trim() && !s.audioBlob);
+  if (!targets.length) { toast('Semua narasi sudah ada — tidak ada kredit terpakai ✓.', 'ok', 6000); return; }
+  state.batchBusy = true;
+  $('#btnBatchAudio').disabled = true;
+  let i = 0;
+  for (const s of targets) {
+    i++;
+    $('#batchBar').style.width = Math.round((i - 1) / targets.length * 100) + '%';
+    $('#batchStatus').textContent = 'Narasi scene ' + (p.scenes.indexOf(s) + 1) + '… (' + i + '/' + targets.length + ')';
+    await genAudio(s.id, false);
+  }
+  $('#batchBar').style.width = '100%';
+  $('#batchStatus').textContent = '✓ Batch narasi selesai — ' + targets.length + ' scene.';
+  state.batchBusy = false;
+  $('#btnBatchAudio').disabled = false;
+  toast('Batch narasi selesai 🔊', 'ok');
+}
+function uploadVisual(sceneId, kind) {
+  const inp = kind === 'video' ? $('#fileVideo') : $('#fileImage');
+  inp.value = ''; inp.dataset.scene = sceneId; inp.click();
+}
+async function handleUpload(inp, kind) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const s = state.project.scenes.find(x => x.id === inp.dataset.scene); if (!s) return;
+  if (f.size > 150 * 1024 * 1024) { toast('Ukuran maksimal 150MB.', 'err'); return; }
+  if (kind === 'image') {
+    s.imageData = await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); });
+    s.visStatus = 'done'; s.visErr = ''; s.fromCache = false;
+  } else {
+    setSceneVisual(s, f, 'video', false);
+    s.audioDur = s.audioDur || 0;
+  }
+  touch(true); renderStep3(); updateCostChips();
+  toast('Media dipasang ke scene.', 'ok');
+}
+async function clearCache() {
+  const ok = await confirmModal('Bersihkan cache AI?', 'Semua gambar/narasi/video yang tersimpan di cache akan dihapus. <b>Kredit TIDAK terpengaruh</b> — hanya hasil lama yang perlu dibuat ulang bila dipakai lagi.', 'Bersihkan');
+  if (!ok) return;
+  const n = await cacheClear();
+  toast(n + ' entri cache dihapus.', 'ok');
+  updateCostChips();
+}
+
+/* ---------------- Step 4 ---------------- */
+function renderStep4() {
+  const p = state.project; if (!p) return;
+  const n = { video: 0, image: 0, text: 0, upload: 0 };
+  p.scenes.forEach(s => n[s.mediaType] = (n[s.mediaType] || 0) + 1);
+  const audioReady = p.scenes.filter(s => s.audioBlob).length;
+  $('#projStats').innerHTML =
+    '<div class="stat"><b>' + p.scenes.length + '</b><span>Scene</span></div>' +
+    '<div class="stat"><b>🎬 ' + n.video + '</b><span>Video AI</span></div>' +
+    '<div class="stat"><b>🖼️ ' + n.image + '</b><span>Gambar AI</span></div>' +
+    '<div class="stat"><b>🔊 ' + audioReady + '</b><span>Narasi siap</span></div>';
+  $('#renderOut').innerHTML = '';
+}
+/* ================= VIDEO ENGINE ================= */
+const Engine = {
+  canvas: null, cx: null, W: 1280, H: 720,
+  timeline: [], total: 0, t: 0, playing: false, speed: 1, muted: false,
+  videoEls: {}, audioEls: {}, audioCtx: null, gain: null, recDest: null,
+  _raf: 0, _last: 0, _uiHook: null, _endCb: null, _watch: 0,
+
+  dims(aspect) {
+    if (aspect === '9:16') return [720, 1280];
+    if (aspect === '1:1') return [960, 960];
+    return [1280, 720];
+  },
+  sceneDur(s, p) {
+    if (s.audioBlob && s.audioDur) return Math.max(s.audioDur + 0.6, 3.2);
+    if (s.videoBlob) return clamp(s.videoDur || (p.videoSeconds + 1), 3, p.videoSeconds + 3);
+    return s.mediaType === 'text' ? 4.2 : 4.8;
+  },
+  buildTimeline() {
+    const p = state.project; if (!p) return { timeline: [], total: 0 };
+    const tl = [];
+    if (p.title) tl.push({ kind: 'intro', start: 0, dur: 2.4, scene: null });
+    for (const s of p.scenes) {
+      const dur = this.sceneDur(s, p);
+      tl.push({ kind: 'scene', start: tl.length ? tl[tl.length - 1].start + tl[tl.length - 1].dur : 0, dur, scene: s });
+    }
+    const total = tl.reduce((a, e) => a + e.dur, 0);
+    return { timeline: tl, total };
+  },
+  getVideoEl(s) {
+    const key = s.id + ':' + hashStr(s.videoUrl || '');
+    if (!this.videoEls[key]) {
+      const v = document.createElement('video');
+      v.src = s.videoUrl; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+      this.videoEls[key] = v;
+    }
+    return this.videoEls[key];
+  },
+  getAudioEl(s) {
+    const key = s.id + ':' + hashStr(s.audioUrl || '');
+    if (!this.audioEls[key]) {
+      const a = new Audio(); a.src = s.audioUrl; a.preload = 'auto'; a.crossOrigin = 'anonymous';
+      this.audioEls[key] = a;
+    }
+    return this.audioEls[key];
+  },
+  ensureAudio() {
+    if (!this.audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      this.audioCtx = new AC();
+      this.gain = this.audioCtx.createGain();
+      this.gain.connect(this.audioCtx.destination);
+      this.recDest = this.audioCtx.createMediaStreamDestination();
+      this.gain.connect(this.recDest);
+    }
+    return this.audioCtx;
+  },
+  prepare() {
+    const p = state.project; if (!p) return;
+    this.pause();
+    const [w, h] = this.dims(p.aspect);
+    this.canvas = $('#stage');
+    if (this.canvas.width !== w || this.canvas.height !== h) { this.canvas.width = w; this.canvas.height = h; }
+    this.cx = this.canvas.getContext('2d');
+    const tl = this.buildTimeline();
+    this.timeline = tl.timeline; this.total = tl.total;
+    if (!this.t) this.t = 0;
+    this.t = clamp(this.t, 0, this.total);
+    // hangatkan elemen video & durasi audio
+    for (const s of p.scenes) {
+      if (s.videoBlob) { const v = this.getVideoEl(s); v.currentTime = 0; }
+      if (s.audioBlob && !s.audioDur) { this.getAudioEl(s); audioDur(s.audioUrl).then(d => { s.audioDur = d; const t2 = this.buildTimeline(); this.timeline = t2.timeline; this.total = t2.total; }); }
+    }
+    this.draw();
+    this.ui(true);
+  },
+  play() {
+    if (this.playing || !this.total) return;
+    this.playing = true;
+    $('#btnPlay').textContent = '⏸';
+    this.ensureAudio();
+    const r = this.audioCtx.resume();
+    Promise.race([r, sleep(1500)]); // guard autoplay-policy hang
+    this._last = performance.now();
+    this.syncMedia();
+    const loop = ts => {
+      if (!this.playing) return;
+      const dt = Math.min(0.1, (ts - this._last) / 1000) * this.speed;
+      this._last = ts;
+      this.t += dt;
+      if (this.t >= this.total) { this.t = this.total; this.draw(); this.ui(); this.pause(); this._onEnd && this._onEnd(); return; }
+      this.syncMedia();
+      this.draw();
+      this.ui();
+      this._raf = requestAnimationFrame(loop);
+    };
+    this._raf = requestAnimationFrame(loop);
+  },
+  pause() {
+    this.playing = false;
+    cancelAnimationFrame(this._raf);
+    const b = $('#btnPlay'); if (b) b.textContent = '▶';
+    Object.values(this.videoEls).forEach(v => { try { v.pause(); } catch (e) {} });
+    Object.values(this.audioEls).forEach(a => { try { a.pause(); } catch (e) {} });
+  },
+  seek(t) {
+    this.t = clamp(t, 0, this.total || 0);
+    this.syncMedia();
+    this.draw();
+    this.ui();
+  },
+  syncMedia() {
+    const tl = this.timeline;
+    let cur = null;
+    for (const e of tl) { if (this.t >= e.start && this.t < e.start + e.dur) { cur = e; break; } }
+    if (!cur) cur = tl[tl.length - 1];
+    for (const e of tl) {
+      if (e.kind !== 'scene') continue;
+      const s = e.scene;
+      const isCur = e === cur && cur.kind === 'scene';
+      if (s.videoBlob) {
+        const v = this.getVideoEl(s);
+        if (isCur) {
+          const vd = v.duration || s.videoDur || 5;
+          const want = (this.t - e.start) % vd;
+          if (Math.abs(v.currentTime - want) > 0.28) v.currentTime = want;
+          if (this.playing && v.paused) v.play().catch(() => {});
+          if (!this.playing && !v.paused) v.pause();
+        } else if (!v.paused) v.pause();
+      }
+      if (s.audioBlob) {
+        const a = this.getAudioEl(s);
+        if (isCur) {
+          a.playbackRate = this.speed;
+          const want = this.t - e.start;
+          if (this.playing) {
+            if (Math.abs(a.currentTime - want) > 0.32) { if (want < (a.duration || 0)) a.currentTime = want; }
+            if (a.paused) a.play().catch(() => {});
+          } else if (!a.paused) a.pause();
+        } else { if (!a.paused) a.pause(); if (isCur === false && a.currentTime !== 0 && this.t < e.start) a.currentTime = 0; }
+      }
+    }
+  },
+  ui(force) {
+    const seek = $('#seek'); if (!seek) return;
+    const frac = this.total ? this.t / this.total : 0;
+    if (document.activeElement !== seek) seek.value = Math.round(frac * 1000);
+    $('#timeLbl').textContent = fmtT(this.t) + ' / ' + fmtT(this.total);
+    if (this._uiHook) this._uiHook(frac);
+  },
+  /* ---------- render ---------- */
+  cover(img, sw, sh, dx, dy, dw, dh, z, px, py) {
+    const r = Math.max(dw / sw, dh / sh) * z;
+    const w = sw * r, h = sh * r;
+    const ox = (dw - w) / 2 + (px || 0) * (w - dw) / 2;
+    const oy = (dh - h) / 2 + (py || 0) * (h - dh) / 2;
+    this.cx.drawImage(img, dx + ox, dy + oy, w, h);
+  },
+  hashNum(str) { let h = 7; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0; return Math.abs(h); },
+  wrapText(txt, maxW) {
+    const cx = this.cx;
+    const words = txt.split(/\s+/); const lines = []; let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (cx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; } else cur = test;
+    }
+    if (cur) lines.push(cur);
+    return lines.slice(0, 3);
+  },
+  imgCache: {},
+  getImg(s) {
+    let img = this.imgCache[s.id];
+    if (!img || img.src !== s.imageData) {
+      img = new Image();
+      img.src = s.imageData;
+      this.imgCache[s.id] = img;
+    }
+    return img;
+  },
+  drawImageScene(s, localT, dur, alpha) {
+    const cx = this.cx, W = this.W, H = this.H;
+    const img = this.getImg(s);
+    if (!(img.complete && img.naturalWidth)) {
+      cx.fillStyle = '#0a0e1b'; cx.fillRect(0, 0, W, H);
+      return;
+    }
+    const shots = dur >= 9 ? 3 : 2;
+    const shotDur = dur / shots;
+    const idx = Math.min(shots - 1, Math.floor(localT / shotDur));
+    const lt = localT - idx * shotDur;
+    const h1 = this.hashNum(s.id + ':' + idx);
+    const zoomIn = h1 % 2 === 0;
+    const prog = clamp(lt / shotDur, 0, 1);
+    const z = zoomIn ? 1.02 + 0.12 * prog : 1.16 - 0.12 * prog;
+    const panX = (h1 % 3 === 1) ? (prog - 0.5) * 0.5 : ((h1 % 3 === 2) ? (0.5 - prog) * 0.5 : 0);
+    const panY = (h1 % 5 === 1) ? (prog - 0.5) * 0.35 : 0;
+    this.cover(img, img.naturalWidth, img.naturalHeight, 0, 0, W, H, z, panX, panY);
+  },
+  drawTextScene(s, localT, dur, seed) {
+    const cx = this.cx, W = this.W, H = this.H;
+    const h1 = this.hashNum(seed);
+    const g = cx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#101527'); g.addColorStop(1, '#1a1233');
+    cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 2; i++) {
+      const bx = W * (0.28 + 0.44 * (0.5 + 0.5 * Math.sin(localT * 0.7 + i * 2.4 + h1)));
+      const by = H * (0.34 + 0.36 * (0.5 + 0.5 * Math.cos(localT * 0.55 + i * 1.8 + h1)));
+      const rad = Math.min(W, H) * (0.32 + 0.06 * Math.sin(localT + i));
+      const rg = cx.createRadialGradient(bx, by, 0, bx, by, rad);
+      rg.addColorStop(0, i ? 'rgba(217,70,239,.30)' : 'rgba(99,102,241,.32)');
+      rg.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = rg; cx.fillRect(0, 0, W, H);
+    }
+    const txt = (s.onScreenText || s.title || '').slice(0, 80);
+    if (txt) {
+      const fs = Math.min(W * 0.066, H * 0.11);
+      cx.font = '800 ' + fs + 'px "Segoe UI",system-ui,sans-serif';
+      cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      const lines = this.wrapText(txt, W * 0.78);
+      const lh = fs * 1.25;
+      const cy = H / 2 - (lines.length - 1) * lh / 2;
+      const a = clamp(localT / 0.6, 0, 1);
+      lines.forEach((ln, i) => {
+        cx.globalAlpha = a * (1 - i * 0.08);
+        cx.fillStyle = '#eef1ff';
+        cx.shadowColor = 'rgba(0,0,0,.45)'; cx.shadowBlur = 14;
+        cx.fillText(ln, W / 2, cy + i * lh + (1 - a) * 16);
+      });
+      cx.shadowBlur = 0; cx.globalAlpha = 1;
+      const lw = W * 0.14 * clamp(localT / 0.9, 0, 1);
+      cx.fillStyle = '#8b5cf6';
+      cx.fillRect(W / 2 - lw / 2, cy + lines.length * lh / 2 + fs * 0.34, lw, 5);
+    }
+  },
+  drawVideoScene(s, localT, alpha) {
+    const cx = this.cx, W = this.W, H = this.H;
+    const v = this.getVideoEl(s);
+    if (v.readyState >= 2) {
+      try { this.cover(v, v.videoWidth || 16, v.videoHeight || 9, 0, 0, W, H, 1.0, 0, 0); } catch (e) { cx.fillStyle = '#0a0e1b'; cx.fillRect(0, 0, W, H); }
+    } else {
+      cx.fillStyle = '#0a0e1b'; cx.fillRect(0, 0, W, H);
+      cx.fillStyle = 'rgba(255,255,255,.35)'; cx.font = '600 ' + Math.round(H * 0.03) + 'px sans-serif';
+      cx.textAlign = 'center'; cx.fillText('memuat klip…', W / 2, H / 2);
+    }
+  },
+  drawScene(s, localT, dur, alpha, tGlobal) {
+    const cx = this.cx;
+    cx.save();
+    cx.globalAlpha = alpha;
+    if (s.mediaType === 'text' || (!s.videoBlob && !s.imageData && s.mediaType !== 'image')) this.drawTextScene(s, localT, dur, s.id);
+    else if (s.mediaType === 'image' && s.imageData) this.drawImageScene(s, localT, dur, alpha);
+    else if ((s.mediaType === 'video' || s.mediaType === 'upload') && s.videoBlob) this.drawVideoScene(s, localT, alpha);
+    else if (s.imageData) this.drawImageScene(s, localT, dur, alpha);
+    else this.drawTextScene(s, localT, dur, s.id);
+    cx.restore();
+  },
+  draw() {
+    const cx = this.cx; if (!cx) return;
+    const p = state.project; if (!p) return;
+    const W = this.W, H = this.H;
+    cx.clearRect(0, 0, W, H);
+    cx.fillStyle = '#05070d'; cx.fillRect(0, 0, W, H);
+    if (!this.timeline.length) {
+      cx.fillStyle = 'rgba(255,255,255,.4)'; cx.textAlign = 'center';
+      cx.font = '600 ' + Math.round(H * 0.04) + 'px sans-serif';
+      cx.fillText('Belum ada scene — buat naskah & visual dulu', W / 2, H / 2);
+      return;
+    }
+    const t = this.t;
+    let cur = this.timeline[this.timeline.length - 1];
+    for (const e of this.timeline) { if (t >= e.start && t < e.start + e.dur) { cur = e; break; } }
+    const idx = this.timeline.indexOf(cur);
+    const localT = t - cur.start;
+    const XFADE = 0.5;
+    if (cur.kind === 'intro') {
+      const g = cx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, '#0b0f1e'); g.addColorStop(1, '#160f2e');
+      cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+      const a = clamp(localT / 0.7, 0, 1) * clamp((cur.dur - localT) / 0.5, 0, 1);
+      cx.globalAlpha = a;
+      cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      const fs = Math.min(W * 0.062, H * 0.105);
+      cx.font = '800 ' + fs + 'px "Segoe UI",system-ui,sans-serif';
+      const grd = cx.createLinearGradient(W * 0.2, H / 2, W * 0.8, H / 2);
+      grd.addColorStop(0, '#a5b4fc'); grd.addColorStop(1, '#e879f9');
+      cx.fillStyle = grd;
+      const lines = this.wrapText(p.title, W * 0.8);
+      const lh = fs * 1.2, cy = H / 2 - (lines.length - 1) * lh / 2;
+      lines.forEach((ln, i) => cx.fillText(ln, W / 2, cy + i * lh));
+      cx.fillStyle = '#8b5cf6';
+      const lw = W * 0.16 * clamp(localT / 1.0, 0, 1);
+      cx.fillRect(W / 2 - lw / 2, cy + lines.length * lh / 2 + fs * 0.3, lw, 5);
+      cx.globalAlpha = 1;
+    } else {
+      // crossfade dari scene sebelumnya
+      const prev = idx > 0 ? this.timeline[idx - 1] : null;
+      const fadeIn = clamp(localT / XFADE, 0, 1);
+      if (prev && prev.kind === 'scene' && localT < XFADE) {
+        this.drawScene(prev.scene, prev.dur - 0.001, prev.dur, 1, t);
+        this.drawScene(cur.scene, localT, cur.dur, fadeIn, t);
+      } else {
+        if (prev && prev.kind === 'scene' && localT < XFADE + 0.001) { /* sudah lewat fade */ }
+        this.drawScene(cur.scene, localT, cur.dur, 1, t);
+      }
+      // chip scene
+      if (localT < 2.6 && cur.scene) {
+        const ca = clamp(localT / 0.4, 0, 1) * clamp((2.6 - localT) / 0.4, 0, 1);
+        const label = (this.timeline.filter(e => e.kind === 'scene').indexOf(cur) + 1) + ' · ' + (cur.scene.title || '').slice(0, 40);
+        cx.font = '700 ' + Math.round(H * 0.026) + 'px "Segoe UI",sans-serif';
+        const tw = cx.measureText(label).width;
+        cx.globalAlpha = ca * 0.85;
+        cx.fillStyle = 'rgba(5,8,18,.72)';
+        roundRect(cx, W * 0.035, H * 0.045, tw + 26, H * 0.052, 9); cx.fill();
+        cx.globalAlpha = ca; cx.fillStyle = '#c7d2fe'; cx.textAlign = 'left'; cx.textBaseline = 'middle';
+        cx.fillText(label, W * 0.035 + 13, H * 0.045 + H * 0.026);
+        cx.globalAlpha = 1;
+      }
+    }
+    // subtitle
+    if ($('#optSub') && $('#optSub').checked && cur.kind === 'scene' && cur.scene && cur.scene.narration) {
+      const dur2 = cur.dur;
+      const na = clamp(localT / 0.35, 0, 1) * clamp((dur2 - 0.25 - localT) / 0.35, 0, 1);
+      if (na > 0.01) {
+        cx.globalAlpha = na;
+        const fs = Math.round(H * 0.037);
+        cx.font = '600 ' + fs + 'px "Segoe UI",sans-serif';
+        cx.textAlign = 'center'; cx.textBaseline = 'bottom';
+        const lines = this.wrapText(cur.scene.narration, W * 0.84);
+        const lh = fs * 1.28;
+        let yy = H - Math.round(H * 0.075) - (lines.length - 1) * lh;
+        for (const ln of lines) {
+          const tw = cx.measureText(ln).width;
+          cx.fillStyle = 'rgba(5,8,18,.62)';
+          roundRect(cx, W / 2 - tw / 2 - 12, yy - fs - 7, tw + 24, fs + 15, 8); cx.fill();
+          cx.fillStyle = '#f2f5ff';
+          cx.fillText(ln, W / 2, yy + 3);
+          yy += lh;
+        }
+        cx.globalAlpha = 1;
+      }
+    }
+    // watermark
+    if ($('#optWm') && $('#optWm').checked) {
+      cx.font = '700 ' + Math.round(H * 0.024) + 'px "Segoe UI",sans-serif';
+      cx.textAlign = 'right'; cx.textBaseline = 'bottom';
+      cx.fillStyle = 'rgba(255,255,255,.5)';
+      cx.fillText('EduVideo Studio', W - 16, H - 14);
+    }
+    // progress
+    cx.fillStyle = 'rgba(255,255,255,.14)';
+    cx.fillRect(0, H - 4, W, 4);
+    const pg = this.total ? t / this.total : 0;
+    const grd2 = cx.createLinearGradient(0, 0, W, 0);
+    grd2.addColorStop(0, '#6366f1'); grd2.addColorStop(1, '#d946ef');
+    cx.fillStyle = grd2;
+    cx.fillRect(0, H - 4, W * pg, 4);
+  },
+
+  /* ---------- Ekspor WebM ---------- */
+  async render(onProgress) {
+    const p = state.project;
+    if (!this.timeline.length) throw new Error('Belum ada scene untuk dirender.');
+    if (!window.MediaRecorder) throw new Error('Browser tidak mendukung MediaRecorder. Gunakan Chrome/Edge terbaru.');
+    this.pause();
+    const ctxA = this.ensureAudio();
+    try { await Promise.race([ctxA.resume(), sleep(1500)]); } catch (e) {}
+    const fps = 30;
+    const stream = this.canvas.captureStream(fps);
+    if (this.recDest) this.recDest.stream.getAudioTracks().forEach(tr => stream.addTrack(tr));
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 5_000_000 } : undefined);
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    const done = new Promise(res => { rec.onstop = res; });
+    this._onEnd = () => { try { rec.state !== 'inactive' && rec.stop(); } catch (e) {} };
+    rec.start(400);
+    this.speed = 1; this.muted = false;
+    if (this.gain) this.gain.gain.value = 1;
+    this.seek(0);
+    // watchdog pemulih macet
+    let lastT = 0, stagnant = 0;
+    this._watch = setInterval(() => {
+      if (Math.abs(this.t - lastT) < 0.001) { stagnant++; if (stagnant > 10 && this.playing) { this.pause(); this._onEnd && this._onEnd(); } }
+      else { stagnant = 0; lastT = this.t; }
+    }, 250);
+    this.play();
+    await new Promise(res => {
+      const poll = setInterval(() => {
+        onProgress && onProgress(this.total ? this.t / this.total : 0);
+        if (!this.playing && this.t >= this.total - 0.01) { clearInterval(poll); res(); }
+      }, 120);
+    });
+    clearInterval(this._watch);
+    await sleep(350);
+    try { rec.state !== 'inactive' && rec.stop(); } catch (e) {}
+    await done;
+    this._onEnd = null;
+    this.seek(0);
+    return new Blob(chunks, { type: 'video/webm' });
+  },
+};
+function roundRect(cx, x, y, w, h, r) {
+  cx.beginPath();
+  cx.moveTo(x + r, y);
+  cx.arcTo(x + w, y, x + w, y + h, r);
+  cx.arcTo(x + w, y + h, x, y + h, r);
+  cx.arcTo(x, y + h, x, y, r);
+  cx.arcTo(x, y, x + w, y, r);
+  cx.closePath();
+}
+
+/* ================= EVENTS & BOOT ================= */
+function updatePill() {
+  const pill = $('#puterPill'), tx = $('#puterPillTx');
+  pill.className = 'pill';
+  if (state.demo) { pill.classList.add('demo'); tx.textContent = '🧪 Mode Demo'; return; }
+  // Jangan auto-muat script Puter di file:// — tampilkan status netral (lihat banner peringatan).
+  if (location.protocol === 'file:') { pill.classList.add('warn'); tx.textContent = 'Puter: perlu server http'; return; }
+  pill.classList.add('warn'); tx.textContent = 'Menghubungkan…';
+  getPuter(12000).then(() => {
+    if (state.demo) return updatePill();
+    pill.className = 'pill ok'; tx.textContent = 'Puter tersambung';
+    Promise.resolve(puter.auth.isSignedIn()).then(s => { if (!s) toast('💡 Puter siap. Saat memakai AI pertama kali, popup masuk/akun tamu akan muncul — itu normal.', '', 7000); }).catch(() => {});
+  }).catch(e => { if (!state.demo) { pill.className = 'pill warn'; tx.textContent = 'Puter tak termuat'; window.__pillErr = (e && e.message) || String(e); console.warn('[pill]', window.__pillErr); } });
+}
+async function doAuth() {
+  if (state.demo) {
+    const ok = await confirmModal('Keluar Mode Demo?', 'Untuk memakai AI sungguhan kamu perlu keluar dari demo lalu masuk ke Puter (boleh akun tamu).', 'Keluar Demo');
+    if (ok) { enableDemo(false); }
+    return;
+  }
+  try {
+    const puter = await getPuter();
+    await puter.auth.signIn();
+    updatePill();
+    toast('Berhasil masuk Puter ✓', 'ok');
+  } catch (e) { toast('Masuk dibatalkan atau gagal — coba lagi.', 'warn'); }
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  const p = state.project;
+  switch (act) {
+    case 'goto': {
+      const n = Number(el.dataset.n);
+      if (n > maxStep()) { toast('Selesaikan langkah sebelumnya dulu (buat naskah).', 'warn'); return; }
+      gotoStep(n); break;
+    }
+    case 'tpl': startProject(TEMPLATES[Number(el.dataset.i)]); break;
+    case 'proj-open': openProject(id); break;
+    case 'proj-dup': dupProject(id); break;
+    case 'proj-del': delProject(id); break;
+    case 'aspect': if (p) { readStep1(); p.aspect = id; touch(); fillStep1(); } break;
+    case 'vres': if (p) { readStep1(); p.videoRes = id; touch(); fillStep1(); } break;
+    case 'sc-up': moveScene(id, -1); break;
+    case 'sc-down': moveScene(id, 1); break;
+    case 'sc-del': delScene(id); break;
+    case 'sc-regen': regenOneScene(id); break;
+    case 'seg-media': {
+      if (!p) break;
+      const s = p.scenes.find(x => x.id === id);
+      if (s) { s.mediaType = el.dataset.mt; s.visErr = ''; s.visStatus = (s.videoBlob || s.imageData) ? 'done' : 'idle'; touch(); renderStep3(); updateCostChips(); }
+      break;
+    }
+    case 'v-gen': genVisual(id, { force: true }); break;
+    case 'v-anim': {
+      if (!p) break;
+      const s = p.scenes.find(x => x.id === id);
+      if (!s || !s.imageData) break;
+      confirmModal('Animasikan gambar (image-to-video)?', 'Gambar scene ini dipakai sebagai <b>frame awal</b> klip video AI (input_reference). Satu panggilan txt2vid akan dibuat.', '🎬 Buat')
+        .then(ok => { if (ok) genVisual(id, { force: true, refDataUrl: s.imageData }); });
+      break;
+    }
+    case 'v-upload': uploadVisual(id, p.scenes.find(x => x.id === id).mediaType === 'image' ? 'image' : 'video'); break;
+    case 'v-del': {
+      const s = p.scenes.find(x => x.id === id);
+      if (s) { s.videoBlob = null; s.imageData = ''; s.videoDur = 0; s.visStatus = 'idle'; s.fromCache = false; touch(); renderStep3(); updateCostChips(); }
+      break;
+    }
+    case 'a-gen': genAudio(id, true); break;
+    case 'a-del': {
+      const s = p.scenes.find(x => x.id === id);
+      if (s) { s.audioBlob = null; s.audioDur = 0; s.audStatus = 'idle'; touch(); renderStep3(); }
+      break;
+    }
+    case 'cache-clear': clearCache(); break;
+  }
+});
+// delegasi input scene (bekerja untuk Step 2 & 3 tanpa re-bind)
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (!t.dataset || !t.dataset.bind) return;
+  const card = t.closest('[data-scene]'); if (!card) return;
+  const s = state.project && state.project.scenes.find(x => x.id === card.dataset.scene);
+  if (!s) return;
+  const k = t.dataset.bind;
+  s[k] = t.value;
+  if (k === 'narration') { const wc = $('#wc-' + s.id); if (wc) wc.textContent = wordCount(t.value) + ' kata'; }
+  if (k === 'title') { const ttl = $('.ttl', card); if (ttl) ttl.textContent = t.value || 'Scene'; }
+  touch();
+});
+
+function boot() {
+  $('#demoBanner').classList.toggle('hide', !state.demo);
+  // Peringatan file:// — Puter.js butuh origin http(s) untuk sign-in
+  if (location.protocol === 'file:') {
+    const w = document.getElementById('fileWarn');
+    if (w) w.classList.remove('hide');
+  }
+  // form step1 statis
+  $('#fSceneCount').addEventListener('input', () => { $('#fSceneCountLbl').textContent = $('#fSceneCount').value + ' scene'; });
+  $('#fVidSec').addEventListener('input', () => { $('#fVidSecLbl').textContent = $('#fVidSec').value + ' detik'; });
+  $('#fEco').addEventListener('change', () => { if (state.project) { readStep1(); state.project.ecoMode = $('#fEco').checked; touch(); fillStep1(); } });
+  $('#fVideoModel').addEventListener('change', () => { if (state.project) { readStep1(); state.project.videoModel = $('#fVideoModel').value; touch(); fillStep1(); } });
+  $('#fVidSec').addEventListener('change', () => { if (state.project) { state.project.videoSeconds = Number($('#fVidSec').value); touch(); } });
+  $('#fVidTest').addEventListener('change', () => { if (state.project) { state.project.videoTest = $('#fVidTest').checked; touch(); } });
+  $('#btnGen').addEventListener('click', () => generateScript(false));
+  $('#btnDemoGen').addEventListener('click', () => {
+    enableDemo(true);
+    if (state.project && !state.project.topic) {
+      state.project.topic = TEMPLATES[0].topic;
+      const tf = document.getElementById('fTopic'); if (tf) tf.value = state.project.topic;
+    }
+    generateScript(false);
+  });
+  $('#btnAddScene').addEventListener('click', addScene);
+  $('#btnRegenAll').addEventListener('click', async () => {
+    const ok = await confirmModal('Buat ulang seluruh naskah?', 'AI menulis ulang semua scene sesuai topik & pengaturan Langkah 1. Media visual/narasi yang sudah ada dilepas.', 'Buat ulang');
+    if (ok) { state.project.step = 1; gotoStep(1); generateScript(true); }
+  });
+  $('#btnToMedia').addEventListener('click', () => gotoStep(3));
+  $('#btnBatchVisual').addEventListener('click', batchVisual);
+  $('#btnBatchAudio').addEventListener('click', batchAudio);
+  $('#btnExitDemo').addEventListener('click', () => enableDemo(false));
+  $('#brandHome').addEventListener('click', () => { Engine.pause(); showView('home'); renderHome(); });
+  $('#btnHome').addEventListener('click', () => { Engine.pause(); showView('home'); renderHome(); });
+  $('#ctaStart').addEventListener('click', () => startProject(null));
+  $('#ctaDemo').addEventListener('click', () => { enableDemo(true); startProject(null); });
+  $('#btnAuth').addEventListener('click', doAuth);
+  $('#fileVideo').addEventListener('change', e => handleUpload(e.target, 'video'));
+  $('#fileImage').addEventListener('change', e => handleUpload(e.target, 'image'));
+  // player
+  $('#btnPlay').addEventListener('click', () => { if (!Engine.total) Engine.prepare(); Engine.playing ? Engine.pause() : Engine.play(); });
+  $('#btnMute').addEventListener('click', () => {
+    Engine.muted = !Engine.muted;
+    Engine.ensureAudio(); Engine.gain.gain.value = Engine.muted ? 0 : 1;
+    $('#btnMute').textContent = Engine.muted ? '🔇' : '🔊';
+  });
+  $('#seek').addEventListener('input', e => { if (Engine.total) Engine.seek(Number(e.target.value) / 1000 * Engine.total); });
+  $('#speedSel').addEventListener('change', e => { Engine.speed = Number(e.target.value) || 1; });
+  $('#optSub').addEventListener('change', () => Engine.draw());
+  $('#optWm').addEventListener('change', () => Engine.draw());
+  $('#btnRender').addEventListener('click', async () => {
+    const p = state.project; if (!p || !p.scenes.length) { toast('Belum ada scene.', 'warn'); return; }
+    Engine.prepare();
+    $('#btnRender').disabled = true;
+    $('#renderStatus').textContent = 'Merekam realtime — biarkan tab ini aktif…';
+    try {
+      const blob = await Engine.render(frac => { $('#renderBar').style.width = Math.round(frac * 100) + '%'; });
+      const url = URL.createObjectURL(blob);
+      const name = ((p.title || 'eduvideo').replace(/[^\w\- ]+/g, '').trim() || 'eduvideo').toLowerCase().replace(/\s+/g, '-') + '.webm';
+      $('#renderOut').innerHTML =
+        '<div class="note g">✅ <span>Render selesai — <b>' + fmtBytes(blob.size) + '</b>. Video WebM tersedia di bawah.</span></div>' +
+        '<div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">' +
+        '<a class="btn btn-p" href="' + url + '" download="' + esc(name) + '">⬇️ Unduh ' + esc(name) + '</a>' +
+        '<video controls src="' + url + '" style="max-height:220px;border-radius:10px;border:1px solid var(--line2)"></video></div>';
+      $('#renderStatus').textContent = '✓ Selesai';
+      $('#renderBar').style.width = '100%';
+      toast('Video berhasil dirender 🎉', 'ok');
+    } catch (err) {
+      $('#renderStatus').textContent = '';
+      toast('Render gagal: ' + esc(err.message), 'err', 7000);
+    } finally { $('#btnRender').disabled = false; }
+  });
+  // keyboard
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && $('#viewStudio') && !$('#viewStudio').classList.contains('hide') && state.project && state.project.step === 4 &&
+        !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+      e.preventDefault();
+      if (!Engine.total) Engine.prepare();
+      Engine.playing ? Engine.pause() : Engine.play();
+    }
+  });
+  renderHome();
+  updatePill();
+  loadProjects().then(renderHome);
+  if (new URLSearchParams(location.search).get('open') === '1') showView('studio');
+}
+document.addEventListener('DOMContentLoaded', boot);
+
+</script></body></html>
