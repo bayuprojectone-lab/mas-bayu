@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EduVid AI Studio — Video Edukasi AI (Puter AI · Klip Video AI Hemat Kredit & Suara Natural Indonesia)</title>
-<meta name="description" content="Studio pembuatan video edukasi berbasis Puter AI: naskah otomatis, KLIP VIDEO AI bergerak (bukan gambar diam) yang hemat kredit, dan suara natural Bahasa Indonesia (Damayanti Neural).">
+<title>EduVid AI Studio — Pembuat Video Konten Edukasi (Puter AI · Suara Natural Indonesia)</title>
+<meta name="description" content="Studio pembuatan video edukasi berbasis Puter AI: naskah otomatis, ilustrasi AI, dan suara natural Bahasa Indonesia (Damayanti Neural).">
 <meta name="theme-color" content="#070b15">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,14 +13,10 @@
 <!--
   EduVid AI Studio — Aplikasi Pembuatan Video Konten Edukasi
   Powered by Puter AI (js.puter.com/v2) — gratis tanpa API key
-  Visual: KLIP VIDEO AI bergerak per scene (puter.ai.txt2vid) — bukan gambar diam
-  Hemat kredit: strategi 1 video bersama, klip pendek harga flat, Mode Uji 0 kredit,
-  cache visual identik, simpan ke Drive Puter untuk dipakai ulang gratis
-  Loading tidak terasa lama: progres bar + timer live selama render video AI,
-  pipeline paralel (video & suara dibuat bersamaan), pesan tahapan otomatis
   Suara natural Bahasa Indonesia: Damayanti (neural, id-ID)
   Cara pakai: buka file ini di browser (Chrome/Edge disarankan)
-  → Masuk dengan Puter → Buat Naskah → Buat Video → Pratinjau → Rekam & Unduh Video.
+  → Masuk dengan Puter → Buat Naskah → Pratinjau → Rekam & Unduh Video.
+  v2: Gambar bergerak sinematik — kamera, partikel & efek otomatis menyesuaikan isi naskah.
 -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -136,7 +132,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .sc-media{display:flex;gap:12px;margin-top:12px;align-items:stretch}
 .sc-thumb{width:180px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
 .sc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.sc-thumb video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
 .sc-thumb .ph{font-size:26px;opacity:.45}
 .sc-actions{display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0}
 .sc-actions .btn{justify-content:flex-start}
@@ -183,9 +178,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .spin{width:56px;height:56px;margin:0 auto 20px;border-radius:50%;background:conic-gradient(from 0deg,#6d5ef2,#22d3ee,#6d5ef2);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));animation:rot .9s linear infinite}
 .ov-box h4{font-size:16px;margin-bottom:6px}
 .ov-box p{font-size:12.5px;color:var(--muted);margin-bottom:18px;min-height:18px}
-#ovProgWrap{width:100%;height:8px;border-radius:99px;background:rgba(148,163,184,.18);overflow:hidden;margin:-6px 0 10px}
-#ovProgBar{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#6d5ef2,#22d3ee);transition:width .6s ease;box-shadow:0 0 12px rgba(34,211,238,.55)}
-#ovMeta{margin-bottom:14px!important;font-size:11.5px!important;min-height:0!important;font-variant-numeric:tabular-nums;color:var(--acc2)!important}
 
 #toasts{position:fixed;top:74px;right:18px;z-index:400;display:flex;flex-direction:column;gap:8px;max-width:360px}
 .toast{background:rgba(15,23,41,.96);border:1px solid var(--line2);border-left:3px solid var(--acc2);padding:11px 15px;border-radius:11px;font-size:12.5px;box-shadow:0 12px 34px rgba(0,0,0,.45);animation:slideIn .25s ease;transition:.4s}
@@ -211,7 +203,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div class="logo">🎬</div>
     <div>
       <h1>EduVid <span>AI Studio</span></h1>
-      <p>Studio Video Edukasi · Klip Video AI · Suara Natural 🇮🇩</p>
+      <p>Studio Video Edukasi · Suara Natural Indonesia 🇮🇩</p>
     </div>
   </div>
   <div class="authbox">
@@ -261,6 +253,13 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
         <option value="cerita">Storytelling — dibuka dengan cerita menarik</option>
         <option value="formal">Formal akademik — tetap enak didengar</option>
       </select>
+      <label class="lb" for="selMotion">Gaya gerak gambar <b>· ikut menyesuaikan naskah</b></label>
+      <select id="selMotion">
+        <option value="auto" selected>Otomatis — gerak &amp; efek mengikuti isi naskah (rekomendasi)</option>
+        <option value="cinematic">Sinematik — gerak kuat + cahaya &amp; partikel</option>
+        <option value="calm">Tenang — gerak halus &amp; pelan</option>
+        <option value="off">Statis — gambar diam tanpa gerak</option>
+      </select>
       <button id="btnGenScript" class="btn btn-p btn-block" type="button">✨ Buat Naskah dengan AI</button>
     </div>
 
@@ -289,26 +288,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
       <button id="btnTestVoice" class="btn btn-block" type="button">🔊 Coba Suara Ini</button>
       <p class="hint">Rahasia suara iklan: naskah percakapan + instruksi karakter announcer ke mesin TTS + jeda tanda baca otomatis. Jika mesin utama gagal, otomatis pindah ke mesin Indonesia lain — bila semua gagal, aplikasi memberi tahu, bukan diam-diam memakai suara Inggris.</p>
     </div>
-
-    <div class="card">
-      <h3><span class="step mic">🎬</span> Klip Video AI — Hemat Kredit</h3>
-      <p class="desc">Visual tiap scene = <b>video AI bergerak</b> (puter.ai.txt2vid), bukan gambar diam. Klip AI butuh ± 1–3 menit per klip — sekarang ada <b>timer &amp; progres bar live</b> selama menunggu, plus video dirender <b>paralel dengan suara</b> biar totalnya lebih cepat. Pengaturan di bawah menjaga kredit tetap irit.</p>
-      <label class="lb" for="selVidStrategy">Strategi kredit</label>
-      <select id="selVidStrategy">
-        <option value="satu" selected>Super Irit — 1 video untuk semua scene 🔋</option>
-        <option value="per-scene">Per Scene — video beda tiap scene</option>
-      </select>
-      <label class="lb" for="selVidPreset">Kualitas &amp; biaya klip</label>
-      <select id="selVidPreset">
-        <option value="uji">Uji Coba GRATIS — 0 kredit (klip contoh Puter)</option>
-        <option value="irit" selected>Irit — harga flat termurah · 1248×704 · 5 dtk</option>
-        <option value="seimbang">Seimbang — 720P · 5 dtk (Wan 2.7)</option>
-        <option value="kualitas">Kualitas — 1080P · 8 dtk (Wan 2.7)</option>
-      </select>
-      <label class="switch"><input type="checkbox" id="chkSaveDrive" checked><span class="track"></span> Simpan klip ke Drive Puter — dipakai ulang nanti tanpa biaya</label>
-      <p class="hint" id="vidEst">Estimasi biaya muncul di sini setelah naskah dibuat.</p>
-      <p class="hint">🔋 Trik irit: mode <b>1 video bersama</b> (hanya 1× potong kredit untuk seluruh video), model harga <b>flat per klip</b> (Seedance Lite), visual sama tidak pernah dibuat dua kali (cache), dan klip lama di Drive bisa dipakai lagi gratis. Video AI butuh waktu ±1–3 menit per klip — itu normal, bukan macet.</p>
-    </div>
   </section>
 
   <!-- ===== KOLOM 2: NASKAH & SCENE ===== -->
@@ -316,7 +295,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div class="toolbar card">
       <div class="tb-stats"><b id="sceneCount">0 scene</b><span id="totalDur">≈ 0:00</span></div>
       <div class="tb-actions">
-        <button id="btnGenAllVids" class="btn btn-s" type="button">🎬 Video Semua</button>
+        <button id="btnGenAllImgs" class="btn btn-s" type="button">🎨 Gambar Semua</button>
         <button id="btnGenAllVoices" class="btn btn-s" type="button">🎙️ Suarakan Semua</button>
         <button id="btnAddScene" class="btn btn-s" type="button">＋ Scene</button>
       </div>
@@ -324,7 +303,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div id="emptyState" class="empty card">
       <div class="empty-emoji">🎬</div>
       <h4>Belum ada naskah</h4>
-      <p>Isi topik di panel kiri, pilih gaya bicara, lalu klik <b>“Buat Naskah dengan AI”</b>.<br>Setiap scene otomatis mendapat <b>klip video AI bergerak</b> (hemat kredit) &amp; suara natural Bahasa Indonesia.</p>
+      <p>Isi topik di panel kiri, pilih gaya bicara, lalu klik <b>“Buat Naskah dengan AI”</b>.<br>Setiap scene otomatis mendapat ilustrasi &amp; suara natural Bahasa Indonesia.</p>
     </div>
     <div id="scenesList" class="scenes"></div>
   </section>
@@ -348,20 +327,19 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
       <p class="hint">Klik segmen untuk lompat &amp; putar dari scene tersebut.</p>
       <button id="btnExport" class="btn btn-p btn-block" type="button">🎥 Rekam &amp; Unduh Video (WebM)</button>
       <div id="dlArea"></div>
-      <p class="hint">Perekaman berjalan real-time di browser (klip video + suara + subtitle menyatu). Butuh MP4? Konversi WebM → MP4 lewat convertio.co atau HandBrake.</p>
+      <p class="hint">Perekaman berjalan real-time di browser (gambar + suara + subtitle menyatu). Butuh MP4? Konversi WebM → MP4 lewat convertio.co atau HandBrake.</p>
     </div>
     <div class="card tips">
-      <h3>💡 Tips Hemat Kredit &amp; Hasil Natural</h3>
+      <h3>💡 Tips Hasil Paling Natural</h3>
       <ul>
-        <li><b>Super Irit</b>: 1 klip video dipakai semua scene — hanya 1× potongan kredit untuk seluruh video.</li>
-        <li>Pakai mode <b>Uji Coba GRATIS</b> (0 kredit) untuk mencoba alur, lalu pindah ke mode Irit.</li>
-        <li>Centang <b>Simpan ke Drive Puter</b> — klip bisa dipakai ulang sesi berikutnya tanpa generate (0 kredit).</li>
-        <li>Edit teks narasi lalu klik 🎙️ untuk suara ulang; klik 🎬 hanya pada scene yang ingin diganti videonya.</li>
-        <li>Video AI butuh ±1–3 menit per klip. Klip 5 detik diputar berulang selama narasi scene berjalan.</li>
-        <li>Suara paling alami: <b>Damayanti Neural</b> + kecepatan <b>1.0×</b> + gaya bicara <b>santai</b>.</li>
+        <li>Edit teks narasi langsung di tiap scene — lalu klik 🎙️ untuk membuat ulang suaranya.</li>
+        <li>Gaya gerak <b>Otomatis</b>: kamera, partikel & efek berubah sendiri mengikuti kalimat narasi tiap scene — edit naskahnya, geraknya ikut menyesuaikan.</li>
+        <li>Ganti <i>prompt visual</i> untuk mengubah gaya ilustrasi scene.</li>
+        <li>Kombinasi paling alami: <b>Damayanti Neural</b> + kecepatan <b>1.0×</b> + gaya bicara <b>santai</b>.</li>
+        <li>Proyek tersimpan otomatis di browser ini (teks saja — gambar &amp; suara dibuat ulang saat perlu).</li>
       </ul>
     </div>
-    <p class="foot">EduVid AI Studio · Ditenagai <b>Puter AI</b> · Klip Video AI (txt2vid) · Suara: Damayanti (id-ID) 🇮🇩</p>
+    <p class="foot">EduVid AI Studio v2 · Gerak Sinematik Ikut Naskah · Ditenagai <b>Puter AI</b> · Suara: Damayanti (id-ID) 🇮🇩</p>
   </section>
 
 </main>
@@ -372,8 +350,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div class="spin"></div>
     <h4 id="ovTitle">Memproses…</h4>
     <p id="ovSub">Mohon tunggu sebentar</p>
-    <div id="ovProgWrap" hidden><div id="ovProgBar"></div></div>
-    <p id="ovMeta" hidden>0:00 berjalan</p>
     <button id="ovCancel" class="btn btn-s" type="button">Batalkan</button>
   </div>
 </div>
@@ -399,19 +375,7 @@ const STYLES={
   cerita:"Storytelling: scene pertama dibuka dengan hook cerita atau pertanyaan yang bikin penasaran, lalu alurnya mengantar penonton memahami materi pelan-pelan.",
   formal:"Formal akademik namun tetap mengalir, jelas, dan enak diucapkan; hindari struktur kalimat buku yang berat."
 };
-const VID_STYLE='modern educational animation, cinematic smooth motion, vibrant colors, clean flat vector illustration coming to life with gentle parallax, soft gradients, friendly and engaging, wide 16:9 composition, high detail, no text, no letters, no captions, no watermark';
-/* Preset klip video — diurutkan dari yang paling hemat kredit.
-   uji       : test_mode Puter → klip contoh, BENAR-BENAR 0 kredit.
-   irit      : Seedance 1.0 Lite (harga FLAT per klip, bukan per detik) — termurah untuk hasil asli.
-   seimbang  : Wan 2.7 (model default Puter) tier 720P, 5 detik.
-   kualitas  : Wan 2.7 tier 1080P, 8 detik. */
-const VID_PRESETS={
-  uji:{key:'uji',label:'Uji Coba GRATIS (klip contoh)',model:'bytedance/seedance-1.0-lite',size:'1248x704',seconds:5,audio:false,test:true},
-  irit:{key:'irit',label:'Irit · 1248×704 · 5 dtk · harga flat',model:'bytedance/seedance-1.0-lite',size:'1248x704',seconds:5,audio:false,test:false},
-  seimbang:{key:'seimbang',label:'Seimbang · 720P · 5 dtk',model:'wan-ai/wan2.7-t2v',size:'720P',seconds:5,audio:false,test:false},
-  kualitas:{key:'kualitas',label:'Kualitas · 1080P · 8 dtk',model:'wan-ai/wan2.7-t2v',size:'1080P',seconds:8,audio:true,test:false}
-};
-const VID_STAGES=['Menghubungi server video AI…','AI mulai merender frame animasi…','Menyusun potongan klip menjadi video utuh…','Merapikan gerakan & warna klip…','Hampir selesai — klip hampir siap diputar…'];
+const IMG_STYLE='modern educational illustration, vibrant colors, clean flat vector style with soft gradients, friendly and engaging, wide 16:9 composition, high detail, no text, no letters, no watermark';
 const VOICE_LABELS={'auto-iklan':'Otomatis · Suara Iklan Indonesia','gemini':'Gemini TTS','openai':'OpenAI TTS','damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
 const VOICE_KAR={
   iklan:'Berbicaralah seperti announcer iklan TV Indonesia profesional: hangat, bersemangat, meyakinkan, dan ramah. Gunakan intonasi yang hidup, penekanan pada kata-kata penting, dan jeda alami antar kalimat. Lafalkan setiap kata seperti penutur asli bahasa Indonesia — jangan terdengar seperti robot atau orang asing.',
@@ -442,8 +406,7 @@ KAIDAH NARASI (WAJIB dipatuhi):
 `;
 
 /* ================= State ================= */
-const state={scenes:[],voice:'auto-iklan',kar:'iklan',speed:1,naturalize:true,vidPreset:'irit',vidStrategy:'satu',saveDrive:true,user:null,busy:false,recording:false};
-const vidCache=new Map(); /* cache klip per prompt+preset → visual identik tidak dipotong kredit dua kali */
+const state={scenes:[],voice:'auto-iklan',kar:'iklan',speed:1,naturalize:true,motion:'auto',user:null,busy:false,recording:false};
 let pipelineCancel=false,exportCancel=false,mediaRec=null,exportChunks=[],exportNodes=[],actx=null,_dbT=null,_rtT=null;
 
 /* ================= Kanvas ================= */
@@ -451,13 +414,11 @@ const cv=$('#cv'),ctx=cv.getContext('2d');
 const W=cv.width,H=cv.height;
 
 function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-function drawCover(media,z,px,py){
-  const iw=media.videoWidth||media.naturalWidth,ih=media.videoHeight||media.naturalHeight;
-  if(!iw||!ih)return;
-  const ir=iw/ih,cr=W/H;
+function drawCover(img,z,px,py){
+  const ir=img.naturalWidth/img.naturalHeight,cr=W/H;
   let w,h;
   if(ir>cr){h=H*z;w=h*ir;}else{w=W*z;h=w/ir;}
-  ctx.drawImage(media,(W-w)/2+px,(H-h)/2+py,w,h);
+  ctx.drawImage(img,(W-w)/2+px,(H-h)/2+py,w,h);
 }
 function wrapText(c,text,maxW){
   const words=String(text).split(/\s+/);const lines=[];let cur='';
@@ -480,38 +441,56 @@ function chunkNarration(text){
   if(cur)chunks.push(cur);
   return chunks.length?chunks:[t||' '];
 }
-function drawIdle(){
+function drawIdle(now){
+  now=now||0;
   const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0d1329');g.addColorStop(1,'#0a0f20');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  const gl=ctx.createRadialGradient(W/2,H*0.42,60,W/2,H*0.42,520);
-  gl.addColorStop(0,'rgba(109,94,242,.20)');gl.addColorStop(1,'rgba(109,94,242,0)');
+  const bx=W/2+Math.sin(now*0.00042)*W*0.16,by=H*0.42+Math.cos(now*0.00057)*H*0.10;
+  let gl=ctx.createRadialGradient(bx,by,40,bx,by,520);
+  gl.addColorStop(0,'rgba(109,94,242,.22)');gl.addColorStop(1,'rgba(109,94,242,0)');
   ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
+  const cx2=W*0.5-Math.sin(now*0.00033+1.7)*W*0.22,cy2=H*0.66+Math.cos(now*0.00047)*H*0.10;
+  gl=ctx.createRadialGradient(cx2,cy2,30,cx2,cy2,420);
+  gl.addColorStop(0,'rgba(34,211,238,.13)');gl.addColorStop(1,'rgba(34,211,238,0)');
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
+  for(let i=0;i<16;i++){
+    const px2=((i*173+now*0.012*(1+(i%3)))%W+W)%W;
+    const py2=((i*127)%H)+Math.sin(now*0.0004+i*1.3)*26;
+    ctx.globalAlpha=0.05+0.06*Math.abs(Math.sin(now*0.0009+i));
+    ctx.fillStyle='#c7d2fe';
+    ctx.beginPath();ctx.arc(px2,py2,1.4+(i%3)*0.7,0,6.2832);ctx.fill();
+  }
+  ctx.globalAlpha=1;
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.font='800 58px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#eef2ff';
   ctx.fillText('🎬 EduVid AI Studio',W/2,H*0.42);
   ctx.font='500 26px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#93a1ba';
   ctx.fillText('Isi topik di panel kiri → klik “Buat Naskah dengan AI”',W/2,H*0.42+56);
   ctx.font='600 20px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='#5d6b84';
-  ctx.fillText('Naskah · Klip Video AI Hemat Kredit · Suara Natural Indonesia (Damayanti)',W/2,H*0.42+100);
+  ctx.fillText('Naskah · Ilustrasi AI · Suara Natural Indonesia (Damayanti)',W/2,H*0.42+100);
+}
+function idleLoop(ts){
+  fx.idleRaf=null;
+  if(state.scenes.length||state.recording)return;
+  drawIdle(ts||performance.now());
+  fx.idleRaf=requestAnimationFrame(idleLoop);
 }
 function drawSubtitle(sc,dur,t){
   if(!sc.narasi)return;
-  if(!sc.chunks)sc.chunks=chunkNarration(sc.narasi);
-  const chunks=sc.chunks;
-  const total=chunks.reduce((a,c)=>a+c.length,0)||1;
-  const speakMs=Math.max(1000,dur-700);
-  const pos=clamp(t/speakMs,0,0.999)*total;
-  let acc=0,txt=chunks[chunks.length-1];
-  for(let i=0;i<chunks.length;i++){acc+=chunks[i].length;if(pos<=acc){txt=chunks[i];break;}}
+  const ci=chunkInfo(getChunks(sc),dur,t);
   ctx.font='600 33px "Plus Jakarta Sans",sans-serif';
-  const lines=wrapText(ctx,txt,W-180).slice(0,3);
+  const lines=wrapText(ctx,ci.txt,W-180).slice(0,3);
   if(!lines.length)return;
+  const pop=EASE.outCubic(clamp((t-ci.st)/230,0,1));
   const lh=45,bh=lines.length*lh+26;
   let bw=0;lines.forEach(l=>bw=Math.max(bw,ctx.measureText(l).width));bw+=60;
-  const y=H-84-bh;
+  const y=H-84-bh+(1-pop)*16;
+  ctx.save();
+  ctx.globalAlpha=clamp(pop,0,1);
   ctx.fillStyle='rgba(4,9,20,.66)';rr(W/2-bw/2,y,bw,bh,16);ctx.fill();
   ctx.fillStyle='#f4f7ff';ctx.textAlign='center';ctx.textBaseline='middle';
   lines.forEach((l,i)=>ctx.fillText(l,W/2,y+13+lh/2+i*lh));
+  ctx.restore();
 }
 function drawProgress(){
   const n=state.scenes.length;if(!n)return;
@@ -525,15 +504,234 @@ function drawProgress(){
     x+=w+gap;
   }
 }
-function drawFrame(){
+/* ============ MESIN GERAK SINEMATIK v2 — kamera & efek otomatis menyesuaikan naskah ============ */
+const EASE={
+  linear:t=>t,
+  inOut:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,
+  outCubic:t=>1-Math.pow(1-t,3),
+  inOutSine:t=>-(Math.cos(Math.PI*t)-1)/2
+};
+function hashStr(s){let h=2166136261;s=String(s||'');for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+/* Preset gerak kamera — p = progres 0..1 di dalam segmen */
+const MOTIONS={
+  zoomIn:p=>{const e=EASE.inOutSine(p);return{z:1.045+0.115*e,px:0,py:0,rot:0};},
+  zoomOut:p=>{const e=EASE.inOutSine(p);return{z:1.16-0.115*e,px:0,py:0,rot:0};},
+  panLR:p=>({z:1.11,px:lerp(-30,30,EASE.inOutSine(p)),py:0,rot:0}),
+  panRL:p=>({z:1.11,px:lerp(30,-30,EASE.inOutSine(p)),py:0,rot:0}),
+  panUp:p=>({z:1.12,px:0,py:lerp(26,-26,EASE.inOutSine(p)),rot:0}),
+  panDown:p=>({z:1.12,px:0,py:lerp(-26,26,EASE.inOutSine(p)),rot:0}),
+  diagTL:p=>{const e=EASE.inOutSine(p);return{z:1.06+0.09*e,px:lerp(-22,22,e),py:lerp(16,-16,e),rot:0};},
+  diagBR:p=>{const e=EASE.inOutSine(p);return{z:1.15-0.09*e,px:lerp(22,-22,e),py:lerp(-16,16,e),rot:0};},
+  pushIn:p=>({z:1.02+0.17*EASE.outCubic(p),px:0,py:0,rot:0}),
+  pullBack:p=>({z:1.19-0.17*EASE.outCubic(p),px:0,py:0,rot:0}),
+  driftR:p=>{const e=EASE.inOutSine(p);return{z:1.10,px:0,py:lerp(-18,18,e),rot:lerp(-0.55,0.55,e)};},
+  driftL:p=>{const e=EASE.inOutSine(p);return{z:1.10,px:0,py:lerp(18,-18,e),rot:lerp(0.55,-0.55,e)};},
+  floaty:p=>{const e=EASE.inOutSine(p);return{z:1.09+0.015*Math.sin(p*Math.PI*2),px:lerp(-14,14,e),py:Math.sin(p*Math.PI*2)*10,rot:0};}
+};
+const MOTION_POOL=Object.keys(MOTIONS);
+/* Tema visual dideteksi dari kata kunci naskah → menentukan partikel, rona warna & pilihan gerak */
+const MOODS={
+  angkasa:{kata:['matahari','planet','tata surya','bintang','angkasa','galaksi','bulan','orbit','astronom','roket','satelit','gerhana','komet','semesta','space','galaxy','solar'],part:'stars',tint:'rgba(76,96,222,.10)',pool:['floaty','zoomIn','panLR','diagTL','driftR','zoomOut']},
+  air:{kata:['air','laut','samudra','sungai','ombak','gelombang','hujan','danau','evaporasi','kondensasi','presipitasi','banjir','renang','water','ocean','rain','river','wave'],part:'bubbles',tint:'rgba(34,168,211,.10)',pool:['panLR','zoomIn','floaty','panUp','diagTL','driftL']},
+  alam:{kata:['tumbuhan','tanaman','fotosintesis','daun','pohon','bunga','bibit','tumbuh','hutan','ekosistem','klorofil','benih','kebun','panen','hewan','plant','leaf','tree','grow','forest','nature'],part:'fireflies',tint:'rgba(52,199,123,.09)',pool:['panUp','zoomIn','diagTL','floaty','panLR','pullBack']},
+  energi:{kata:['energi','listrik','panas','api','reaksi','ledakan','petir','magnet','kecepatan','gaya','gerak','otot','kalori','daya','mesin','energy','electric','fire','heat'],part:'sparks',tint:'rgba(251,146,60,.09)',pool:['pushIn','zoomOut','diagBR','panRL','driftR','zoomIn']},
+  data:{kata:['angka','persen','data','grafik','statistik','hitung','rumus','soal','pythagoras','matematika','aljabar','segitiga','sisi','perbandingan','penelitian','math','number','chart','graph'],part:'plus',tint:'rgba(139,109,242,.10)',pool:['zoomIn','panLR','diagBR','zoomOut','panRL','pushIn']},
+  manusia:{kata:['sejarah','proklamasi','kemerdekaan','pejuang','presiden','soekarno','hatta','tokoh','perang','kerajaan','budaya','masyarakat','manusia','anak','murid','siswa','guru','sekolah','keluarga','belajar','hoaks','literasi'],part:'dust',tint:'rgba(251,191,36,.07)',pool:['panRL','zoomOut','diagBR','panLR','driftL','zoomIn']}
+};
+const MOOD_DEF={part:'dust',tint:'rgba(148,163,184,.07)',pool:MOTION_POOL};
+function sceneMood(sc){
+  const txt=((sc.judul||'')+' '+(sc.visual||'')+' '+(sc.narasi||'')).toLowerCase();
+  let best=null,bs=0;
+  for(const k in MOODS){
+    let s=0;const ws=MOODS[k].kata;
+    for(let i=0;i<ws.length;i++)if(txt.indexOf(ws[i])!==-1)s+=ws[i].length>6?2:1;
+    if(s>bs){bs=s;best=k;}
+  }
+  return best;
+}
+function getChunks(sc){if(!sc.chunks)sc.chunks=chunkNarration(sc.narasi);return sc.chunks;}
+/* Rencana gerak per scene: jumlah segmen mengikuti jumlah potongan kalimat narasi,
+   sehingga saat naskah diedit, gerak kamera ikut berubah menyesuaikan. */
+function getPlan(sc){
+  const key=(sc.narasi||'')+'|'+(sc.judul||'')+'|'+(sc.visual||'')+'|'+state.motion;
+  if(sc._plan&&sc._planKey===key)return sc._plan;
+  const mood=sceneMood(sc);
+  const cfg=mood?MOODS[mood]:MOOD_DEF;
+  const chunks=getChunks(sc);
+  const n=clamp(chunks.length,2,6);
+  const seed=hashStr((sc.id||0)+'#'+key);
+  const segs=[];
+  for(let i=0;i<n;i++){
+    const h=hashStr(seed+':'+i);
+    let name=cfg.pool[h%cfg.pool.length];
+    if(i&&name===segs[i-1].name)name=cfg.pool[(h+1)%cfg.pool.length];
+    segs.push({name:name});
+  }
+  sc._plan={mood:mood,part:cfg.part,tint:cfg.tint,segs:segs};
+  sc._planKey=key;
+  return sc._plan;
+}
+function chunkInfo(chunks,dur,t){
+  const speakMs=Math.max(1000,dur-700);
+  const total=chunks.reduce((a,c)=>a+c.length,0)||1;
+  const pos=clamp(t/speakMs,0,0.999)*total;
+  let acc=0;
+  for(let i=0;i<chunks.length;i++){acc+=chunks[i].length;if(pos<=acc)return{i:i,st:(acc-chunks[i].length)/total*speakMs,en:acc/total*speakMs,txt:chunks[i]};}
+  return{i:chunks.length-1,st:0,en:speakMs,txt:chunks[chunks.length-1]};
+}
+function chunkBounds(chunks,dur,i){
+  const speakMs=Math.max(1000,dur-700);
+  const total=chunks.reduce((a,c)=>a+c.length,0)||1;
+  let acc=0;
+  for(let k=0;k<chunks.length;k++){const b=acc/total*speakMs;acc+=chunks[k].length;if(k===i)return{st:b,en:acc/total*speakMs};}
+  return{st:0,en:speakMs};
+}
+function motionSeg(sc,plan,dur,t){
+  const chunks=getChunks(sc),n=plan.segs.length;
+  const speakMs=Math.max(1000,dur-700);
+  if(chunks.length<=1){const i=Math.min(n-1,Math.floor(clamp(t/speakMs,0,0.999)*n));return{i:i,st:i/n*speakMs,en:(i+1)/n*speakMs};}
+  const per=Math.ceil(chunks.length/n);
+  const ci=chunkInfo(chunks,dur,t);
+  const gi=Math.min(n-1,Math.floor(ci.i/per));
+  const a=chunkBounds(chunks,dur,gi*per);
+  const b=chunkBounds(chunks,dur,Math.min(chunks.length-1,(gi+1)*per-1));
+  return{i:gi,st:a.st,en:b.en};
+}
+function motionTF(sc,plan,dur,t,now){
+  if(state.motion==='off')return{z:1.001,px:0,py:0,rot:0};
+  const seg=motionSeg(sc,plan,dur,t);
+  const sg=plan.segs[seg.i];
+  const local=clamp((t-seg.st)/Math.max(1,seg.en-seg.st),0,1);
+  let tf=MOTIONS[sg.name](local);
+  const amp=state.motion==='calm'?0.5:state.motion==='cinematic'?1.22:1;
+  tf={z:1+(tf.z-1)*amp,px:tf.px*amp,py:tf.py*amp,rot:(tf.rot||0)*amp};
+  if(sc._segIdx!==seg.i){
+    if(sc._segIdx!=null&&sc._curTf){sc._prevTf=sc._curTf;sc._swT=now;}
+    sc._segIdx=seg.i;
+  }
+  if(sc._prevTf&&now-sc._swT<420){
+    const q=EASE.inOut(clamp((now-sc._swT)/420,0,1));
+    tf={z:lerp(sc._prevTf.z,tf.z,q),px:lerp(sc._prevTf.px,tf.px,q),py:lerp(sc._prevTf.py,tf.py,q),rot:lerp(sc._prevTf.rot||0,tf.rot||0,q)};
+  }
+  sc._curTf=tf;
+  return tf;
+}
+function drawImageTf(img,tf,alpha){
+  const ir=img.naturalWidth/img.naturalHeight,cr=W/H;
+  let w,h;
+  if(ir>cr){h=H*tf.z;w=h*ir;}else{w=W*tf.z;h=w/ir;}
+  ctx.save();
+  if(alpha!=null&&alpha<1)ctx.globalAlpha=alpha;
+  ctx.translate(W/2+tf.px,H/2+tf.py);
+  if(tf.rot)ctx.rotate(tf.rot*Math.PI/180);
+  ctx.drawImage(img,-w/2,-h/2,w,h);
+  ctx.restore();
+}
+/* ---- Partikel & efek cahaya per tema ---- */
+const fx={parts:null,partsId:null,partsType:null,partsSeed:null,lastNow:0,idleRaf:null,trans:null,sprites:{}};
+const PARTS={
+  stars:{n:34,col:'255,255,255',col2:'147,197,253',size:[1.2,3.0],sp:[6,16],mode:'twinkle'},
+  bubbles:{n:26,col:'125,211,252',size:[2,5.5],sp:[18,42],mode:'rise'},
+  fireflies:{n:26,col:'190,242,100',col2:'253,224,71',size:[1.6,3.4],sp:[8,18],mode:'sway'},
+  sparks:{n:30,col:'253,186,116',col2:'251,146,60',size:[1.2,2.6],sp:[40,90],mode:'riseFast'},
+  plus:{n:20,col:'196,181,253',size:[4,8],sp:[5,12],mode:'plus'},
+  dust:{n:22,col:'203,213,225',size:[1,2.6],sp:[4,10],mode:'sway'}
+};
+function glowSprite(col){
+  if(fx.sprites[col])return fx.sprites[col];
+  const c=document.createElement('canvas');c.width=48;c.height=48;
+  const g=c.getContext('2d');
+  const gr=g.createRadialGradient(24,24,0,24,24,24);
+  gr.addColorStop(0,'rgba('+col+',.9)');gr.addColorStop(.4,'rgba('+col+',.35)');gr.addColorStop(1,'rgba('+col+',0)');
+  g.fillStyle=gr;g.fillRect(0,0,48,48);
+  fx.sprites[col]=c;return c;
+}
+function ensureParts(sc,type){
+  if(fx.partsId===sc.id&&fx.partsType===type&&fx.parts)return;
+  const cfg=PARTS[type]||PARTS.dust;
+  const n=state.motion==='cinematic'?Math.round(cfg.n*1.5):state.motion==='calm'?Math.round(cfg.n*0.6):cfg.n;
+  fx.parts=[];fx.partsId=sc.id;fx.partsType=type;fx.partsSeed=cfg;
+  for(let i=0;i<n;i++)fx.parts.push({x:Math.random()*W,y:Math.random()*H,r:cfg.size[0]+Math.random()*(cfg.size[1]-cfg.size[0]),sp:cfg.sp[0]+Math.random()*(cfg.sp[1]-cfg.sp[0]),ph:Math.random()*Math.PI*2,vx:(Math.random()-0.5)*8});
+}
+function drawParts(now){
+  const cfg=fx.partsSeed;
+  if(!cfg||!fx.parts)return;
+  const dt=Math.min(64,now-(fx.lastNow||now));fx.lastNow=now;
+  const dim=state.motion==='calm'?0.6:1;
+  ctx.save();
+  for(let i=0;i<fx.parts.length;i++){
+    const p=fx.parts[i];let a=1;
+    if(cfg.mode==='twinkle'){a=.25+.75*Math.abs(Math.sin(now*.0016+p.ph));p.y+=p.sp*dt/1000*.4;p.x+=Math.sin(now*.0006+p.ph)*dt/1000*6;}
+    else if(cfg.mode==='rise'){p.y-=p.sp*dt/1000;p.x+=Math.sin(now*.001+p.ph)*dt/1000*10;}
+    else if(cfg.mode==='riseFast'){p.y-=p.sp*dt/1000;p.x+=Math.sin(now*.004+p.ph)*dt/1000*16;}
+    else{p.y+=Math.sin(now*.0008+p.ph)*dt/1000*8;p.x+=(p.vx+Math.sin(now*.0005+p.ph)*8)*dt/1000;}
+    if(p.y<-12)p.y=H+10;if(p.y>H+12)p.y=-10;if(p.x<-12)p.x=W+10;if(p.x>W+12)p.x=-10;
+    if(cfg.mode==='plus'){
+      ctx.globalAlpha=.45*dim;
+      ctx.strokeStyle='rgba('+cfg.col+',.95)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(p.x-p.r,p.y);ctx.lineTo(p.x+p.r,p.y);ctx.moveTo(p.x,p.y-p.r);ctx.lineTo(p.x,p.y+p.r);ctx.stroke();
+    }else if(cfg.mode==='riseFast'){
+      ctx.globalAlpha=.55*dim;
+      ctx.strokeStyle='rgba('+cfg.col+',.9)';ctx.lineWidth=p.r;
+      ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x,p.y+8+p.sp*.06);ctx.stroke();
+    }else{
+      const col=(p.ph>3.14&&cfg.col2)?cfg.col2:cfg.col;
+      ctx.globalAlpha=(cfg.mode==='twinkle'?a*.9:.75)*dim;
+      const s=p.r*6;
+      ctx.drawImage(glowSprite(col),p.x-s/2,p.y-s/2,s,s);
+    }
+  }
+  ctx.restore();ctx.globalAlpha=1;
+}
+let _vig=null;
+function vignette(){
+  if(_vig)return _vig;
+  _vig=document.createElement('canvas');_vig.width=W;_vig.height=H;
+  const g=_vig.getContext('2d');
+  const gr=g.createRadialGradient(W/2,H/2,H*0.42,W/2,H/2,H*0.95);
+  gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(2,4,10,.42)');
+  g.fillStyle=gr;g.fillRect(0,0,W,H);
+  return _vig;
+}
+function drawSweep(now){
+  if(state.motion!=='cinematic')return;
+  const per=6800,ph=(now%per)/per;
+  const a=Math.sin(Math.PI*ph)*0.07;
+  if(a<=0.004)return;
+  const x0=lerp(-W*0.35,W*1.05,ph);
+  const g=ctx.createLinearGradient(x0,0,x0+W*0.22,H*0.42);
+  g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,'+a.toFixed(3)+')');g.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.save();ctx.translate(W*0.12,0);ctx.rotate(0.14);
+  ctx.fillStyle=g;ctx.fillRect(-W*0.3,-H*0.3,W*1.8,H*1.7);
+  ctx.restore();
+}
+
+function drawFrame(now){
+  now=now||performance.now();
   const sc=state.scenes[player.idx];
-  if(!sc){drawIdle();return;}
+  if(!sc){drawIdle(now);if(!fx.idleRaf&&!state.scenes.length)fx.idleRaf=requestAnimationFrame(idleLoop);return;}
   const dur=player.sceneDur(player.idx),t=player.t;
-  const vidEl=(sc.vid&&sc.vid.el&&sc.vid.el.readyState>=2)?sc.vid.el:null;
-  if(vidEl){
-    const p=clamp(t/dur,0,1);
-    drawCover(vidEl,1.02+0.08*p,0,0);
+  const plan=getPlan(sc);
+  const hasImg=!!(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth);
+  if(hasImg){
+    const tf=motionTF(sc,plan,dur,t,now);
+    drawImageTf(sc.imgEl,tf,1);
+    if(fx.trans){
+      const q=clamp((now-fx.trans.t0)/fx.trans.dur,0,1);
+      if(q>=1)fx.trans=null;
+      else if(fx.trans.img){
+        const ptf=fx.trans.tf;
+        drawImageTf(fx.trans.img,{z:ptf.z*(1+0.06*q),px:ptf.px*(1+0.4*q),py:ptf.py*(1-0.2*q),rot:(ptf.rot||0)*(1-q)},1-EASE.inOut(q));
+      }
+    }
+    ctx.drawImage(vignette(),0,0);
+    if(state.motion!=='off'){
+      ensureParts(sc,plan.part);drawParts(now);
+      ctx.fillStyle=plan.tint;ctx.fillRect(0,0,W,H);
+      drawSweep(now);
+    }
   }else{
+    fx.trans=null;
     const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#131a36');g.addColorStop(1,'#0c1124');
     ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     ctx.textAlign='center';ctx.textBaseline='middle';
@@ -541,19 +739,20 @@ function drawFrame(){
     ctx.font='800 230px "Plus Jakarta Sans",sans-serif';
     ctx.fillText(String(player.idx+1),W/2,H/2);
     ctx.font='600 30px "Plus Jakarta Sans",sans-serif';ctx.fillStyle='rgba(230,237,247,.35)';
-    ctx.fillText($('#inpTopic').value.trim()||'Belum ada klip — klik 🎬 Buat Video',W/2,H-140);
+    ctx.fillText($('#inpTopic').value.trim()||'Ilustrasi sedang dibuat…',W/2,H-140);
   }
   const gg=ctx.createLinearGradient(0,H*0.5,0,H);gg.addColorStop(0,'rgba(4,8,18,0)');gg.addColorStop(1,'rgba(4,8,18,.82)');
   ctx.fillStyle=gg;ctx.fillRect(0,H*0.5,W,H*0.5);
-  const chipA=clamp(1-Math.max(0,t-1700)/800,0,1);
+  const chipA=clamp(1-Math.max(0,t-1900)/700,0,1)*clamp(t/260,0,1);
   if(chipA>0&&sc.judul){
+    const sl=(1-EASE.outCubic(clamp(t/430,0,1)))*-20;
     ctx.globalAlpha=chipA;
     ctx.font='800 26px "Plus Jakarta Sans",sans-serif';
     const tw=ctx.measureText(sc.judul).width;
-    ctx.fillStyle='rgba(10,14,26,.72)';rr(28,28,tw+44,52,14);ctx.fill();
-    ctx.fillStyle='#22d3ee';rr(28,28,6,52,3);ctx.fill();
+    ctx.fillStyle='rgba(10,14,26,.72)';rr(28+sl,28,tw+44,52,14);ctx.fill();
+    ctx.fillStyle='#22d3ee';rr(28+sl,28,6,52,3);ctx.fill();
     ctx.fillStyle='#f2f6ff';ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillText(sc.judul,52,55);
+    ctx.fillText(sc.judul,52+sl,55);
     ctx.globalAlpha=1;
   }
   drawSubtitle(sc,dur,t);
@@ -561,8 +760,11 @@ function drawFrame(){
   ctx.font='700 19px "Plus Jakarta Sans",sans-serif';ctx.textAlign='right';ctx.textBaseline='alphabetic';
   ctx.fillStyle='rgba(230,237,247,.4)';
   ctx.fillText('🎬 EduVid AI Studio',W-26,44);
-  const fade=1-Math.min(clamp(t/350,0,1),clamp((dur-t)/350,0,1));
-  if(fade>0.01){ctx.fillStyle='rgba(3,6,12,'+fade.toFixed(3)+')';ctx.fillRect(0,0,W,H);}
+  let dark=0;
+  if(player.idx===0)dark=Math.max(dark,1-clamp(t/300,0,1));
+  if(player.idx===state.scenes.length-1)dark=Math.max(dark,1-clamp((dur-t)/300,0,1));
+  if(!hasImg)dark=Math.max(dark,1-clamp(t/260,0,1));
+  if(dark>0.01){ctx.fillStyle='rgba(3,6,12,'+dark.toFixed(3)+')';ctx.fillRect(0,0,W,H);}
 }
 
 /* ================= Pemain (player) ================= */
@@ -579,22 +781,19 @@ const player={
     if(!this.raf)this.raf=requestAnimationFrame(ts=>this.tick(ts));
   },
   pause(){this.playing=false;this.pauseAudio();updatePlayUI();drawFrame();},
-  stop(){this.pauseAudio();this.playing=false;this.stopAfter=null;this.idx=0;this.t=0;this.lastTs=null;state.scenes.forEach(s=>{if(s.vid&&s.vid.el){try{s.vid.el.pause();}catch(_){ }}});highlightSceneCard();updatePlayUI();drawFrame();updateTimeUI();},
+  stop(){this.fxReset();this.pauseAudio();this.playing=false;this.stopAfter=null;this.idx=0;this.t=0;this.lastTs=null;highlightSceneCard();updatePlayUI();drawFrame();updateTimeUI();},
   playOne(i){if(!state.scenes.length)return;this.seek(i);this.stopAfter=i;this.play();},
   step(d){const max=Math.max(0,state.scenes.length-1);const i=clamp(this.idx+d,0,max);
     if(this.playing){this.toScene(i);this.resumeAudio();}else{this.seek(i);drawFrame();updateTimeUI();}},
-  seek(i){this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;
-    const sc=state.scenes[this.idx];if(sc&&sc.vid&&sc.vid.el){try{sc.vid.el.currentTime=0;}catch(_){ }}
-    highlightSceneCard();updateTimeUI();},
-  toScene(i){const prev=state.scenes[this.idx];if(prev&&prev.vid&&prev.vid.el){try{prev.vid.el.pause();}catch(_){ }}
-    this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;
-    const sc=state.scenes[this.idx];
-    if(sc&&sc.playback&&sc.playback.el){try{sc.playback.el.currentTime=0;}catch(_){}}
-    if(sc&&sc.vid&&sc.vid.el){sc.vid.el.muted=true;try{sc.vid.el.currentTime=0;}catch(_){ }if(this.playing)sc.vid.el.play().catch(()=>{});}
+  fxCapture(){const pv=state.scenes[this.idx];if(!pv)return;
+    fx.trans={img:(pv.imgEl&&pv.imgEl.complete&&pv.imgEl.naturalWidth)?pv.imgEl:null,tf:pv._curTf||{z:1.06,px:0,py:0,rot:0},t0:performance.now(),dur:560};},
+  fxReset(){fx.trans=null;},
+  seek(i){this.fxReset();this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;highlightSceneCard();updateTimeUI();},
+  toScene(i){this.fxCapture();this.pauseAudio();this.idx=clamp(i,0,Math.max(0,state.scenes.length-1));this.t=0;this.lastTs=null;
+    const sc=state.scenes[this.idx];if(sc&&sc.playback&&sc.playback.el){try{sc.playback.el.currentTime=0;}catch(_){}}
     highlightSceneCard();},
   pauseAudio(){
     const sc=state.scenes[this.idx];if(!sc)return;
-    if(sc.vid&&sc.vid.el){try{sc.vid.el.pause();}catch(_){ }}
     if(state.recording){const a=exportNodes[this.idx];if(a){try{a.pause();}catch(_){}}return;}
     const pb=sc.playback;
     if(pb&&pb.type==='puter'){try{pb.el.pause();}catch(_){}}
@@ -602,7 +801,6 @@ const player={
   },
   resumeAudio(){
     const sc=state.scenes[this.idx];if(!sc)return;
-    if(sc.vid&&sc.vid.el){sc.vid.el.muted=true;sc.vid.el.play().catch(()=>{});}
     if(state.recording){const a=exportNodes[this.idx];if(a){a.playbackRate=state.speed;a.play().catch(()=>{});}return;}
     const pb=sc.playback;
     if(pb&&pb.type==='puter'){
@@ -794,9 +992,8 @@ function buildPrompt(topic,level,dur,style,n){
     'Durasi total target: sekitar '+dur+' detik, dibagi menjadi TEPAT '+n+' scene.\n\n'+
     'GAYA BICARA: '+STYLES[style]+'\n\n'+
     'Panjang tiap narasi scene: 2-4 kalimat (sekitar 15-30 detik dibaca dengan tempo wajar).\n\n'+
-    'Karena visualnya berupa KLIP VIDEO BERGERAK (bukan gambar diam), isi "visual" dengan 1 kalimat bahasa Inggris yang menjelaskan: subjek + GERAKAN yang terjadi + gerakan kamera + suasana. Contoh: "sunlight rays drifting over a green leaf while the camera slowly zooms in, fresh morning mood".\n\n'+
     'Balas HANYA array JSON valid — TANPA penjelasan dan TANPA markdown — dengan bentuk persis:\n'+
-    '[{"judul":"judul scene singkat","narasi":"teks yang dibacakan penyiar","visual":"english video prompt: subject + motion + camera move + mood"}]\n'+
+    '[{"judul":"judul scene singkat","narasi":"teks yang dibacakan penyiar","visual":"english image prompt for the scene illustration"}]\n'+
     'Mulai jawabanmu langsung dengan karakter [';
 }
 function normalizeSceneRaw(o){
@@ -811,7 +1008,7 @@ function normalizeScene(o){
     .replace(/\b(sebagai|as)\s+(sebuah\s+)?(AI|artificial intelligence|kecerdasan buatan|model bahasa|language model)\b[^.!?]*[.!?]?/gi,'')
     .replace(/^scene\s*\d+\s*[:.\-]\s*/i,'')
     .trim();
-  return {id:uid(),judul:s.judul||'Scene',narasi:nar,visual:s.visual,vid:null,vidPath:null,vidLabel:'',playback:null,audioDur:0,chunks:null,stale:false};
+  return {id:uid(),judul:s.judul||'Scene',narasi:nar,visual:s.visual,imgSrc:null,imgEl:null,playback:null,audioDur:0,chunks:null,stale:false};
 }
 function tryParseScenes(raw){
   if(!raw)return null;
@@ -873,117 +1070,35 @@ async function genScript(topic){
   if(!parsed||!parsed.length)throw new Error('AI tidak mengembalikan naskah yang bisa dibaca — coba lagi ya');
   return parsed;
 }
-/* ---------- Klip VIDEO AI (puter.ai.txt2vid) — mesin hemat kredit ---------- */
-function buildVidPrompt(p){
-  let base=String(p||'').trim()||'educational animation';
-  if(base.length>560)base=base.slice(0,560);
-  return base+', '+VID_STYLE;
+async function makeImage(prompt){
+  const full=(String(prompt||'').trim()||'educational illustration')+', '+IMG_STYLE;
+  const res=await puter.ai.txt2img(full);
+  const src=typeof res==='string'?res:(res&&res.src);
+  if(!src)throw new Error('Gambar tidak diterima dari AI');
+  return src;
 }
-function drivePath(name){
-  return 'eduvid-videos/'+slug($('#inpTopic').value)+'-'+Date.now().toString(36)+'-'+String(name||'sc')+'.mp4';
-}
-function buildVideoEl(url){
-  return new Promise((res,rej)=>{
-    const v=document.createElement('video');
-    v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';v.crossOrigin='anonymous';
-    v.src=url;
-    let done=false;
-    const fin=ok=>{if(done)return;done=true;clearTimeout(tm);ok?res(v):rej(new Error('Klip video tidak bisa dimuat'));};
-    const tm=setTimeout(()=>fin(v.readyState>=2),20000);
-    v.addEventListener('loadeddata',()=>fin(true),{once:true});
-    v.addEventListener('canplay',()=>fin(true),{once:true});
-    v.addEventListener('error',()=>fin(false),{once:true});
-    try{v.load();}catch(_){ }
+function ensureImgEl(sc){
+  if(sc.imgEl&&sc.imgEl.complete&&sc.imgEl.naturalWidth)return Promise.resolve(sc.imgEl);
+  if(!sc.imgSrc)return Promise.resolve(null);
+  const load=u=>new Promise((res,rej)=>{
+    const im=new Image();im.crossOrigin='anonymous';
+    im.onload=()=>res(im);im.onerror=rej;im.src=u;
   });
-}
-async function ingestVideo(res,preset){
-  let src=null;
-  if(res){
-    if(typeof res.src==='string')src=res.src;
-    else{try{src=String(res);}catch(_){ }}
-  }
-  if(!src||src==='[object Object]')throw new Error('Klip video tidak diterima dari AI');
-  let url=src,blob=null;
-  /* Blob lokal → canvas tidak ter-taint, rekaman WebM tetap jalan */
-  try{const r=await fetch(src);if(r.ok){blob=await r.blob();url=URL.createObjectURL(blob);}}catch(_){ }
-  let el=null;
-  try{el=await buildVideoEl(url);}
-  catch(_){
-    if(url!==src){try{el=await buildVideoEl(src);}catch(__){el=null;}}
-    if(!el)throw new Error('Klip video tidak bisa diputar di browser ini');
-  }
-  const dur=(isFinite(el.duration)&&el.duration>0)?el.duration:(preset.seconds||5);
-  return {type:'video',el:el,blob:blob,url:url,dur:dur,label:preset.label,path:null};
-}
-async function makeVideo(prompt,name){
-  if(typeof puter==='undefined')throw new Error('SDK Puter belum termuat');
-  const preset=VID_PRESETS[state.vidPreset]||VID_PRESETS.irit;
-  const full=buildVidPrompt(prompt);
-  const key=preset.key+'|'+full;
-  if(vidCache.has(key))return vidCache.get(key);
-  const attempts=[];
-  if(preset.test){
-    attempts.push({model:preset.model,test_mode:true});
-    attempts.push({test_mode:true});
-  }else{
-    const base={seconds:preset.seconds,size:preset.size,generate_audio:preset.audio};
-    attempts.push(state.saveDrive?Object.assign({model:preset.model},{puter_output_path:drivePath(name)}):Object.assign({model:preset.model},base));
-    attempts.push(Object.assign({},base)); /* cadangan: model default Puter */
-  }
-  let lastErr=null;
-  for(let i=0;i<attempts.length;i++){
-    const opts=attempts[i];
-    try{
-      const res=await puter.ai.txt2vid(full,opts);
-      const vid=await ingestVideo(res,preset);
-      vid.path=opts.puter_output_path||null;
-      if(vid.path)vid.label+=' · Drive';
-      vidCache.set(key,vid);
-      return vid;
-    }catch(e){
-      lastErr=e;
-      const code=String((e&&(e.code||e.errorCode))||'');
-      const msg=String((e&&(e.message||e.error))||e||'');
-      if(/moderation/i.test(code))throw new Error('Prompt visual ditolak filter konten — coba ubah prompt visual scene ini');
-      if(/insufficient_funds/i.test(code)||/insufficient/i.test(msg))throw new Error('Kredit Puter kurang — pakai Mode Uji GRATIS (0 kredit), pilih mode lebih irit, atau isi ulang kredit akun Puter');
-      if(opts.puter_output_path&&/access_denied|cannot_write|permission/i.test(code+' '+msg)){
-        toast('Tidak bisa simpan ke Drive Puter — lanjut tanpa menyimpan','warn');
-        const o=Object.assign({},opts);delete o.puter_output_path;
-        attempts.splice(i+1,0,o);
-        continue;
-      }
-      console.warn('[VID] percobaan gagal:',e);
-      if(i<attempts.length-1)toast('Percobaan pertama gagal — otomatis mencoba jalur cadangan…','warn');
+  return (async()=>{
+    let src=sc.imgSrc;
+    if(!src.startsWith('data:')){
+      try{const r=await fetch(src);const b=await r.blob();src=URL.createObjectURL(b);sc.imgSrc=src;}catch(_){ }
     }
-  }
-  throw new Error('Video gagal dibuat'+(lastErr?': '+(((lastErr&&(lastErr.message||lastErr.code))||lastErr)):'')+'. Provider video bisa sibuk — tunggu sebentar lalu coba lagi.');
-}
-async function restoreVideos(){
-  if(typeof puter==='undefined'||!puter.fs||!puter.fs.read)return;
-  const byPath=new Map();
-  for(const sc of state.scenes){
-    if(!sc.vidPath||sc.vid)continue;
-    try{
-      let entry=byPath.get(sc.vidPath);
-      if(!entry){
-        const blob=await puter.fs.read(sc.vidPath);
-        const url=URL.createObjectURL(blob);
-        const el=await buildVideoEl(url);
-        entry={type:'video',el:el,blob:blob,url:url,dur:(isFinite(el.duration)&&el.duration>0)?el.duration:5,label:(sc.vidLabel||'Klip tersimpan')+' · Drive',path:sc.vidPath};
-        byPath.set(sc.vidPath,entry);
-      }
-      sc.vid=entry;
-      updateSceneMedia(sc);
-    }catch(_){ /* Drive tidak bisa dibaca — scene tinggal di-generate ulang */ }
-  }
-  drawFrame();updateVidEst();
+    try{sc.imgEl=await load(src);}catch(_){sc.imgEl=null;}
+    return sc.imgEl;
+  })();
 }
 
 /* ================= UI Scene ================= */
 function scDurSec(sc){const base=(sc.playback&&sc.playback.dur)||estSec(sc.narasi);return Math.max(2.5,base/state.speed);}
 function sceneCardHTML(sc,i){
   const hasV=sc.playback&&sc.playback.type==='puter';
-  const hasVid=!!sc.vid;
+  const hasImg=!!sc.imgSrc;
   const pillV=hasV?(sc.stale?'🎙️ ⟳':'🎙️ ✓'):(sc.playback&&sc.playback.type==='browser'?'🎙️ ✓ (browser)':'🎙️ —');
   const clsV=hasV&&!sc.stale?'pill st-voice ok':hasV?'pill st-voice warn':'pill st-voice';
   return ''+
@@ -1001,18 +1116,18 @@ function sceneCardHTML(sc,i){
   '<div class="sc-meta">'+
     '<span class="sc-meta-info">'+sc.narasi.length+' karakter · ≈ '+Math.round(estSec(sc.narasi))+' dtk</span>'+
     '<span class="pills">'+
-      '<span class="pill st-vid'+(hasVid?' ok':'')+'" title="'+esc(hasVid?(sc.vidLabel||'Klip video AI'):'Belum ada klip video')+'">'+(hasVid?'🎬 ✓':'🎬 —')+'</span>'+
+      '<span class="pill st-img'+(hasImg?' ok':'')+'">'+(hasImg?'🖼️ ✓':'🖼️ —')+'</span>'+
       '<span class="'+clsV+'">'+pillV+'</span>'+
     '</span>'+
     '<button class="linkish" type="button" data-act="vis">Prompt visual</button>'+
   '</div>'+
   '<div class="sc-visual-row"'+(sc.visual?'':' hidden')+'>'+
-    '<input class="sc-visual" value="'+esc(sc.visual)+'" placeholder="Prompt video (bahasa Inggris) — subjek + gerakan + kamera, cth: sunlight drifting over a green leaf, camera slowly zooms in">'+
+    '<input class="sc-visual" value="'+esc(sc.visual)+'" placeholder="Prompt gambar (bahasa Inggris) — cth: plant photosynthesis diagram, sunlight">'+
   '</div>'+
   '<div class="sc-media">'+
-    '<div class="sc-thumb">'+(hasVid?'<video src="'+esc(sc.vid.url)+'" muted preload="metadata" playsinline></video>':'<div class="ph">🎬</div>')+'</div>'+
+    '<div class="sc-thumb">'+(hasImg?'<img src="'+esc(sc.imgSrc)+'" alt="">':'<div class="ph">🖼️</div>')+'</div>'+
     '<div class="sc-actions">'+
-      '<button class="btn btn-s" type="button" data-act="vid">🎬 '+(hasVid?(state.vidStrategy==='satu'?'Ganti (semua)':'Ganti Video'):'Buat Video')+'</button>'+
+      '<button class="btn btn-s" type="button" data-act="img">🎨 '+(hasImg?'Ganti Gambar':'Buat Gambar')+'</button>'+
       '<button class="btn btn-s" type="button" data-act="voice">🎙️ '+(hasV?'Ganti Suara':'Buat Suara')+'</button>'+
       '<button class="btn btn-s ghost" type="button" data-act="test">▶️ Tes Scene</button>'+
     '</div>'+
@@ -1035,13 +1150,10 @@ function updateSceneMedia(sc){
   const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');if(!card)return;
   const th=card.querySelector('.sc-thumb');
   th.innerHTML='';
-  if(sc.vid&&sc.vid.url){
-    const v=document.createElement('video');
-    v.src=sc.vid.url;v.muted=true;v.preload='metadata';v.playsInline=true;v.setAttribute('playsinline','');
-    th.appendChild(v);
-  }else{const p=document.createElement('div');p.className='ph';p.textContent='🎬';th.appendChild(p);}
-  const si=card.querySelector('.st-vid');
-  if(si){si.className='pill st-vid'+(sc.vid?' ok':'');si.textContent=sc.vid?'🎬 ✓':'🎬 —';}
+  if(sc.imgSrc){const im=document.createElement('img');im.src=sc.imgSrc;im.alt='';th.appendChild(im);}
+  else{const p=document.createElement('div');p.className='ph';p.textContent='🖼️';th.appendChild(p);}
+  const si=card.querySelector('.st-img');
+  if(si){si.className='pill st-img'+(sc.imgSrc?' ok':'');si.textContent=sc.imgSrc?'🖼️ ✓':'🖼️ —';}
   const hasV=sc.playback&&sc.playback.type==='puter';
   const sv=card.querySelector('.st-voice');
   if(sv){
@@ -1050,48 +1162,20 @@ function updateSceneMedia(sc){
   }
   const du=card.querySelector('.sc-dur');
   if(du)du.textContent='≈ '+Math.round(scDurSec(sc))+' dtk';
-  const bv=card.querySelector('[data-act="vid"]');
-  if(bv){bv.disabled=false;bv.textContent=sc.vid?(state.vidStrategy==='satu'?'🎬 Ganti (semua)':'🎬 Ganti Video'):'🎬 Buat Video';}
-  const bs=card.querySelector('[data-act="voice"]');
-  if(bs){bs.disabled=false;bs.textContent=hasV?'🎙️ Ganti Suara':'🎙️ Buat Suara';}
+  const bi=card.querySelector('[data-act="img"]');
+  if(bi){bi.disabled=false;bi.textContent=sc.imgSrc?'🎨 Ganti Gambar':'🎨 Buat Gambar';}
+  const bv=card.querySelector('[data-act="voice"]');
+  if(bv){bv.disabled=false;bv.textContent=hasV?'🎙️ Ganti Suara':'🎙️ Buat Suara';}
 }
-function sharedVidPrompt(){
-  const topic=$('#inpTopic').value.trim();
-  const uniq=[...new Set(state.scenes.map(s=>(s.visual||'').trim()).filter(Boolean))];
-  let core=uniq.slice(0,3).join(' ; ');
-  if(core.length>420)core=core.slice(0,420);
-  return (topic?topic+' — ':'')+(core||'friendly educational explainer about the topic');
-}
-function assignShared(vid){
-  state.scenes.forEach(s=>{s.vid=vid;s.vidPath=vid.path||null;s.vidLabel=vid.label||'';});
-}
-async function genVidFor(sc,opts){
-  opts=opts||{};
+async function genImageFor(sc){
   const card=document.querySelector('.scene-card[data-id="'+sc.id+'"]');
-  const sv=card&&card.querySelector('.st-vid');
-  if(sv){sv.className='pill st-vid busy';sv.textContent='🎬 ⏳';}
-  try{
-    if(state.vidStrategy==='satu'){
-      const holder=state.scenes.find(s=>s.vid);
-      if(holder&&!opts.force){
-        assignShared(holder.vid);
-        toast('Scene ini otomatis memakai video bersama yang sudah ada — 0 kredit','success');
-      }else{
-        const vid=await makeVideo(sharedVidPrompt(),'semua');
-        assignShared(vid);
-      }
-    }else{
-      const prompt=sc.visual||($('#inpTopic').value+' — '+sc.judul);
-      const vid=await makeVideo(prompt,String(state.scenes.indexOf(sc)+1));
-      sc.vid=vid;sc.vidPath=vid.path||null;sc.vidLabel=vid.label||'';
-    }
-  }catch(e){
-    if(sv){sv.className='pill st-vid';sv.textContent='🎬 —';}
-    throw e;
-  }
+  const si=card&&card.querySelector('.st-img');
+  if(si){si.className='pill st-img busy';si.textContent='🖼️ ⏳';}
+  const prompt=sc.visual||($('#inpTopic').value+' — '+sc.judul);
+  sc.imgSrc=await makeImage(prompt);
+  sc.imgEl=null;
+  await ensureImgEl(sc);
   updateSceneMedia(sc);
-  if(state.vidStrategy==='satu')state.scenes.forEach(s=>updateSceneMedia(s));
-  updateVidEst();
   drawFrame();
 }
 async function genVoiceFor(sc){
@@ -1109,17 +1193,6 @@ async function genVoiceFor(sc){
 function updateToolbar(){
   $('#sceneCount').textContent=state.scenes.length+' scene';
   $('#totalDur').textContent='≈ '+fmtTime(player.totalDur()/1000);
-  updateVidEst();
-}
-function updateVidEst(){
-  const el=$('#vidEst');if(!el)return;
-  const n=state.scenes.length;
-  if(!n){el.textContent='Estimasi biaya muncul di sini setelah naskah dibuat.';return;}
-  if(state.vidStrategy==='satu')el.textContent='💰 Estimasi: '+(state.scenes.some(s=>s.vid)?'0 klip lagi (video bersama sudah ada)':'1 klip')+' untuk '+n+' scene · proses ± 1–3 menit · timer & progres live tampil saat proses';
-  else{
-    const need=state.scenes.filter(s=>!s.vid).length;
-    el.textContent='💰 Estimasi: '+need+' klip lagi (1 per scene) · proses ± '+Math.max(1,need)+'–'+Math.max(3,need*3)+' menit · progres live tampil saat proses';
-  }
 }
 function addScene(){
   const sc=normalizeScene({judul:'Scene '+(state.scenes.length+1),narasi:'',visual:''});
@@ -1129,7 +1202,7 @@ function addScene(){
   if(card){card.querySelector('.sc-nar').focus();card.scrollIntoView({block:'center',behavior:'smooth'});}
 }
 function setBusyUI(b){
-  ['#btnGenScript','#btnGenAllVids','#btnGenAllVoices','#btnAddScene'].forEach(s=>{
+  ['#btnGenScript','#btnGenAllImgs','#btnGenAllVoices','#btnAddScene'].forEach(s=>{
     const el=$(s);if(el)el.disabled=b;
   });
 }
@@ -1147,31 +1220,18 @@ async function generateProject(){
     state.scenes=list.map(normalizeScene);
     player.idx=0;player.t=0;player.playing=false;player.stopAfter=null;player.onFinish=null;player.lastTs=null;
     renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();updatePlayUI();
-    /* PARALEL: video bersama & suara dirender BERSAMAAN → total menunggu ± setengahnya */
-    let vidP=null,vidErr=null;
-    if(state.vidStrategy==='satu'&&!pipelineCancel){
-      vidP=genVidFor(state.scenes[0],{force:true}).catch(e=>{vidErr=e;});
-    }
     for(let i=0;i<state.scenes.length;i++){
       if(pipelineCancel)break;
       const sc=state.scenes[i];
-      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia… (video AI dirender paralel di latar belakang)',true);
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Membuat ilustrasi…',true);
+      try{await genImageFor(sc);}catch(e){toast('Gambar scene '+(i+1)+' gagal: '+(e.message||e),'err');}
+      if(pipelineCancel)break;
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia…',true);
       try{await genVoiceFor(sc);}catch(e){toast('Suara scene '+(i+1)+' gagal: '+(e.message||e),'err');}
-    }
-    if(vidP){
-      if(pipelineCancel)overlayShow('Menyelesaikan klip video AI…','Klip yang sedang diproses server tidak bisa dihentikan — menunggu sebentar lagi…',true);
-      else overlayShow('Klip video AI sedang dirender…','Suara sudah selesai semua — video AI ± 1–3 menit · cuma 1× potong kredit',true,{eta:150,stages:VID_STAGES});
-      await vidP;
-      if(vidErr)toast('Video bersama gagal: '+(vidErr.message||vidErr),'err');
-    }
-    if(!pipelineCancel&&state.vidStrategy!=='satu'){
-      overlayHide();
-      toast('Naskah & suara siap! Klik 🎬 Video Semua untuk membuat klip per scene','info');
     }
     overlayHide();
     saveLocal();renderTimeline();updateToolbar();
-    if(state.vidStrategy==='satu'&&!pipelineCancel)toast(vidErr?'Naskah & suara siap — klip video gagal, coba tombol 🎬 Video Semua':'Naskah, suara & video siap! Klik ▶️ untuk pratinjau 🎬','success');
-    else if(!pipelineCancel)toast('Naskah siap! Klik ▶️ untuk pratinjau 🎬','success');
+    toast('Naskah siap! Klik ▶️ untuk pratinjau videonya 🎬','success');
   }catch(e){
     overlayHide();
     if(e.message!=='cancel')toast('Gagal: '+(e.message||e),'err');
@@ -1184,34 +1244,23 @@ async function generateAll(kind){
   if(!state.scenes.length){toast('Belum ada scene','warn');return;}
   if(!requireAuth())return;
   state.busy=true;setBusyUI(true);pipelineCancel=false;
-  let jobs=[];
-  if(kind==='vid'&&state.vidStrategy==='satu'){
-    if(state.scenes.some(s=>s.vid)){
-      state.busy=false;setBusyUI(false);
-      toast('Semua scene sudah memakai video bersama — klik 🎬 Ganti di sebuah scene untuk buat ulang','info');
-      return;
-    }
-    jobs.push({sc:state.scenes[0],i:0,shared:true});
-  }else{
-    state.scenes.forEach((sc,i)=>{
-      const need=kind==='vid'?!sc.vid:!(sc.playback&&sc.playback.type==='puter');
-      if(need)jobs.push({sc:sc,i:i});
-    });
-    if(!jobs.length){
-      state.busy=false;setBusyUI(false);
-      toast(kind==='vid'?'Semua scene sudah punya video 🎬':'Semua scene sudah bersuara 🔊','info');
-      return;
-    }
+  const jobs=[];
+  state.scenes.forEach((sc,i)=>{
+    const need=kind==='img'?!sc.imgSrc:!(sc.playback&&sc.playback.type==='puter');
+    if(need)jobs.push({sc:sc,i:i});
+  });
+  if(!jobs.length){
+    state.busy=false;setBusyUI(false);
+    toast(kind==='img'?'Semua scene sudah punya gambar 🖼️':'Semua scene sudah bersuara 🔊','info');
+    return;
   }
   let okc=0;
   for(let k=0;k<jobs.length;k++){
     if(pipelineCancel)break;
-    const j=jobs[k];
-    const judul=(kind==='vid'&&j.shared)?'klip bersama semua scene':'scene '+(j.i+1)+'/'+state.scenes.length;
-    if(kind==='vid')overlayShow('Membuat video AI · '+judul,'Mode hemat kredit 🔋 — biarkan tab terbuka, boleh minimize saja',true,{eta:180,stages:VID_STAGES});
-    else overlayShow('Membuat suara iklan Indonesia · '+judul,((k+1)+' dari '+jobs.length+' sedang diproses…'),true);
-    try{if(kind==='vid')await genVidFor(j.sc,{force:!!j.shared});else await genVoiceFor(j.sc);okc++;}
-    catch(err){toast((j.shared?'Klip bersama':'Scene '+(j.i+1))+': '+(err.message||err),'err');}
+    const sc=jobs[k].sc,i=jobs[k].i;
+    overlayShow((kind==='img'?'Membuat ilustrasi':'Merekam suara iklan Indonesia')+' · scene '+(i+1)+'/'+state.scenes.length,(k+1)+' dari '+jobs.length+' sedang diproses…',true);
+    try{if(kind==='img')await genImageFor(sc);else await genVoiceFor(sc);okc++;}
+    catch(err){toast('Scene '+(i+1)+': '+(err.message||err),'err');}
   }
   overlayHide();
   state.busy=false;setBusyUI(false);
@@ -1371,9 +1420,8 @@ function saveLocal(){
   try{
     localStorage.setItem('eduvid_v1',JSON.stringify({
       topic:$('#inpTopic').value,level:$('#selLevel').value,dur:$('#selDuration').value,style:$('#selStyle').value,
-      voice:state.voice,kar:state.kar,speed:state.speed,naturalize:state.naturalize,
-      vidPreset:state.vidPreset,vidStrategy:state.vidStrategy,saveDrive:state.saveDrive,
-      scenes:state.scenes.map(s=>({judul:s.judul,narasi:s.narasi,visual:s.visual,vidPath:s.vidPath||null,vidLabel:s.vidLabel||''}))
+      voice:state.voice,kar:state.kar,speed:state.speed,naturalize:state.naturalize,motion:state.motion,
+      scenes:state.scenes.map(s=>({judul:s.judul,narasi:s.narasi,visual:s.visual}))
     }));
   }catch(_){ }
 }
@@ -1391,68 +1439,30 @@ function loadLocal(){
     state.kar=VOICE_KAR[d.kar]?d.kar:'iklan';
     state.speed=+d.speed||1;
     state.naturalize=d.naturalize!==false;
-    state.vidPreset=VID_PRESETS[d.vidPreset]?d.vidPreset:'irit';
-    state.vidStrategy=(d.vidStrategy==='per-scene')?'per-scene':'satu';
-    state.saveDrive=d.saveDrive!==false;
-    $('#selVidPreset').value=state.vidPreset;
-    $('#selVidStrategy').value=state.vidStrategy;
-    $('#chkSaveDrive').checked=state.saveDrive;
+    state.motion=['auto','cinematic','calm','off'].indexOf(d.motion)>=0?d.motion:'auto';
     $('#selVoice').value=state.voice;
+    $('#selMotion').value=state.motion;
+    fx.partsId=null;fx.trans=null;
     $('#selKar').value=state.kar;
     $('#rngSpeed').value=String(state.speed);
     $('#chkNatural').checked=state.naturalize;
     if(Array.isArray(d.scenes)&&d.scenes.length){
       state.scenes=d.scenes.map(normalizeScene);
       renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();
-      if(state.scenes.some(s=>s.vidPath))setTimeout(restoreVideos,1200);
-      setTimeout(()=>toast('Proyek terakhir dipulihkan — klip video diambil dari Drive Puter bila tersedia','info'),800);
+      setTimeout(()=>toast('Proyek terakhir dipulihkan — buat ulang gambar & suara bila perlu','info'),800);
     }
   }catch(_){ }
 }
 
 /* ================= Overlay & toast ================= */
-let _ovTimer=null,_ovStageTimer=null,_ovT0=0,_ovEta=0;
-function ovStopTimers(){
-  if(_ovTimer){clearInterval(_ovTimer);_ovTimer=null;}
-  if(_ovStageTimer){clearInterval(_ovStageTimer);_ovStageTimer=null;}
-}
-function overlayShow(title,sub,cancellable,opts){
-  opts=opts||{};
+function overlayShow(title,sub,cancellable){
   $('#ovTitle').textContent=title;
   $('#ovSub').textContent=sub||'';
   $('#ovCancel').hidden=!cancellable;
-  const wrap=$('#ovProgWrap'),meta=$('#ovMeta');
-  ovStopTimers();
-  if(opts.eta){
-    _ovEta=opts.eta;_ovT0=Date.now();
-    wrap.hidden=false;meta.hidden=false;
-    $('#ovProgBar').style.width='0%';
-    const tick=()=>{
-      const el=Math.max(0,(Date.now()-_ovT0)/1000);
-      const raw=Math.min(el/_ovEta,1);
-      const pct=Math.min(94,Math.round(94*(1-Math.pow(1-raw,1.7))));
-      $('#ovProgBar').style.width=pct+'%';
-      meta.textContent=fmtTime(el)+' berjalan · estimasi total ± '+fmtTime(_ovEta)+(pct>=90?' — hampir selesai, jangan tutup tab ya':' — tab boleh dibiarkan terbuka saja');
-    };
-    tick();
-    _ovTimer=setInterval(tick,1000);
-    if(opts.stages&&opts.stages.length){
-      let si=0;
-      $('#ovSub').textContent=opts.stages[0];
-      _ovStageTimer=setInterval(()=>{si=(si+1)%opts.stages.length;$('#ovSub').textContent=opts.stages[si];},13000);
-    }
-  }else{
-    wrap.hidden=true;meta.hidden=true;
-  }
   $('#overlay').hidden=false;
 }
 function overlaySub(s){$('#ovSub').textContent=s;}
-function overlayHide(){
-  ovStopTimers();
-  $('#ovProgBar').style.width='0%';
-  $('#ovProgWrap').hidden=true;$('#ovMeta').hidden=true;
-  $('#overlay').hidden=true;
-}
+function overlayHide(){$('#overlay').hidden=true;}
 function toast(msg,type){
   type=type||'info';
   const t=document.createElement('div');
@@ -1478,22 +1488,17 @@ function sceneClickHandler(e){
     if(!confirm('Hapus scene ini?'))return;
     const i=state.scenes.indexOf(sc);
     if(sc.playback&&sc.playback.el){try{sc.playback.el.pause();}catch(_){ }}
-    if(sc.vid&&sc.vid.el){try{sc.vid.el.pause();}catch(_){ }}
     state.scenes.splice(i,1);
     if(i<player.idx)player.idx--;
     else if(i===player.idx){player.t=0;if(player.playing)player.resumeAudio();}
     renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();saveLocal();
   }else if(act==='vis'){
     const row=card.querySelector('.sc-visual-row');row.hidden=!row.hidden;
-  }else if(act==='vid'){
+  }else if(act==='img'){
     if(state.busy)return toast('Tunggu proses selesai ya','warn');
     if(!requireAuth())return;
-    const needForce=state.vidStrategy==='satu'&&sc.vid&&state.scenes.some(s=>s.vid);
-    if(needForce&&!confirm('Mode Super Irit memakai 1 video bersama. Buat video BARU untuk SEMUA scene (1 klip, potong kredit)?'))return;
     btn.disabled=true;btn.textContent='⏳…';
-    genVidFor(sc,{force:needForce})
-      .then(()=>{saveLocal();toast('Video siap 🎬','success');})
-      .catch(err=>toast('Video gagal: '+(err.message||err),'err'));
+    genImageFor(sc).then(()=>saveLocal()).catch(err=>toast('Gambar gagal: '+(err.message||err),'err'));
   }else if(act==='voice'){
     if(state.busy)return toast('Tunggu proses selesai ya','warn');
     if(!requireAuth())return;
@@ -1548,16 +1553,14 @@ function wireEvents(){
   $('#btnSignOut').onclick=signOut;
   $('#btnGenScript').onclick=generateProject;
   $('#btnAddScene').onclick=addScene;
-  $('#btnGenAllVids').onclick=()=>generateAll('vid');
-  $('#selVidStrategy').onchange=e=>{state.vidStrategy=e.target.value;updateVidEst();saveLocal();toast(state.vidStrategy==='satu'?'Strategi kredit: 1 video untuk semua scene — paling irit 🔋':'Strategi kredit: video unik per scene','info');};
-  $('#selVidPreset').onchange=e=>{state.vidPreset=e.target.value;saveLocal();toast('Kualitas klip: '+((VID_PRESETS[state.vidPreset]||{}).label||state.vidPreset),'info');};
-  $('#chkSaveDrive').onchange=e=>{state.saveDrive=e.target.checked;saveLocal();};
+  $('#btnGenAllImgs').onclick=()=>generateAll('img');
   $('#btnGenAllVoices').onclick=()=>generateAll('voice');
   $('#btnTestVoice').onclick=testVoice;
   $('#selVoice').onchange=e=>{state.voice=e.target.value;saveLocal();toast('Mesin suara: '+(VOICE_LABELS[state.voice]||state.voice),'info');};
   $('#selKar').onchange=e=>{state.kar=e.target.value;saveLocal();toast('Karakter bicara: '+e.target.selectedOptions[0].text,'info');};
   $('#rngSpeed').oninput=e=>{state.speed=+e.target.value;updateSpeedLabel();updateToolbar();renderTimeline();saveLocalDebounced();};
   $('#chkNatural').onchange=e=>{state.naturalize=e.target.checked;saveLocal();};
+  $('#selMotion').onchange=e=>{state.motion=e.target.value;fx.partsId=null;fx.trans=null;drawFrame();saveLocal();toast('Gaya gerak: '+e.target.selectedOptions[0].text,'info');};
   $('#btnPlay').onclick=()=>player.toggle();
   $('#btnPrev').onclick=()=>player.step(-1);
   $('#btnNext').onclick=()=>player.step(1);
