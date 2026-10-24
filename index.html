@@ -16,6 +16,8 @@
   Visual: KLIP VIDEO AI bergerak per scene (puter.ai.txt2vid) — bukan gambar diam
   Hemat kredit: strategi 1 video bersama, klip pendek harga flat, Mode Uji 0 kredit,
   cache visual identik, simpan ke Drive Puter untuk dipakai ulang gratis
+  Loading tidak terasa lama: progres bar + timer live selama render video AI,
+  pipeline paralel (video & suara dibuat bersamaan), pesan tahapan otomatis
   Suara natural Bahasa Indonesia: Damayanti (neural, id-ID)
   Cara pakai: buka file ini di browser (Chrome/Edge disarankan)
   → Masuk dengan Puter → Buat Naskah → Buat Video → Pratinjau → Rekam & Unduh Video.
@@ -181,6 +183,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .spin{width:56px;height:56px;margin:0 auto 20px;border-radius:50%;background:conic-gradient(from 0deg,#6d5ef2,#22d3ee,#6d5ef2);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));animation:rot .9s linear infinite}
 .ov-box h4{font-size:16px;margin-bottom:6px}
 .ov-box p{font-size:12.5px;color:var(--muted);margin-bottom:18px;min-height:18px}
+#ovProgWrap{width:100%;height:8px;border-radius:99px;background:rgba(148,163,184,.18);overflow:hidden;margin:-6px 0 10px}
+#ovProgBar{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#6d5ef2,#22d3ee);transition:width .6s ease;box-shadow:0 0 12px rgba(34,211,238,.55)}
+#ovMeta{margin-bottom:14px!important;font-size:11.5px!important;min-height:0!important;font-variant-numeric:tabular-nums;color:var(--acc2)!important}
 
 #toasts{position:fixed;top:74px;right:18px;z-index:400;display:flex;flex-direction:column;gap:8px;max-width:360px}
 .toast{background:rgba(15,23,41,.96);border:1px solid var(--line2);border-left:3px solid var(--acc2);padding:11px 15px;border-radius:11px;font-size:12.5px;box-shadow:0 12px 34px rgba(0,0,0,.45);animation:slideIn .25s ease;transition:.4s}
@@ -287,7 +292,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 
     <div class="card">
       <h3><span class="step mic">🎬</span> Klip Video AI — Hemat Kredit</h3>
-      <p class="desc">Visual tiap scene = <b>video AI bergerak</b> (puter.ai.txt2vid), bukan gambar diam. Pengaturan di bawah menjaga kredit tetap irit.</p>
+      <p class="desc">Visual tiap scene = <b>video AI bergerak</b> (puter.ai.txt2vid), bukan gambar diam. Klip AI butuh ± 1–3 menit per klip — sekarang ada <b>timer &amp; progres bar live</b> selama menunggu, plus video dirender <b>paralel dengan suara</b> biar totalnya lebih cepat. Pengaturan di bawah menjaga kredit tetap irit.</p>
       <label class="lb" for="selVidStrategy">Strategi kredit</label>
       <select id="selVidStrategy">
         <option value="satu" selected>Super Irit — 1 video untuk semua scene 🔋</option>
@@ -367,6 +372,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div class="spin"></div>
     <h4 id="ovTitle">Memproses…</h4>
     <p id="ovSub">Mohon tunggu sebentar</p>
+    <div id="ovProgWrap" hidden><div id="ovProgBar"></div></div>
+    <p id="ovMeta" hidden>0:00 berjalan</p>
     <button id="ovCancel" class="btn btn-s" type="button">Batalkan</button>
   </div>
 </div>
@@ -404,6 +411,7 @@ const VID_PRESETS={
   seimbang:{key:'seimbang',label:'Seimbang · 720P · 5 dtk',model:'wan-ai/wan2.7-t2v',size:'720P',seconds:5,audio:false,test:false},
   kualitas:{key:'kualitas',label:'Kualitas · 1080P · 8 dtk',model:'wan-ai/wan2.7-t2v',size:'1080P',seconds:8,audio:true,test:false}
 };
+const VID_STAGES=['Menghubungi server video AI…','AI mulai merender frame animasi…','Menyusun potongan klip menjadi video utuh…','Merapikan gerakan & warna klip…','Hampir selesai — klip hampir siap diputar…'];
 const VOICE_LABELS={'auto-iklan':'Otomatis · Suara Iklan Indonesia','gemini':'Gemini TTS','openai':'OpenAI TTS','damayanti-neural':'Damayanti · Neural (id-ID)','damayanti-standard':'Damayanti · Standard (id-ID)','browser':'Suara Browser (id-ID)'};
 const VOICE_KAR={
   iklan:'Berbicaralah seperti announcer iklan TV Indonesia profesional: hangat, bersemangat, meyakinkan, dan ramah. Gunakan intonasi yang hidup, penekanan pada kata-kata penting, dan jeda alami antar kalimat. Lafalkan setiap kata seperti penutur asli bahasa Indonesia — jangan terdengar seperti robot atau orang asing.',
@@ -880,10 +888,11 @@ function buildVideoEl(url){
     v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';v.crossOrigin='anonymous';
     v.src=url;
     let done=false;
-    const fin=ok=>{if(done)return;done=true;setTimeout(()=>ok?res(v):rej(new Error('Klip video tidak bisa dimuat')),60);};
+    const fin=ok=>{if(done)return;done=true;clearTimeout(tm);ok?res(v):rej(new Error('Klip video tidak bisa dimuat'));};
     const tm=setTimeout(()=>fin(v.readyState>=2),20000);
-    v.addEventListener('loadeddata',()=>{clearTimeout(tm);fin(true);},{once:true});
-    v.addEventListener('error',()=>{clearTimeout(tm);fin(false);},{once:true});
+    v.addEventListener('loadeddata',()=>fin(true),{once:true});
+    v.addEventListener('canplay',()=>fin(true),{once:true});
+    v.addEventListener('error',()=>fin(false),{once:true});
     try{v.load();}catch(_){ }
   });
 }
@@ -944,6 +953,7 @@ async function makeVideo(prompt,name){
         continue;
       }
       console.warn('[VID] percobaan gagal:',e);
+      if(i<attempts.length-1)toast('Percobaan pertama gagal — otomatis mencoba jalur cadangan…','warn');
     }
   }
   throw new Error('Video gagal dibuat'+(lastErr?': '+(((lastErr&&(lastErr.message||lastErr.code))||lastErr)):'')+'. Provider video bisa sibuk — tunggu sebentar lalu coba lagi.');
@@ -1105,10 +1115,10 @@ function updateVidEst(){
   const el=$('#vidEst');if(!el)return;
   const n=state.scenes.length;
   if(!n){el.textContent='Estimasi biaya muncul di sini setelah naskah dibuat.';return;}
-  if(state.vidStrategy==='satu')el.textContent='💰 Estimasi: '+(state.scenes.some(s=>s.vid)?'0 klip lagi (video bersama sudah ada)':'1 klip')+' untuk '+n+' scene · proses ± 1–3 menit';
+  if(state.vidStrategy==='satu')el.textContent='💰 Estimasi: '+(state.scenes.some(s=>s.vid)?'0 klip lagi (video bersama sudah ada)':'1 klip')+' untuk '+n+' scene · proses ± 1–3 menit · timer & progres live tampil saat proses';
   else{
     const need=state.scenes.filter(s=>!s.vid).length;
-    el.textContent='💰 Estimasi: '+need+' klip lagi (1 per scene) · proses ± '+Math.max(1,need)+'–'+Math.max(3,need*3)+' menit';
+    el.textContent='💰 Estimasi: '+need+' klip lagi (1 per scene) · proses ± '+Math.max(1,need)+'–'+Math.max(3,need*3)+' menit · progres live tampil saat proses';
   }
 }
 function addScene(){
@@ -1137,25 +1147,31 @@ async function generateProject(){
     state.scenes=list.map(normalizeScene);
     player.idx=0;player.t=0;player.playing=false;player.stopAfter=null;player.onFinish=null;player.lastTs=null;
     renderScenes();renderTimeline();updateToolbar();drawFrame();updateTimeUI();updatePlayUI();
+    /* PARALEL: video bersama & suara dirender BERSAMAAN → total menunggu ± setengahnya */
+    let vidP=null,vidErr=null;
+    if(state.vidStrategy==='satu'&&!pipelineCancel){
+      vidP=genVidFor(state.scenes[0],{force:true}).catch(e=>{vidErr=e;});
+    }
     for(let i=0;i<state.scenes.length;i++){
       if(pipelineCancel)break;
       const sc=state.scenes[i];
-      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia…',true);
+      overlayShow('Scene '+(i+1)+'/'+state.scenes.length+' · '+sc.judul,'Merekam suara iklan Indonesia… (video AI dirender paralel di latar belakang)',true);
       try{await genVoiceFor(sc);}catch(e){toast('Suara scene '+(i+1)+' gagal: '+(e.message||e),'err');}
     }
-    if(state.vidStrategy==='satu'){
-      if(pipelineCancel)throw new Error('cancel');
-      overlayShow('Membuat 1 video bersama untuk semua scene…','Klip video AI ± 1–3 menit · mode paling hemat kredit (cuma 1× potong)',true);
-      try{await genVidFor(state.scenes[0],{force:true});}
-      catch(e){toast('Video bersama gagal: '+(e.message||e),'err');}
-    }else if(!pipelineCancel){
+    if(vidP){
+      if(pipelineCancel)overlayShow('Menyelesaikan klip video AI…','Klip yang sedang diproses server tidak bisa dihentikan — menunggu sebentar lagi…',true);
+      else overlayShow('Klip video AI sedang dirender…','Suara sudah selesai semua — video AI ± 1–3 menit · cuma 1× potong kredit',true,{eta:150,stages:VID_STAGES});
+      await vidP;
+      if(vidErr)toast('Video bersama gagal: '+(vidErr.message||vidErr),'err');
+    }
+    if(!pipelineCancel&&state.vidStrategy!=='satu'){
       overlayHide();
       toast('Naskah & suara siap! Klik 🎬 Video Semua untuk membuat klip per scene','info');
     }
     overlayHide();
     saveLocal();renderTimeline();updateToolbar();
-    if(state.vidStrategy==='satu')toast('Naskah, suara & video siap! Klik ▶️ untuk pratinjau 🎬','success');
-    else toast('Naskah siap! Klik ▶️ untuk pratinjau 🎬','success');
+    if(state.vidStrategy==='satu'&&!pipelineCancel)toast(vidErr?'Naskah & suara siap — klip video gagal, coba tombol 🎬 Video Semua':'Naskah, suara & video siap! Klik ▶️ untuk pratinjau 🎬','success');
+    else if(!pipelineCancel)toast('Naskah siap! Klik ▶️ untuk pratinjau 🎬','success');
   }catch(e){
     overlayHide();
     if(e.message!=='cancel')toast('Gagal: '+(e.message||e),'err');
@@ -1192,7 +1208,8 @@ async function generateAll(kind){
     if(pipelineCancel)break;
     const j=jobs[k];
     const judul=(kind==='vid'&&j.shared)?'klip bersama semua scene':'scene '+(j.i+1)+'/'+state.scenes.length;
-    overlayShow('Membuat '+(kind==='vid'?'video AI':'suara iklan Indonesia')+' · '+judul,kind==='vid'?'Klip video butuh ±1–3 menit — biarkan tab terbuka (mode hemat kredit 🔋)':((k+1)+' dari '+jobs.length+' sedang diproses…'),true);
+    if(kind==='vid')overlayShow('Membuat video AI · '+judul,'Mode hemat kredit 🔋 — biarkan tab terbuka, boleh minimize saja',true,{eta:180,stages:VID_STAGES});
+    else overlayShow('Membuat suara iklan Indonesia · '+judul,((k+1)+' dari '+jobs.length+' sedang diproses…'),true);
     try{if(kind==='vid')await genVidFor(j.sc,{force:!!j.shared});else await genVoiceFor(j.sc);okc++;}
     catch(err){toast((j.shared?'Klip bersama':'Scene '+(j.i+1))+': '+(err.message||err),'err');}
   }
@@ -1394,14 +1411,48 @@ function loadLocal(){
 }
 
 /* ================= Overlay & toast ================= */
-function overlayShow(title,sub,cancellable){
+let _ovTimer=null,_ovStageTimer=null,_ovT0=0,_ovEta=0;
+function ovStopTimers(){
+  if(_ovTimer){clearInterval(_ovTimer);_ovTimer=null;}
+  if(_ovStageTimer){clearInterval(_ovStageTimer);_ovStageTimer=null;}
+}
+function overlayShow(title,sub,cancellable,opts){
+  opts=opts||{};
   $('#ovTitle').textContent=title;
   $('#ovSub').textContent=sub||'';
   $('#ovCancel').hidden=!cancellable;
+  const wrap=$('#ovProgWrap'),meta=$('#ovMeta');
+  ovStopTimers();
+  if(opts.eta){
+    _ovEta=opts.eta;_ovT0=Date.now();
+    wrap.hidden=false;meta.hidden=false;
+    $('#ovProgBar').style.width='0%';
+    const tick=()=>{
+      const el=Math.max(0,(Date.now()-_ovT0)/1000);
+      const raw=Math.min(el/_ovEta,1);
+      const pct=Math.min(94,Math.round(94*(1-Math.pow(1-raw,1.7))));
+      $('#ovProgBar').style.width=pct+'%';
+      meta.textContent=fmtTime(el)+' berjalan · estimasi total ± '+fmtTime(_ovEta)+(pct>=90?' — hampir selesai, jangan tutup tab ya':' — tab boleh dibiarkan terbuka saja');
+    };
+    tick();
+    _ovTimer=setInterval(tick,1000);
+    if(opts.stages&&opts.stages.length){
+      let si=0;
+      $('#ovSub').textContent=opts.stages[0];
+      _ovStageTimer=setInterval(()=>{si=(si+1)%opts.stages.length;$('#ovSub').textContent=opts.stages[si];},13000);
+    }
+  }else{
+    wrap.hidden=true;meta.hidden=true;
+  }
   $('#overlay').hidden=false;
 }
 function overlaySub(s){$('#ovSub').textContent=s;}
-function overlayHide(){$('#overlay').hidden=true;}
+function overlayHide(){
+  ovStopTimers();
+  $('#ovProgBar').style.width='0%';
+  $('#ovProgWrap').hidden=true;$('#ovMeta').hidden=true;
+  $('#overlay').hidden=true;
+}
 function toast(msg,type){
   type=type||'info';
   const t=document.createElement('div');
